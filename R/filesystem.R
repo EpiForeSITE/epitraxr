@@ -7,6 +7,20 @@
 #' @param settings Filepath. Folder to hold report settings.
 #'
 #' @returns NULL.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   internal_folder <- "internal_reports"
+#'   public_folder <- "public_reports"
+#'   settings_folder <- "report_settings"
+#'
+#'   create_filesystem(
+#'     internal = internal_folder,
+#'     public = public_folder,
+#'     settings = settings_folder
+#'   )
+#' }
 create_filesystem <- function(internal, public, settings) {
   # - Create folders if needed
   for (f in c(internal, public, settings)) {
@@ -24,6 +38,15 @@ create_filesystem <- function(internal, public, settings) {
 #' @param config_filepath Filepath. Path to report config file.
 #'
 #' @returns a named list with an attribute of 'keys' from the file.
+#' @export
+#'
+#' @importFrom yaml read_yaml
+#'
+#' @examples
+#' \dontrun{
+#'   config_file <- "path/to/config_file"
+#'   report_config <- read_report_config(config_file)
+#' }
 read_report_config <- function(config_filepath) {
 
   if (file.exists(config_filepath)) {
@@ -31,21 +54,21 @@ read_report_config <- function(config_filepath) {
 
     # - Validate or set defaults
     if (is.null(config$current_population) ||
-        class(config$current_population) != "integer") {
+        !inherits(config$current_population, "integer")) {
       warning("In '", config_filepath, "', 'current_population' is missing or
             invalid. Using default value of 100,000 instead.")
       config$current_population <- 100000
     }
 
     if (is.null(config$avg_5yr_population) ||
-        class(config$avg_5yr_population) != "integer") {
+        !inherits(config$avg_5yr_population,"integer")) {
       warning("In '", config_filepath, "', 'avg_5yr_population' is missing or
             invalid. Using default value of 'current_population' instead.")
       config$avg_5yr_population <- config$current_population
     }
 
     if (is.null(config$rounding_decimals) ||
-        class(config$rounding_decimals) != "integer") {
+        !inherits(config$rounding_decimals, "integer")) {
       warning("In '", config_filepath, "', 'rounding_decimals' is missing or
             invalid. Using default value of 2 instead.")
       config$rounding_decimals <- 2
