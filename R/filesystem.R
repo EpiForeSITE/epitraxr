@@ -61,7 +61,7 @@ read_report_config <- function(config_filepath) {
     }
 
     if (is.null(config$avg_5yr_population) ||
-        !inherits(config$avg_5yr_population,"integer")) {
+        !inherits(config$avg_5yr_population, "integer")) {
       warning("In '", config_filepath, "', 'avg_5yr_population' is missing or
             invalid. Using default value of 'current_population' instead.")
       config$avg_5yr_population <- config$current_population
