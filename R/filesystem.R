@@ -147,3 +147,62 @@ read_report_config <- function(config_filepath) {
 write_report_csv <- function(data, filename, folder) {
   utils::write.csv(data, file.path(folder, filename), row.names = FALSE)
 }
+
+
+#' Get the internal disease list
+#'
+#' 'get_internal_disease_list' reads the internal list from a given CSV file or
+#' uses the default diseases, if the file doesn't exist.
+#'
+#' The provided internal disease list file must contain one column of EpiTrax
+#' disease names (EpiTrax_name) to include in internal reports.
+#' @param filepath Filepath. Internal disease list CSV file.
+#' @param default_diseases String vector. List of default diseases to use if the
+#' above file doesn't exist.
+#'
+#' @returns A dataframe containing the diseases to include in the public report
+#' and the name to use for each disease in the public report.
+#' @export
+#'
+#' @importFrom utils read.csv
+#'
+#' @examples
+#' \dontrun{
+#'   list_file <- "path/to/file"
+#'   default_list <- c("Measles", "Chickenpox")
+#'
+#'   disease_list <- get_internal_disease_list(list_file, default_list)
+#' }
+get_internal_disease_list <- function(filepath, default_diseases) {
+
+  if (file.exists(filepath)) {
+
+    d_list <- read.csv(filepath, header = TRUE)
+
+    # Validate file
+    if (is.null(d_list$EpiTrax_name)) {
+      stop("File '", filepath, "' missing required column 'EpiTrax_name'.")
+    }
+
+    d_list
+
+  } else {
+    # If the file doesn't exist, use the default list of diseases provided
+    warning("You have not provided a disease list for internal reports.",
+            "\n - The program will default to using only the diseases ",
+            "found in the input dataset.",
+            "\n - If you would like to use a different list, ",
+            "please include a file named \n\n\t'",
+            filepath,
+            "'\n\n - The file must have a column named",
+            "\n\n\t'EpiTrax_name'")
+
+    default_diseases <- sort(default_diseases)
+
+    d_list <- data.frame(
+      EpiTrax_name = default_diseases
+    )
+
+    d_list
+  }
+}

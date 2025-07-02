@@ -92,8 +92,29 @@ expect_silent(write_report_csv(r_data, r_file, public_folder))
 
 csv_fp <- file.path(public_folder, r_file)
 expect_true(file.exists(csv_fp))
-csv_data <- read.csv(csv_fp)
+csv_data <- utils::read.csv(csv_fp)
 expect_equal(csv_data, r_data)
+
+
+# Test get_internal_disease_list() ---------------------------------------------
+list_file <-"test_files/disease_lists/internal_list.csv"
+default_list <- c("Measles", "Chickenpox")
+
+# Test with valid list file
+expect_silent(d_list <- get_internal_disease_list(list_file, default_list))
+file_data <- utils::read.csv(list_file)
+expect_equal(file_data, d_list)
+
+# Test with no list file
+expect_warning(d_list <- get_internal_disease_list("", default_list),
+               "You have not provided a disease list for internal reports.")
+expect_equal(sort(default_list), d_list$EpiTrax_name)
+
+# Test with invalid list file
+list_file <-"test_files/disease_lists/invalid_list.csv"
+expect_error(d_list <- get_internal_disease_list(list_file, default_list),
+             "missing required column")
+
 
 # Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
 unlink(internal_folder, recursive = TRUE)
