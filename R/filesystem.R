@@ -50,7 +50,7 @@ create_filesystem <- function(internal, public, settings) {
 read_report_config <- function(config_filepath) {
 
   if (file.exists(config_filepath)) {
-    config <- read_yaml(config_filepath)
+    config <- yaml::read_yaml(config_filepath)
 
     # - Validate or set defaults
     if (is.null(config$current_population) ||
