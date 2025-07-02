@@ -117,3 +117,33 @@ read_report_config <- function(config_filepath) {
     config
   }
 }
+
+
+#' Write report CSV files
+#'
+#' `write_report_csv` writes the given data to the specified folder with the
+#' given filename.
+#'
+#' @param data Dataframe. Report data.
+#' @param filename String. Report filename.
+#' @param folder Filepath. Report destination folder.
+#'
+#' @returns NULL.
+#' @export
+#'
+#' @importFrom utils write.csv
+#'
+#' @examples
+#' \dontrun{
+#'   r_data <- data.frame(
+#'     Disease = c("Measles", "Chickenpox"),
+#'     Counts = c(20, 43)
+#'   )
+#'   r_file <- "report.csv"
+#'   r_folder <- "reports"
+#'
+#'   write_report_csv(r_data, r_file, r_folder)
+#' }
+write_report_csv <- function(data, filename, folder) {
+  utils::write.csv(data, file.path(folder, filename), row.names = FALSE)
+}

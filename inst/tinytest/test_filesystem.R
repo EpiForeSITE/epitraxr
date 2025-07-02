@@ -80,3 +80,23 @@ expect_warning(report_config <- read_report_config(invalid_config_file),
 
 has_config_defaults(report_config)
 
+
+# Test write_report_csv() ------------------------------------------------------
+r_data <- data.frame(
+  Disease = c("Measles", "Chickenpox"),
+  Counts = c(20, 43)
+)
+r_file <- "report.csv"
+
+expect_silent(write_report_csv(r_data, r_file, public_folder))
+
+csv_fp <- file.path(public_folder, r_file)
+expect_true(file.exists(csv_fp))
+csv_data <- read.csv(csv_fp)
+expect_equal(csv_data, r_data)
+
+# Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
+unlink(internal_folder, recursive = TRUE)
+unlink(public_folder, recursive = TRUE)
+unlink(settings_folder, recursive = TRUE)
+
