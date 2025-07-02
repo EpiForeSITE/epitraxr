@@ -1,2 +1,34 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # epitraxr
-R Package for manipulating EpiTrax data
+
+<!-- badges: start -->
+
+[![ForeSITE
+Group](https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
+<!-- badges: end -->
+
+The goal of epitraxr is to simplify the process of manipulating Epitrax
+data and generating reports. The package is targeted toward public
+health officials.
+
+## Installation
+
+You can install the development version of epitraxr from
+[GitHub](https://github.com/EpiForeSITE/epitraxr) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("EpiForeSITE/epitraxr")
+```
+
+## Example
+
+As more functions are added to the package, we will include some basic
+examples here:
+
+``` r
+library(epitraxr)
+## basic example code
+```
