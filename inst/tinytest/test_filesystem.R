@@ -116,6 +116,27 @@ expect_error(d_list <- get_internal_disease_list(list_file, default_list),
              "missing required column")
 
 
+# Test get_public_disease_list() -----------------------------------------------
+list_file <-"test_files/disease_lists/public_list.csv"
+default_list <- c("Measles", "Chickenpox")
+
+# Test with valid list file
+expect_silent(d_list <- get_public_disease_list(list_file, default_list))
+file_data <- utils::read.csv(list_file)
+expect_equal(file_data, d_list)
+
+# Test with no list file
+expect_warning(d_list <- get_public_disease_list("", default_list),
+               "You have not provided a disease list for public reports.")
+expect_equal(sort(default_list), d_list$EpiTrax_name)
+expect_equal(sort(default_list), d_list$Public_name)
+
+# Test with invalid list file
+list_file <-"test_files/disease_lists/invalid_list.csv"
+expect_error(d_list <- get_public_disease_list(list_file, default_list),
+             "is incorrectly formatted")
+
+
 # Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
 unlink(internal_folder, recursive = TRUE)
 unlink(public_folder, recursive = TRUE)

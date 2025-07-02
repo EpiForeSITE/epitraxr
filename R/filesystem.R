@@ -206,3 +206,64 @@ get_internal_disease_list <- function(filepath, default_diseases) {
     d_list
   }
 }
+
+
+#' Get the public disease list
+#'
+#' 'get_public_disease_list' reads the public list from a given CSV file or uses
+#' the default diseases if the file doesn't exist.
+#'
+#' The provided public disease list file must contain two columns that map the
+#' EpiTrax disease name to a public-facing name for the public report.
+#' @param filepath Filepath. Public disease list CSV file.
+#' @param default_diseases String vector. List of default diseases to use if the
+#' above file doesn't exist.
+#'
+#' @returns A dataframe containing the diseases to include in the public report
+#' and the name to use for each disease in the public report.
+#' @export
+#'
+#' @importFrom utils read.csv
+#'
+#' @examples
+#' \dontrun{
+#'   list_file <- "path/to/file"
+#'   default_list <- c("Measles", "Chickenpox")
+#'
+#'   disease_list <- get_public_disease_list(list_file, default_list)
+#' }
+get_public_disease_list <- function(filepath, default_diseases) {
+
+  if (file.exists(filepath)) {
+
+    d_list <- read.csv(filepath, header = TRUE)
+
+    # Validate file
+    if (is.null(d_list$EpiTrax_name) || is.null(d_list$Public_name)) {
+      stop("File '", filepath, "' is incorrectly formatted. Please use the ",
+           "column names: 'EpiTrax_name' and 'Public_name'.")
+    }
+
+    d_list
+
+  } else {
+    # If the file doesn't exist, use the default list of diseases provided
+    warning("You have not provided a disease list for public reports.",
+            "\n - The program will default to using only the diseases ",
+            "found in the input dataset.",
+            "\n - If you would like to use a different list, ",
+            "please include a file named \n\n\t'",
+            filepath,
+            "'\n\n - The file must have columns named",
+            "\n\n\t'EpiTrax_name' and 'Public_name'")
+
+    default_diseases <- sort(default_diseases)
+
+    d_list <- data.frame(
+      EpiTrax_name = default_diseases,
+      Public_name = default_diseases
+    )
+
+    d_list
+  }
+}

@@ -3,6 +3,7 @@
 export(clear_old_reports)
 export(create_filesystem)
 export(get_internal_disease_list)
+export(get_public_disease_list)
 export(read_report_config)
 export(write_report_csv)
 importFrom(utils,read.csv)
