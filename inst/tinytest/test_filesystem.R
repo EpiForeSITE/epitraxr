@@ -13,6 +13,25 @@ expect_true(dir.exists(internal_folder))
 expect_true(dir.exists(public_folder))
 expect_true(dir.exists(settings_folder))
 
+# Test clear_old_reports() -----------------------------------------------------
+# Copy test files into test folders
+i_report_name <- "internal_report.csv"
+p_report_name <- "public_report.csv"
+
+file.copy(file.path("test_files/reports/", i_report_name), internal_folder)
+file.copy(file.path("test_files/reports/", p_report_name), public_folder)
+
+# Test files deleted
+i_file <- file.path(internal_folder, i_report_name)
+p_file <- file.path(public_folder, p_report_name)
+
+expect_silent(old_files <- clear_old_reports(internal_folder, public_folder))
+expect_equal(old_files[[1]], i_file)
+expect_equal(old_files[[2]], p_file)
+
+expect_false(file.exists(i_file))
+expect_false(file.exists(p_file))
+
 # Test read_report_config() ----------------------------------------------------
 # Test with valid config file
 good_config_file <- "test_files/configs/good_config.yaml"
@@ -60,3 +79,4 @@ expect_warning(report_config <- read_report_config(invalid_config_file),
                "'rounding_decimals' is missing")
 
 has_config_defaults(report_config)
+

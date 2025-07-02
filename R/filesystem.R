@@ -31,6 +31,34 @@ create_filesystem <- function(internal, public, settings) {
 }
 
 
+#' Clear out old reports before generating new ones.
+#'
+#' `clear_old_reports` deletes reports from previous runs and returns a list of
+#' the reports that were deleted.
+#'
+#' @param i_folder Filepath. Folder containing internal reports.
+#' @param p_folder Filepath. Folder containing public reports.
+#'
+#' @returns The list of old reports that were cleared.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   clear_old_reports("internal_reports", "public_reports")
+#' }
+clear_old_reports <- function(i_folder, p_folder) {
+  # - Remove old internal reports
+  i_reports <- list(list.files(i_folder, full.names = TRUE))
+  p_reports <- list(list.files(p_folder, full.names = TRUE))
+
+  old_reports <- c(i_reports, p_reports)
+
+  do.call(file.remove, old_reports)
+
+  old_reports
+}
+
+
 #' Read in the report config YAML file
 #'
 #' 'read_report_config' reads in the config YAML file

@@ -1,6 +1,6 @@
 Package: epitraxr
 Title: Manipulate Epitrax Data And Generate Reports
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person(
         "Andrew", "Pulsipher", role = c("aut", "cre"),
