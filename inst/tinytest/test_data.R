@@ -69,3 +69,31 @@ expect_true(all(res$counts == 1))
 expect_equal(nrow(res), 6) # 7 years - 1 year filtered out
 expect_true(all(res$year >= max(input$patient_mmwr_year) - 5))
 
+
+# Test read_epitrax_data() ----------------------------------------------------
+
+# Test with valid file (minimal valid data)
+tmp_csv <- tempfile(fileext = ".csv")
+tmp_data <- data.frame(patient_mmwr_year=2020L,
+                       patient_mmwr_week=1L,
+                       patient_disease="A")
+utils::write.csv(tmp_data, tmp_csv, row.names=FALSE)
+
+res <- read_epitrax_data(tmp_csv)
+expect_true(is.data.frame(res))
+expect_equal(nrow(res), 1)
+expect_equal(res$year, tmp_data$patient_mmwr_year)
+
+unlink(tmp_csv)
+
+# Test with non-existent file
+expect_error(read_epitrax_data("/tmp/this_file_does_not_exist.csv"),
+             "Please select an EpiTrax data file \\(.csv\\)\\.")
+
+# Test with wrong file extension
+wrong_file <- tempfile(fileext = ".txt")
+file.create(wrong_file)
+expect_error(read_epitrax_data(wrong_file),
+             "Please select an EpiTrax data file \\(.csv\\)\\.")
+unlink(wrong_file)
+

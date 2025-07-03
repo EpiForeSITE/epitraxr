@@ -104,3 +104,43 @@ format_week_num <- function(data) {
 
   data
 }
+
+#' Read in input EpiTrax data
+#'
+#' 'read_epitrax_data' reads EpiTrax data from a CSV, validates and formats it,
+#' then returns the data.
+#'
+#' @param data_file Optional filepath. Data file should be a CSV. If this parameter
+#' is NULL, the user will be prompted to choose a file interactively.
+#'
+#' @returns The validated and formatted EpiTrax data from the input file.
+#' @export
+#'
+#' @importFrom utils read.csv
+#'
+#' @examples
+#' \dontrun{
+#' # Interactive file chooser:
+#' read_epitrax_data()
+#' # Using a file path:
+#' read_epitrax_data("path/to/epitrax.csv")
+#' }
+read_epitrax_data <- function(data_file = NULL) {
+
+  # If data_file is provided, use it; otherwise, prompt user to choose a file
+  fpath <- ifelse(!is.null(data_file), data_file, file.choose())
+
+  if (!file.exists(fpath) || !grepl("\\.csv$", fpath)) {
+    stop("Please select an EpiTrax data file (.csv).")
+  }
+
+  # Read data from file
+  input_data <- utils::read.csv(fpath, header = TRUE)
+
+  # Validate and format data
+  input_data <- validate_data(input_data)
+  input_data <- format_week_num(input_data)
+
+  # Return data from file
+  input_data
+}
