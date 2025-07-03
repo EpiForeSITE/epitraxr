@@ -113,6 +113,7 @@ expect_equal(nrow(reshaped), 2)
 expect_equal(reshaped[reshaped$disease == "A", "Jan"], 5)
 expect_equal(reshaped[reshaped$disease == "B", "Feb"], 8)
 
+
 # Test with missing month for a disease (should fill with 0)
 df2 <- data.frame(
   disease = c("A", "B"),
@@ -122,4 +123,18 @@ df2 <- data.frame(
 reshaped2 <- reshape_monthly_wide(df2)
 expect_equal(reshaped2[reshaped2$disease == "A", "Feb"], 0)
 expect_equal(reshaped2[reshaped2$disease == "B", "Jan"], 0)
+
+
+# Test prep_report_data() -----------------------------------------------------
+
+df <- data.frame(disease=c("A","B","D"), Jan=c(5,7,8), Feb=c(6,8,9))
+report_diseases <- c("A","C")
+
+res <- prep_report_data(df, report_diseases)
+
+# Check that only diseases in report_diseases are present
+expect_equal(report_diseases, res$disease)
+# Check that disease "C" is added with 0s for Jan and Feb
+expect_true(all(res[res$disease == "C", c("Jan", "Feb")] == 0))
+expect_equal(res[res$disease == "A", "Jan"], 5)
 

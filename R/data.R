@@ -179,3 +179,46 @@ reshape_monthly_wide <- function(df) {
 
   m_df
 }
+
+#' Prepare data for report
+#'
+#' 'prep_report_data' removes rows from the data that shouldn't appear in the
+#' report and adds rows for diseases that should be in the report, but weren't
+#' in the input dataset. Added rows are filled with 0s.
+#'
+#' @param data Dataframe. Current report data.
+#' @param report_d_list String vector. Diseases to include in the report.
+#'
+#' @returns Report data with rows for all diseases to report.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(disease=c("A","B","D"), counts=c(5,7,8))
+#' prep_report_data(df, c("A","C"))
+prep_report_data <- function(data, report_d_list) {
+
+  # - Remove rows from data that aren't going into the public report
+  data <- subset(data, disease %in% report_d_list)
+
+  # - Get diseases from report list that weren't in the data
+  missing_diseases <- report_d_list[!(report_d_list %in% data$disease)]
+
+  # If there are any missing diseases, add them
+  if (length(missing_diseases) > 0) {
+    # - Fill the missing diseases in with 0
+    missing_data <- data.frame(
+      disease = missing_diseases
+    )
+
+    missing_cols <- colnames(data)[2:length(colnames(data))]
+    missing_data[, missing_cols] <- 0.0
+
+    # - Combine data with missing_data
+    data <- rbind(data, missing_data)
+
+    # - Sort alphabetically so missing diseases are correctly placed
+    data <- data[order(data$disease),]
+  }
+
+  data
+}
