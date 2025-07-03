@@ -144,3 +144,38 @@ read_epitrax_data <- function(data_file = NULL) {
   # Return data from file
   input_data
 }
+
+#' Reshape data frame with each month as a separate column
+#'
+#' 'reshape_monthly_wide' reshapes a given data frame with diseases for rows and
+#' months for columns.
+#'
+#' @param df Dataframe. Data to reshape with months as columns.
+#'
+#' @returns The reshaped data frame.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(disease=c("A","B"), month=c(1,2), counts=c(5,6))
+#' reshape_monthly_wide(df)
+reshape_monthly_wide <- function(df) {
+  m_df <- with(df, reshape(
+    merge(
+      df,
+      expand.grid(
+        disease = unique(disease),
+        month = unique(month)
+      ),
+      all = TRUE
+    ),
+    direction = "wide",
+    idvar = "disease",
+    timevar = "month"
+  ))
+  # - Set NA values to 0
+  m_df[is.na(m_df)] <- 0
+  # - Update column names to more human-readable format
+  colnames(m_df) <- c("disease", month.abb[1:(ncol(m_df) - 1)])
+
+  m_df
+}

@@ -97,3 +97,29 @@ expect_error(read_epitrax_data(wrong_file),
              "Please select an EpiTrax data file \\(.csv\\)\\.")
 unlink(wrong_file)
 
+
+# Test reshape_monthly_wide() -------------------------------------------------
+
+df <- data.frame(
+  disease = c("A", "A", "B", "B"),
+  month = c(1, 2, 1, 2),
+  counts = c(5, 6, 7, 8)
+)
+
+reshaped <- reshape_monthly_wide(df)
+expected_cols <- c("disease", "Jan", "Feb")
+expect_equal(colnames(reshaped), expected_cols)
+expect_equal(nrow(reshaped), 2)
+expect_equal(reshaped[reshaped$disease == "A", "Jan"], 5)
+expect_equal(reshaped[reshaped$disease == "B", "Feb"], 8)
+
+# Test with missing month for a disease (should fill with 0)
+df2 <- data.frame(
+  disease = c("A", "B"),
+  month = c(1, 2),
+  counts = c(10, 20)
+)
+reshaped2 <- reshape_monthly_wide(df2)
+expect_equal(reshaped2[reshaped2$disease == "A", "Feb"], 0)
+expect_equal(reshaped2[reshaped2$disease == "B", "Jan"], 0)
+
