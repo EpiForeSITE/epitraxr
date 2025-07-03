@@ -49,3 +49,23 @@ na_data <- data.frame(
 expect_warning(validated <- validate_data(na_data),
                "dataset contains missing or NA values")
 expect_equal(nrow(validated), 1)
+
+
+# Test format_week_num() ------------------------------------------------------
+
+# Test with data simulating 7 years (old years should be filtered out)
+input <- data.frame(
+  patient_mmwr_year = c(2017L, 2018L, 2019L, 2020L, 2021L, 2022L, 2023L),
+  patient_mmwr_week = rep(1, 7),
+  patient_disease = rep("A", 7)
+)
+
+expected_cols <- c("disease", "month", "year", "counts")
+
+res <- format_week_num(input)
+
+expect_equal(colnames(res), expected_cols)
+expect_true(all(res$counts == 1))
+expect_equal(nrow(res), 6) # 7 years - 1 year filtered out
+expect_true(all(res$year >= max(input$patient_mmwr_year) - 5))
+

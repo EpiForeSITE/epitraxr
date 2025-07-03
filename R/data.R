@@ -71,3 +71,36 @@ validate_data <- function(data) {
 
   data
 }
+
+#' Format input EpiTrax data
+#'
+#' 'format_week_num' formats the input EpiTrax dataset with month numbers
+#' using the field 'patient_mmwr_week' and filters rows older than five years.
+#'
+#' @param data Dataframe. Data to format.
+#'
+#' @returns The formatted data.
+#' @export
+#'
+#' @importFrom lubridate month ymd
+#'
+#' @examples
+#' df <- data.frame(patient_mmwr_year=2020L, patient_mmwr_week=1L, patient_disease="A")
+#' format_week_num(df)
+format_week_num <- function(data) {
+  # Format data
+  data$month <- with(data, lubridate::month(
+    lubridate::ymd(patient_mmwr_year * 10000 + 0101) +
+      patient_mmwr_week * 7
+  ))
+  data$patient_mmwr_week <- NULL
+  data$counts <- 1 # Makes easier to use aggregate()
+  colnames(data) <- c("year", "disease", "month", "counts")
+  # - Rearrange columns for easier debugging
+  data <- data[c("disease", "month", "year", "counts")]
+
+  # - Extract last years of data
+  data <- with(data, data[year >= (max(year) - 5), ])
+
+  data
+}

@@ -2,18 +2,19 @@ Package: epitraxr
 Title: Manipulate Epitrax Data And Generate Reports
 Version: 0.0.3
 Authors@R:
-    person(
-        "Andrew", "Pulsipher", role = c("aut", "cre"),
-        email = "pulsipher.a@gmail.com",
-        comment = c(ORCID = "0000-0002-0773-3210"))
+    person("Andrew", "Pulsipher", , "pulsipher.a@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0773-3210"))
 Description: Functions to manipulate datasets exported from Epitrax and
-  generate reports.
+    generate reports.
 License: MIT + file LICENSE
+Depends:
+    lubridate
+Imports:
+    stats,
+    utils,
+    yaml
+Suggests:
+    tinytest
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Imports:
-  yaml,
-  utils
-Suggests:
-  tinytest

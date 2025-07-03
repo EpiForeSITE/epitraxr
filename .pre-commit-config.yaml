@@ -16,4 +16,6 @@ repos:
     hooks:
       - id: readme-rmd-rendered
       - id: roxygenize
+        additional_dependencies:
+        - lubridate
       - id: use-tidy-description
