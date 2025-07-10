@@ -45,7 +45,8 @@ d_list <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1
+  rounding_decimals = 1,
+  generate_csvs = TRUE
 )
 
 create_public_report_month(cases, avgs, d_list, 1, 2024, config, tempdir())

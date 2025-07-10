@@ -4,7 +4,7 @@
 \alias{create_public_report_ytd}
 \title{Create a YTD public report}
 \usage{
-create_public_report_ytd(ytd_rates, d_list, r_folder)
+create_public_report_ytd(ytd_rates, d_list, config, r_folder)
 }
 \arguments{
 \item{ytd_rates}{Dataframe. YTD case rates per 100k. Must have columns:
@@ -12,6 +12,8 @@ disease, Current_YTD_Rate_per_100k, Avg_5yr_YTD_Rate_per_100k.}
 
 \item{d_list}{Dataframe. List of diseases to use for the report. Must have
 columns: EpiTrax_name, Public_name.}
+
+\item{config}{List. Settings to use for report.}
 
 \item{r_folder}{Filepath. Destination folder for the public report.}
 }
@@ -31,5 +33,6 @@ d_list <- data.frame(
   EpiTrax_name = c("A","B"),
   Public_name = c("Alpha","Beta")
 )
-create_public_report_ytd(ytd_rates, d_list, tempdir())
+config <- list(generate_csvs = TRUE)
+create_public_report_ytd(ytd_rates, d_list, config, tempdir())
 }

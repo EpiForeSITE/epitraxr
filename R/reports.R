@@ -33,7 +33,8 @@
 #' config <- list(
 #'   current_population = 100000,
 #'   avg_5yr_population = 100000,
-#'   rounding_decimals = 1
+#'   rounding_decimals = 1,
+#'   generate_csvs = TRUE
 #' )
 #'
 #' create_public_report_month(cases, avgs, d_list, 1, 2024, config, tempdir())
@@ -83,9 +84,11 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
   # - Add Trends column last
   m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate)
 
-  # - Write to CSV file
+  # - Write to CSV file if enabled in config
   r_name <- paste0("public_report_", month_name, y)
-  write_report_csv(m_report, paste0(r_name, ".csv"), r_folder)
+  if (config$generate_csvs) {
+    write_report_csv(m_report, paste0(r_name, ".csv"), r_folder)
+  }
 
   list("name" = r_name, "report" = m_report)
 }
@@ -99,6 +102,7 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
 #' disease, Current_YTD_Rate_per_100k, Avg_5yr_YTD_Rate_per_100k.
 #' @param d_list Dataframe. List of diseases to use for the report. Must have
 #' columns: EpiTrax_name, Public_name.
+#' @param config List. Settings to use for report.
 #' @param r_folder Filepath. Destination folder for the public report.
 #'
 #' @returns List containing the report name and data.
@@ -116,8 +120,9 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
 #'   EpiTrax_name = c("A","B"),
 #'   Public_name = c("Alpha","Beta")
 #' )
-#' create_public_report_ytd(ytd_rates, d_list, tempdir())
-create_public_report_ytd <- function(ytd_rates, d_list, r_folder) {
+#' config <- list(generate_csvs = TRUE)
+#' create_public_report_ytd(ytd_rates, d_list, config, tempdir())
+create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
 
   # - Create the report data frame initializing the Rate_per_100k column to 0
   m_report <- data.frame(
@@ -140,9 +145,11 @@ create_public_report_ytd <- function(ytd_rates, d_list, r_folder) {
   # - Add Trends column last
   m_report$Trend <- get_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate)
 
-  # - Write to CSV file
+  # - Write to CSV file if enabled in config
   r_name <- "public_report_YTD"
-  write_report_csv(m_report, paste0(r_name, ".csv"), r_folder)
+  if (config$generate_csvs) {
+    write_report_csv(m_report, paste0(r_name, ".csv"), r_folder)
+  }
 
   list("name" = r_name, "report" = m_report)
 }

@@ -15,7 +15,8 @@ d_list <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1
+  rounding_decimals = 1,
+  generate_csvs = TRUE
 )
 
 # Test with valid input
@@ -36,12 +37,16 @@ expect_equal(report[report$Disease == "Alpha", "Rate_per_100k"], 10)
 expect_equal(report[report$Disease == "Alpha", "Avg_5yr_Rate"], 5)
 expect_equal(report[report$Disease == "Alpha", "Trend"], get_trend(10, 5))
 
-# Check file written
+# Check file written (when generate_csvs = TRUE)
 csv_file <- file.path(tmp_dir, paste0(result$name, ".csv"))
 expect_true(file.exists(csv_file))
-
-# Clean up
 unlink(csv_file)
+
+# Test with generate_csvs = FALSE
+config$generate_csvs <- FALSE
+result2 <- create_public_report_month(cases, avgs, d_list, 1, 2024, config, tmp_dir)
+csv_file2 <- file.path(tmp_dir, paste0(result2$name, ".csv"))
+expect_false(file.exists(csv_file2))
 
 
 # Test create_public_report_ytd() ---------------------------------------------
@@ -56,9 +61,12 @@ d_list <- data.frame(
   EpiTrax_name = c("A", "B"),
   Public_name = c("Alpha", "Beta")
 )
+config <- list(
+  generate_csvs = TRUE
+)
 
 # Test with valid input
-ytd_result <- create_public_report_ytd(ytd_rates, d_list, tmp_dir)
+ytd_result <- create_public_report_ytd(ytd_rates, d_list, config, tmp_dir)
 
 # Check output structure
 expect_true(is.list(ytd_result))
@@ -75,11 +83,15 @@ expect_equal(ytd_report[ytd_report$Disease == "Alpha", "YTD_Rate_per_100k"], 12)
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Avg_5yr_Rate"], 10)
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Trend"], get_trend(12, 10))
 
-# Check file written
+# Check file written (when generate_csvs = TRUE)
 ytd_csv_file <- file.path(tmp_dir, paste0(ytd_result$name, ".csv"))
 expect_true(file.exists(ytd_csv_file))
-
-# Clean up
 unlink(ytd_csv_file)
+
+# Test with generate_csvs = FALSE
+config$generate_csvs <- FALSE
+ytd_result2 <- create_public_report_ytd(ytd_rates, d_list, config, tmp_dir)
+ytd_csv_file2 <- file.path(tmp_dir, paste0(ytd_result2$name, ".csv"))
+expect_false(file.exists(ytd_csv_file2))
 
 
