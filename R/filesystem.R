@@ -102,17 +102,26 @@ read_report_config <- function(config_filepath) {
       config$rounding_decimals <- 2
     }
 
+    if (is.null(config$generate_csvs) ||
+        !inherits(config$generate_csvs, "logical")) {
+      warning("In '", config_filepath, "', 'generate_csvs' is missing or
+            invalid. Using default value of TRUE instead.")
+      config$generate_csvs <- TRUE
+    }
+
     config
   } else {
 
     warning("No report configuration file provided. Using default values:
             'current_population' = 100,000
             'avg_5yr_population' = 100,000
-            'rounding_decimals' = 2")
+            'rounding_decimals' = 2
+            'generate_csvs' = TRUE")
 
     config <- list(current_population = 100000,
                    avg_5yr_population = 100000,
-                   rounding_decimals = 2)
+                   rounding_decimals = 2,
+                   generate_csvs = TRUE)
 
     config
   }

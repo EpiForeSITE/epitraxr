@@ -40,12 +40,14 @@ expect_silent(report_config <- read_report_config(good_config_file))
 expect_equal(report_config$current_population, 56000)
 expect_equal(report_config$avg_5yr_population, 57000)
 expect_equal(report_config$rounding_decimals, 3)
+expect_equal(report_config$generate_csvs, FALSE)
 
 
 has_config_defaults <- function(config) {
   expect_equal(config$current_population, 100000)
   expect_equal(config$avg_5yr_population, 100000)
   expect_equal(config$rounding_decimals, 2)
+  expect_equal(config$generate_csvs, TRUE)
 }
 
 
@@ -64,6 +66,8 @@ expect_warning(report_config <- read_report_config(empty_config_file),
                "'avg_5yr_population' is missing")
 expect_warning(report_config <- read_report_config(empty_config_file),
                "'rounding_decimals' is missing")
+expect_warning(report_config <- read_report_config(empty_config_file),
+               "'generate_csvs' is missing")
 
 has_config_defaults(report_config)
 
@@ -77,6 +81,8 @@ expect_warning(report_config <- read_report_config(invalid_config_file),
                "'avg_5yr_population' is missing")
 expect_warning(report_config <- read_report_config(invalid_config_file),
                "'rounding_decimals' is missing")
+expect_warning(report_config <- read_report_config(empty_config_file),
+               "'generate_csvs' is missing")
 
 has_config_defaults(report_config)
 
