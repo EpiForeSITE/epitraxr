@@ -13,28 +13,30 @@
 #' @param config List. Settings to use for report.
 #' @param r_folder Filepath. Destination folder for the public report.
 #'
-#' @returns List containing the report name and data.
-#' @export
-#'
-#' @examples
-#' cases <- data.frame(
-#'   disease = c("A","B"),
-#'   year = 2024,
-#'   month = 1,
-#'   counts = c(10,20)
-#' )
-#' avgs <- data.frame(disease = c("A","B"), Jan = c(5,15))
-#' d_list <- data.frame(
-#'   EpiTrax_name = c("A","B"),
-#'   Public_name = c("Alpha","Beta")
-#' )
-#' config <- list(
-#'   current_population = 100000,
-#'   avg_5yr_population = 100000,
-#'   rounding_decimals = 1
-#' )
-#'
-#' create_public_report_month(cases, avgs, d_list, 1, 2024, config, tempdir())
+ #' @returns List containing the report name and data.
+ #' @export
+
+ #' @importFrom stats aggregate
+ #'
+ #' @examples
+ #' cases <- data.frame(
+ #'   disease = c("A","B"),
+ #'   year = 2024,
+ #'   month = 1,
+ #'   counts = c(10,20)
+ #' )
+ #' avgs <- data.frame(disease = c("A","B"), Jan = c(5,15))
+ #' d_list <- data.frame(
+ #'   EpiTrax_name = c("A","B"),
+ #'   Public_name = c("Alpha","Beta")
+ #' )
+ #' config <- list(
+ #'   current_population = 100000,
+ #'   avg_5yr_population = 100000,
+ #'   rounding_decimals = 1
+ #' )
+ #'
+ #' create_public_report_month(cases, avgs, d_list, 1, 2024, config, tempdir())
 create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_folder) {
 
   month_name <- month.abb[[m]]
@@ -74,7 +76,7 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
   m_report <- m_report[order(m_report$Disease),]
 
   # - Combine diseases with same public name (if any)
-  m_report <- aggregate(m_report[ , -1], by = list(Disease = m_report$Disease), "sum")
+  m_report <- stats::aggregate(m_report[ , -1], by = list(Disease = m_report$Disease), "sum")
 
   # - Add Trends column last
   m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate)
