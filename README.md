@@ -29,6 +29,8 @@ As more functions are added to the package, we will include some basic
 examples here:
 
 ``` r
-library(epitraxr)
+suppressPackageStartupMessages(
+  library(epitraxr)
+)
 ## basic example code
 ```
