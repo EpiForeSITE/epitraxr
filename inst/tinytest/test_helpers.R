@@ -12,6 +12,7 @@ expect_equal(convert_counts_to_rate(7, 30000, 3), 23.333)
 # Test get_trend() ------------------------------------------------------------
 
 # Up, down, same
-expect_equal(get_trend(c(5, 10, 10), c(3, 12, 10)), c("\U2191", "\U2193", "\U2192"))
+expect_equal(get_trend(c(5, 10, 10), c(3, 10, 12)),
+             c("Elevated", "Expected", "Less Than Expected"))
 # Vector recycling
-expect_equal(get_trend(1, c(0, 2)), c("\U2191", "\U2193"))
+expect_equal(get_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))

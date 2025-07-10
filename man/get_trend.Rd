@@ -12,13 +12,13 @@ get_trend(col1, col2)
 \item{col2}{List. Historical comparison data.}
 }
 \value{
-Column containing the Trend markers.
+Character vector containing the trend labels.
 }
 \description{
 'get_trend' compares values of two columns and produces a new column
-containing the trend result. The trend is represented by arrows:
-up, down, and right arrows for increase, decrease, and no change respectively.
-Arrows are given using escape codes to generate Unicode characters.
+containing the trend result. The trend is represented by the strings:
+"Elevated" (increase), "Less Than Expected" (decrease), and
+"Expected" (no change).
 }
 \examples{
 get_trend(c(5, 10, 10), c(3, 10, 12))

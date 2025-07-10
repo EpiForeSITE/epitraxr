@@ -22,21 +22,20 @@ convert_counts_to_rate <- function(counts, pop, digits, rate_adj_pop = 100000) {
 #' Get Trend column of report
 #'
 #' 'get_trend' compares values of two columns and produces a new column
-#' containing the trend result. The trend is represented by arrows:
-#' up, down, and right arrows for increase, decrease, and no change respectively.
-#' Arrows are given using escape codes to generate Unicode characters.
+#' containing the trend result. The trend is represented by the strings:
+#' "Elevated" (increase), "Less Than Expected" (decrease), and
+#' "Expected" (no change).
 #'
 #' @param col1 List. Current data.
 #' @param col2 List. Historical comparison data.
 #'
-#' @returns Column containing the Trend markers.
+#' @returns Character vector containing the trend labels.
 #' @export
 #'
 #' @examples
 #' get_trend(c(5, 10, 10), c(3, 10, 12))
 get_trend <- function(col1, col2) {
   mapply(function(x, y) {
-    # Excape codes for up, down, and right arrows
-    ifelse(x > y, "\U2191", ifelse(x < y, "\U2193", "\U2192"))
+    ifelse(x > y, "Elevated", ifelse(x < y, "Less Than Expected", "Expected"))
   }, col1, col2)
 }
