@@ -173,7 +173,7 @@ reshape_monthly_wide <- function(df) {
     timevar = "month"
   ))
   # - Set NA values to 0
-  m_df[is.na(m_df)] <- 0
+  m_df <- set_na_0(m_df)
   # - Update column names to more human-readable format
   colnames(m_df) <- c("disease", month.abb[1:(ncol(m_df) - 1)])
 
@@ -214,7 +214,7 @@ reshape_annual_wide <- function(df) {
     timevar = "year"
   ))
   # - Set NA values to 0
-  a_df[is.na(a_df)] <- 0
+  a_df <- set_na_0(a_df)
   # - Update column names to more human-readable format
   colnames(a_df) <- c("disease", get_yrs(df))
 

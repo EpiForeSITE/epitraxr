@@ -57,3 +57,21 @@ get_trend <- function(col1, col2) {
 get_yrs <- function(data) {
   sort(unique(data$year))
 }
+
+
+#' Set NA values to 0
+#'
+#' 'set_na_0' sets NA values to 0 in a data frame.
+#'
+#' @param df Dataframe.
+#'
+#' @returns Dataframe with NA values replaced by 0.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(year = c(2020, NA, 2022))
+#' set_na_0(df)
+set_na_0 <- function(df) {
+  df[is.na(df)] <- 0
+  df
+}

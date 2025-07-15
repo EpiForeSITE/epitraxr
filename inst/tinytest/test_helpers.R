@@ -27,3 +27,20 @@ expect_equal(get_yrs(df), c(2020, 2021, 2022))
 # Works with only one year
 single <- data.frame(year = 2023)
 expect_equal(get_yrs(single), 2023)
+
+
+# Test set_na_0() -------------------------------------------------------------
+
+# Test with mixed NA and non-NA values
+df <- data.frame(a = c(1, NA, 3), b = c(NA, 2, 3))
+res <- set_na_0(df)
+expected_res <- data.frame(a = c(1, 0, 3), b = c(0, 2, 3))
+expect_equal(res, expected_res)
+
+# Test with all NA
+all_na <- data.frame(x = c(NA, NA))
+expect_equal(set_na_0(all_na)$x, c(0, 0))
+
+# Test with no NA
+no_na <- data.frame(y = c(1, 2, 3))
+expect_equal(set_na_0(no_na), no_na)
