@@ -180,6 +180,29 @@ reshape_monthly_wide <- function(df) {
   m_df
 }
 
+
+reshape_annual_wide <- function(df, yrs) {
+  a_df <- with(df, reshape(
+    merge(
+      df,
+      expand.grid(
+        disease = unique(disease),
+        year = unique(year)
+      ),
+      all = TRUE
+    ),
+    direction = "wide",
+    idvar = "disease",
+    timevar = "year"
+  ))
+  # - Set NA values to 0
+  a_df[is.na(a_df)] <- 0
+  # - Update column names to more human-readable format
+  colnames(a_df) <- c("disease", yrs)
+
+  a_df
+}
+
 #' Prepare data for report
 #'
 #' 'prep_report_data' removes rows from the data that shouldn't appear in the

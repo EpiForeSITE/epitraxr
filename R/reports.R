@@ -153,3 +153,19 @@ create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
 
   list("name" = r_name, "report" = m_report)
 }
+
+
+create_internal_report_annual_counts <- function(data, disease_names) {
+  # - Aggregate annual counts by disease and year
+  annual_counts <- aggregate(counts ~ disease + year,
+                            data = data,
+                            FUN = sum)
+
+  # - Reshape data to use years as columns and diseases as rows
+  annual_counts <- reshape_annual_wide(annual_counts, get_yrs(data))
+
+  # - Add missing diseases
+  annual_counts <- prep_report_data(annual_counts, disease_names)
+
+  annual_counts
+}

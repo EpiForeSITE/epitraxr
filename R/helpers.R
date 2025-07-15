@@ -39,3 +39,8 @@ get_trend <- function(col1, col2) {
     ifelse(x > y, "Elevated", ifelse(x < y, "Less Than Expected", "Expected"))
   }, col1, col2)
 }
+
+
+get_yrs <- function(data) {
+  sort(unique(data$year))
+}
