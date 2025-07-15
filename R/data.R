@@ -181,6 +181,25 @@ reshape_monthly_wide <- function(df) {
 }
 
 
+#' Reshape data frame with each year as a separate column
+#'
+#' 'reshape_annual_wide' reshapes a given data frame with diseases for rows and
+#' years for columns.
+#'
+#' @param df Dataframe. Data to reshape with years as columns. Must have
+#' columns: disease, year, and counts.
+#' @param yrs Integer vector. Years to use as columns.
+#'
+#' @returns The reshaped data frame.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(
+#'   disease = c("A", "A", "B"),
+#'   year = c(2020, 2021, 2020),
+#'   counts = c(5, 7, 8)
+#' )
+#' reshape_annual_wide(df, yrs = c(2020, 2021))
 reshape_annual_wide <- function(df, yrs) {
   a_df <- with(df, reshape(
     merge(

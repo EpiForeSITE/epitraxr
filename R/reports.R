@@ -155,6 +155,26 @@ create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
 }
 
 
+#' Create internal annual counts report
+#'
+#' 'create_internal_report_annual_counts' generates a data frame of annual case
+#' counts for each disease, with years as columns.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, counts.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#'
+#' @returns Dataframe of annual counts with one row per disease and one column
+#' per year.
+#' @export
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "B"),
+#'   year = c(2020, 2021, 2020),
+#'   counts = c(5, 7, 8)
+#' )
+#' create_internal_report_annual_counts(data, disease_names = c("A", "B", "C"))
 create_internal_report_annual_counts <- function(data, disease_names) {
   # - Aggregate annual counts by disease and year
   annual_counts <- aggregate(counts ~ disease + year,

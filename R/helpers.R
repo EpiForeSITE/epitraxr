@@ -41,6 +41,19 @@ get_trend <- function(col1, col2) {
 }
 
 
+#' Get unique years from a data frame
+#'
+#' 'get_yrs' extracts and returns the sorted unique years from the 'year' column
+#' of a data frame.
+#'
+#' @param data Dataframe. Must contain a 'year' column.
+#'
+#' @returns Integer vector of sorted unique years present in the data.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(year = c(2020, 2021, 2020, 2022))
+#' get_yrs(df)
 get_yrs <- function(data) {
   sort(unique(data$year))
 }
