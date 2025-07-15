@@ -182,7 +182,7 @@ create_internal_report_annual_counts <- function(data, disease_names) {
                             FUN = sum)
 
   # - Reshape data to use years as columns and diseases as rows
-  annual_counts <- reshape_annual_wide(annual_counts, get_yrs(data))
+  annual_counts <- reshape_annual_wide(annual_counts)
 
   # - Add missing diseases
   annual_counts <- prep_report_data(annual_counts, disease_names)

@@ -125,6 +125,28 @@ expect_equal(reshaped2[reshaped2$disease == "A", "Feb"], 0)
 expect_equal(reshaped2[reshaped2$disease == "B", "Jan"], 0)
 
 
+# Test reshape_annual_wide() --------------------------------------------------
+
+df <- data.frame(
+  disease = c("A", "A", "B", "C"),
+  year = c(2020, 2021, 2020, 2021),
+  counts = c(5, 7, 8, 0)
+)
+result <- reshape_annual_wide(df)
+
+expected_df <- data.frame(
+  disease = c("A", "B", "C"),
+  `2020` = c(5, 8, 0),
+  `2021` = c(7, 0, 0),
+  check.names = FALSE
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result$disease, expected_df$disease)
+expect_equal(result$`2020`, expected_df$`2020`)
+expect_equal(result$`2021`, expected_df$`2021`)
+
+
 # Test prep_report_data() -----------------------------------------------------
 
 df <- data.frame(disease=c("A","B","D"), Jan=c(5,7,8), Feb=c(6,8,9))
@@ -137,4 +159,3 @@ expect_equal(report_diseases, res$disease)
 # Check that disease "C" is added with 0s for Jan and Feb
 expect_true(all(res[res$disease == "C", c("Jan", "Feb")] == 0))
 expect_equal(res[res$disease == "A", "Jan"], 5)
-

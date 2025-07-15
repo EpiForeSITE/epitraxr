@@ -9,6 +9,7 @@ expect_equal(convert_counts_to_rate(0, 100000, 2), 0)
 # Rounding
 expect_equal(convert_counts_to_rate(7, 30000, 3), 23.333)
 
+
 # Test get_trend() ------------------------------------------------------------
 
 # Up, down, same
@@ -16,3 +17,13 @@ expect_equal(get_trend(c(5, 10, 10), c(3, 10, 12)),
              c("Elevated", "Expected", "Less Than Expected"))
 # Vector recycling
 expect_equal(get_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))
+
+
+# Test get_yrs() --------------------------------------------------------------
+
+df <- data.frame(year = c(2020, 2021, 2020, 2022, 2021))
+expect_equal(get_yrs(df), c(2020, 2021, 2022))
+
+# Works with only one year
+single <- data.frame(year = 2023)
+expect_equal(get_yrs(single), 2023)

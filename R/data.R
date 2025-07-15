@@ -188,7 +188,6 @@ reshape_monthly_wide <- function(df) {
 #'
 #' @param df Dataframe. Data to reshape with years as columns. Must have
 #' columns: disease, year, and counts.
-#' @param yrs Integer vector. Years to use as columns.
 #'
 #' @returns The reshaped data frame.
 #' @export
@@ -199,8 +198,8 @@ reshape_monthly_wide <- function(df) {
 #'   year = c(2020, 2021, 2020),
 #'   counts = c(5, 7, 8)
 #' )
-#' reshape_annual_wide(df, yrs = c(2020, 2021))
-reshape_annual_wide <- function(df, yrs) {
+#' reshape_annual_wide(df)
+reshape_annual_wide <- function(df) {
   a_df <- with(df, reshape(
     merge(
       df,
@@ -217,7 +216,7 @@ reshape_annual_wide <- function(df, yrs) {
   # - Set NA values to 0
   a_df[is.na(a_df)] <- 0
   # - Update column names to more human-readable format
-  colnames(a_df) <- c("disease", yrs)
+  colnames(a_df) <- c("disease", get_yrs(df))
 
   a_df
 }

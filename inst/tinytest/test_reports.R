@@ -95,3 +95,28 @@ ytd_csv_file2 <- file.path(tmp_dir, paste0(ytd_result2$name, ".csv"))
 expect_false(file.exists(ytd_csv_file2))
 
 
+# Test create_internal_report_annual_counts() ----------------------------------
+
+data <- data.frame(
+  disease = c("A", "A", "B", "C"),
+  year = c(2020, 2021, 2020, 2021),
+  counts = c(5, 7, 8, 0)
+)
+
+disease_names <- c("A", "B", "C", "D")
+
+result <- create_internal_report_annual_counts(data, disease_names)
+
+expected_result <- data.frame(
+  disease = disease_names,
+  `2020` = c(5,8,0,0),
+  `2021` = c(7,0,0,0),
+  check.names = FALSE
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result$disease, expected_result$disease)
+expect_equal(result$`2020`, expected_result$`2020`)
+expect_equal(result$`2021`, expected_result$`2021`)
+
+

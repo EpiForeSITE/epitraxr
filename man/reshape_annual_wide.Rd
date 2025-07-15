@@ -4,13 +4,11 @@
 \alias{reshape_annual_wide}
 \title{Reshape data frame with each year as a separate column}
 \usage{
-reshape_annual_wide(df, yrs)
+reshape_annual_wide(df)
 }
 \arguments{
 \item{df}{Dataframe. Data to reshape with years as columns. Must have
 columns: disease, year, and counts.}
-
-\item{yrs}{Integer vector. Years to use as columns.}
 }
 \value{
 The reshaped data frame.
@@ -25,5 +23,5 @@ df <- data.frame(
   year = c(2020, 2021, 2020),
   counts = c(5, 7, 8)
 )
-reshape_annual_wide(df, yrs = c(2020, 2021))
+reshape_annual_wide(df)
 }
