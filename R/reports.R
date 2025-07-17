@@ -293,3 +293,51 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 
   monthly_avgs
 }
+
+
+create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates = FALSE) {
+
+  # - Aggregate monthly counts by disease, year, and month
+  month_counts <- stats::aggregate(counts ~ disease + year + month,
+                                   data = data,
+                                   FUN = sum)
+
+  num_prev_yrs <- length(unique(data[data$year != y,]$year))
+
+  # Compute current year-to-date (YTD) counts
+  current_ytd <- month_counts[month_counts$year == y, ]
+  current_ytd <- stats::aggregate(counts ~ disease, data = current_ytd, FUN = sum)
+  current_ytd <- prep_report_data(current_ytd, disease_names)
+
+  # Compute average YTD counts for the previous years
+  avg_5yr_ytd <- with(month_counts, month_counts[year != y & month <= m, ])
+  avg_5yr_ytd <- stats::aggregate(counts ~ disease, data = avg_5yr_ytd, FUN = sum)
+  avg_5yr_ytd$counts <- round(avg_5yr_ytd$counts / num_prev_yrs,
+                              config$rounding_decimals)
+  avg_5yr_ytd <- prep_report_data(avg_5yr_ytd, disease_names)
+
+  # Assemble YTD report
+  ytd_report <- data.frame(disease = current_ytd$disease)
+
+  if (as.rates) {
+    # Convert counts to rates per 100k
+    ytd_report <- cbind(data.frame(
+      Current_YTD_Rate_per_100k = convert_counts_to_rate(
+        current_ytd$counts,
+        pop = config$current_population,
+        digits = config$rounding_decimals),
+      Avg_5yr_YTD_Rate_per_100k = convert_counts_to_rate(
+        avg_5yr_ytd$counts,
+        pop = config$avg_5yr_population,
+        digits = config$rounding_decimals)
+    ))
+  } else {
+    # Use raw counts
+    ytd_report <- cbind(data.frame(
+      Current_YTD_Counts = current_ytd$counts,
+      Avg_5yr_YTD_Counts = avg_5yr_ytd$counts
+    ))
+  }
+
+  ytd_report
+}
