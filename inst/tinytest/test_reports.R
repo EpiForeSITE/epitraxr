@@ -49,7 +49,7 @@ csv_file2 <- file.path(tmp_dir, paste0(result2$name, ".csv"))
 expect_false(file.exists(csv_file2))
 
 
-# Test create_public_report_ytd() ---------------------------------------------
+# Test create_public_report_ytd() ----------------------------------------------
 
 tmp_dir <- tempdir()
 ytd_rates <- data.frame(
@@ -115,8 +115,28 @@ expected_result <- data.frame(
 )
 
 expect_true(is.data.frame(result))
-expect_equal(result$disease, expected_result$disease)
-expect_equal(result$`2020`, expected_result$`2020`)
-expect_equal(result$`2021`, expected_result$`2021`)
+expect_equal(result, expected_result)
 
 
+# Test create_report_monthly_counts() ------------------------------------------
+
+data <- data.frame(
+  disease = c("A", "A", "B", "B", "C"),
+  year = c(2024, 2024, 2024, 2024, 2024),
+  month = c(1, 2, 1, 3, 1),
+  counts = c(5, 7, 8, 3, 2)
+)
+
+disease_names <- c("A", "B", "C", "D")
+
+result <- create_report_monthly_counts(data, 2024, disease_names)
+
+expected_result <- data.frame(
+  disease = disease_names,
+  Jan = c(5, 8, 2, 0),
+  Feb = c(7, 0, 0, 0),
+  Mar = c(0, 3, 0, 0)
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result, expected_result)

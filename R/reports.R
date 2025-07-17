@@ -168,6 +168,8 @@ create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
 #' per year.
 #' @export
 #'
+#' @importFrom stats aggregate
+#'
 #' @examples
 #' data <- data.frame(
 #'   disease = c("A", "A", "B"),
@@ -177,7 +179,7 @@ create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
 #' create_report_annual_counts(data, disease_names = c("A", "B", "C"))
 create_report_annual_counts <- function(data, disease_names) {
   # - Aggregate annual counts by disease and year
-  annual_counts <- aggregate(counts ~ disease + year,
+  annual_counts <- stats::aggregate(counts ~ disease + year,
                             data = data,
                             FUN = sum)
 
@@ -187,13 +189,40 @@ create_report_annual_counts <- function(data, disease_names) {
   # - Add missing diseases
   annual_counts <- prep_report_data(annual_counts, disease_names)
 
+  # - Clear row names
+  rownames(annual_counts) <- NULL
+
   annual_counts
 }
 
 
+#' Create monthly counts report
+#'
+#' 'create_report_monthly_counts' generates a data frame of monthly case
+#' counts for each disease for a specific year, with months as columns.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param y Integer. The year to generate the report for.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#'
+#' @returns Dataframe of monthly counts with one row per disease and one column
+#' per month (Jan through Dec).
+#' @export
+#'
+#' @importFrom stats aggregate
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "B", "B"),
+#'   year = c(2024, 2024, 2024, 2023),
+#'   month = c(1, 2, 1, 4),
+#'   counts = c(5, 7, 8, 9)
+#' )
+#' create_report_monthly_counts(data, 2024, disease_names = c("A", "B", "C"))
 create_report_monthly_counts <- function(data, y, disease_names) {
   # - Aggregate monthly counts by disease, year, and month
-  month_counts <- aggregate(counts ~ disease + year + month,
+  month_counts <- stats::aggregate(counts ~ disease + year + month,
                               data = data,
                               FUN = sum)
 
@@ -209,6 +238,9 @@ create_report_monthly_counts <- function(data, y, disease_names) {
 
   # - Add missing diseases
   month_counts <- prep_report_data(month_counts, disease_names)
+
+  # - Clear row names
+  rownames(month_counts) <- NULL
 
   month_counts
 }

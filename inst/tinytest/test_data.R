@@ -51,7 +51,7 @@ expect_warning(validated <- validate_data(na_data),
 expect_equal(nrow(validated), 1)
 
 
-# Test format_week_num() ------------------------------------------------------
+# Test format_week_num() -------------------------------------------------------
 
 # Test with data simulating 7 years (old years should be filtered out)
 input <- data.frame(
@@ -70,7 +70,7 @@ expect_equal(nrow(res), 6) # 7 years - 1 year filtered out
 expect_true(all(res$year >= max(input$patient_mmwr_year) - 5))
 
 
-# Test read_epitrax_data() ----------------------------------------------------
+# Test read_epitrax_data() -----------------------------------------------------
 
 # Test with valid file (minimal valid data)
 tmp_csv <- tempfile(fileext = ".csv")
@@ -98,7 +98,7 @@ expect_error(read_epitrax_data(wrong_file),
 unlink(wrong_file)
 
 
-# Test reshape_monthly_wide() -------------------------------------------------
+# Test reshape_monthly_wide() --------------------------------------------------
 
 df <- data.frame(
   disease = c("A", "A", "B", "B"),
@@ -125,7 +125,7 @@ expect_equal(reshaped2[reshaped2$disease == "A", "Feb"], 0)
 expect_equal(reshaped2[reshaped2$disease == "B", "Jan"], 0)
 
 
-# Test reshape_annual_wide() --------------------------------------------------
+# Test reshape_annual_wide() ---------------------------------------------------
 
 df <- data.frame(
   disease = c("A", "A", "B", "C"),
@@ -147,7 +147,7 @@ expect_equal(result$`2020`, expected_df$`2020`)
 expect_equal(result$`2021`, expected_df$`2021`)
 
 
-# Test prep_report_data() -----------------------------------------------------
+# Test prep_report_data() ------------------------------------------------------
 
 df <- data.frame(disease=c("A","B","D"), Jan=c(5,7,8), Feb=c(6,8,9))
 report_diseases <- c("A","C")
