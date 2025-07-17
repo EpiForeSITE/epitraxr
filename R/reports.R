@@ -189,3 +189,26 @@ create_report_annual_counts <- function(data, disease_names) {
 
   annual_counts
 }
+
+
+create_report_monthly_counts <- function(data, y, disease_names) {
+  # - Aggregate monthly counts by disease, year, and month
+  month_counts <- aggregate(counts ~ disease + year + month,
+                              data = data,
+                              FUN = sum)
+
+  # - Extract counts for given year
+  month_counts <- month_counts[month_counts$year == y, ]
+
+  # - Remove year column (don't want to include in report)
+  # TODO: could just not return this column at the end of the function
+  month_counts$year <- NULL
+
+  # - Reshape data to use months as columns and diseases as rows
+  month_counts <- reshape_monthly_wide(month_counts)
+
+  # - Add missing diseases
+  month_counts <- prep_report_data(month_counts, disease_names)
+
+  month_counts
+}
