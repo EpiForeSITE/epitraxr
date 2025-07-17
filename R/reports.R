@@ -244,3 +244,27 @@ create_report_monthly_counts <- function(data, y, disease_names) {
 
   month_counts
 }
+
+
+create_report_monthly_avgs <- function(data, disease_names, config) {
+  # - Compute average counts for each month
+  monthly_avgs <- aggregate(counts ~ disease + month,
+                          data = data,
+                          FUN = sum)
+
+  num_yrs <- length(unique(data$year))
+
+  monthly_avgs$counts <- round(monthly_avgs$counts / num_yrs,
+                               digits = config$rounding_decimals)
+
+  # - Reshape data to use months as columns and disease as rows
+  monthly_avgs <- reshape_monthly_wide(monthly_avgs)
+
+  # - Add missing diseases
+  monthly_avgs <- prep_report_data(monthly_avgs, disease_names)
+
+  # - Clear row names
+  rownames(monthly_avgs) <- NULL
+
+  monthly_avgs
+}
