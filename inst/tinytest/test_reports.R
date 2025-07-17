@@ -140,3 +140,27 @@ expected_result <- data.frame(
 
 expect_true(is.data.frame(result))
 expect_equal(result, expected_result)
+
+
+# Test create_report_monthly_avgs() ------------------------------------------
+
+data <- data.frame(
+  disease = c("A", "A", "B", "B", "C"),
+  year = c(2023, 2024, 2023, 2024, 2023),
+  month = c(1, 1, 2, 2, 1),
+  counts = c(10, 20, 15, 25, 8)
+)
+
+disease_names <- c("A", "B", "C", "D")
+config <- list(rounding_decimals = 1)
+
+result <- create_report_monthly_avgs(data, disease_names, config)
+
+expected_result <- data.frame(
+  disease = disease_names,
+  Jan = c(15.0, 0.0, 4.0, 0.0),  # (10+20)/2, 0, 8/2, 0
+  Feb = c(0.0, 20.0, 0.0, 0.0)   # 0, (15+25)/2, 0, 0
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result, expected_result)

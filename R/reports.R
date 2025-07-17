@@ -246,9 +246,34 @@ create_report_monthly_counts <- function(data, y, disease_names) {
 }
 
 
+#' Create monthly averages report
+#'
+#' 'create_report_monthly_avgs' generates a data frame of average monthly case
+#' counts for each disease across all years in the input data.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#' @param config List. Settings to use for report.
+#'
+#' @returns Dataframe of monthly averages with one row per disease and one column
+#' per month (Jan through Dec).
+#' @export
+#'
+#' @importFrom stats aggregate
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "B", "B"),
+#'   year = c(2023, 2024, 2023, 2024),
+#'   month = c(1, 1, 2, 2),
+#'   counts = c(10, 20, 15, 25)
+#' )
+#' config <- list(rounding_decimals = 1)
+#' create_report_monthly_avgs(data, c("A", "B", "C"), config)
 create_report_monthly_avgs <- function(data, disease_names, config) {
   # - Compute average counts for each month
-  monthly_avgs <- aggregate(counts ~ disease + month,
+  monthly_avgs <- stats::aggregate(counts ~ disease + month,
                           data = data,
                           FUN = sum)
 
