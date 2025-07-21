@@ -295,6 +295,39 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 }
 
 
+#' Create year-to-date (YTD) counts report
+#'
+#' 'create_report_ytd_counts' generates a data frame of year-to-date counts
+#' for each disease, comparing the given year to the average of other years.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#' @param y Integer. Current report year.
+#' @param m Integer. Current report month (1-12).
+#' @param config List. Configuration with current_population, avg_5yr_population,
+#' and rounding_decimals settings.
+#' @param as.rates Logical. If TRUE, returns rates per 100k instead of raw counts.
+#'
+#' @returns Dataframe with one row per disease and columns for current YTD and
+#' average YTD values (either counts or rates per 100k).
+#' @export
+#'
+#' @importFrom stats aggregate
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "B", "B"),
+#'   year = c(2024, 2023, 2024, 2023),
+#'   month = c(1, 1, 2, 2),
+#'   counts = c(10, 20, 15, 25)
+#' )
+#' config <- list(
+#'   current_population = 100000,
+#'   avg_5yr_population = 100000,
+#'   rounding_decimals = 1
+#' )
+#' create_report_ytd_counts(data, c("A", "B", "C"), 2024, 2, config)
 create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates = FALSE) {
 
   # - Aggregate monthly counts by disease, year, and month
@@ -321,21 +354,25 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
 
   if (as.rates) {
     # Convert counts to rates per 100k
-    ytd_report <- cbind(data.frame(
-      Current_YTD_Rate_per_100k = convert_counts_to_rate(
-        current_ytd$counts,
-        pop = config$current_population,
-        digits = config$rounding_decimals),
-      Avg_5yr_YTD_Rate_per_100k = convert_counts_to_rate(
-        avg_5yr_ytd$counts,
-        pop = config$avg_5yr_population,
-        digits = config$rounding_decimals)
+    ytd_report <- cbind(
+      ytd_report,
+      data.frame(
+        Current_YTD_Rate_per_100k = convert_counts_to_rate(
+          current_ytd$counts,
+          pop = config$current_population,
+          digits = config$rounding_decimals),
+        Avg_5yr_YTD_Rate_per_100k = convert_counts_to_rate(
+          avg_5yr_ytd$counts,
+          pop = config$avg_5yr_population,
+          digits = config$rounding_decimals)
     ))
   } else {
     # Use raw counts
-    ytd_report <- cbind(data.frame(
-      Current_YTD_Counts = current_ytd$counts,
-      Avg_5yr_YTD_Counts = avg_5yr_ytd$counts
+    ytd_report <- cbind(
+      ytd_report,
+      data.frame(
+        Current_YTD_Counts = current_ytd$counts,
+        Avg_5yr_YTD_Counts = avg_5yr_ytd$counts
     ))
   }
 

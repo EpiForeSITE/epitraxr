@@ -164,3 +164,58 @@ expected_result <- data.frame(
 
 expect_true(is.data.frame(result))
 expect_equal(result, expected_result)
+
+
+# Test create_report_ytd_counts() ----------------------------------------------
+
+data <- data.frame(
+  disease = c("A", "A", "B", "B", "C"),
+  year = c(2024, 2023, 2024, 2023, 2023),
+  month = c(1, 1, 2, 2, 1),
+  counts = c(10, 20, 15, 25, 8)
+)
+
+disease_names <- c("A", "B", "C", "D")
+config <- list(
+  current_population = 56000,
+  avg_5yr_population = 103000,
+  rounding_decimals = 1
+)
+
+# Test with raw counts
+result <- create_report_ytd_counts(
+  data = data,
+  disease_names = disease_names,
+  y = 2024,
+  m = 2,
+  config = config,
+  as.rates = FALSE
+)
+
+expected_result <- data.frame(
+  disease = disease_names,
+  Current_YTD_Counts = c(10, 15, 0, 0), # 2024 counts up to month 2
+  Avg_5yr_YTD_Counts = c(20, 25, 8, 0)  # 2023 counts up to month 2
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result, expected_result)
+
+# Test with rates
+result <- create_report_ytd_counts(
+  data = data,
+  disease_names = disease_names,
+  y = 2024,
+  m = 2,
+  config = config,
+  as.rates = TRUE
+)
+
+expected_result <- data.frame(
+  disease = disease_names,
+  Current_YTD_Rate_per_100k = c(17.9, 26.8, 0.0, 0.0),
+  Avg_5yr_YTD_Rate_per_100k = c(19.4, 24.3, 7.8, 0.0) 
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result, expected_result)
