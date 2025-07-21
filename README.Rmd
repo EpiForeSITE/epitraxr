@@ -30,13 +30,43 @@ You can install the development version of epitraxr from [GitHub](https://github
 devtools::install_github("EpiForeSITE/epitraxr")
 ```
 
-## Example
+## Examples
 
-As more functions are added to the package, we will include some basic examples here:
+```{r include = FALSE}
+library(epitraxr)
+```
 
 ```{r example}
-suppressPackageStartupMessages(
-  library(epitraxr)
+# Read the sample EpiTrax dataset included with the package
+sample_file <- system.file("sample_data", "sample_epitrax_data.csv", package = "epitraxr")
+epitrax_data <- read_epitrax_data(sample_file)
+
+# Get the list of diseases in the dataset
+diseases <- unique(epitrax_data$disease)
+
+# Set up configuration
+config <- list(
+  current_population = 102000,
+  avg_5yr_population = 97000,
+  rounding_decimals = 1
 )
-## basic example code
+
+# Generate monthly counts report for 2024
+monthly_counts <- create_report_monthly_counts(
+  data = epitrax_data,
+  y = 2024,
+  disease_names = diseases
+)
+monthly_counts
+
+# Generate YTD counts with rates per 100k (through May)
+ytd_report <- create_report_ytd_counts(
+  data = epitrax_data,
+  disease_names = diseases,
+  y = 2024,
+  m = 5,
+  config = config,
+  as.rates = TRUE
+)
+ytd_report
 ```
