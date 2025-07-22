@@ -136,14 +136,40 @@ read_epitrax_data <- function(data_file = NULL) {
   }
 
   # Read data from file
-  input_data <- utils::read.csv(fpath, header = TRUE)
+  data <- utils::read.csv(fpath, header = TRUE)
 
   # Validate and format data
-  input_data <- validate_data(input_data)
-  input_data <- format_week_num(input_data)
+  data <- validate_data(data)
+  data <- format_week_num(data)
 
   # Return data from file
-  input_data
+  data
+}
+
+
+get_epitrax <- function(data_file = NULL) {
+  # Read in EpiTrax data
+  epitrax_data <- read_epitrax_data(data_file)
+
+  # Compute common summary statistics and metadata
+  data_diseases <- unique(epitrax_data$disease)
+  data_yrs <- get_yrs(epitrax_data$year)
+  r_year <- max(data_yrs)
+  r_month <- max(epitrax_data[epitrax_data$year == r_year,]$month)
+
+  # Return list of EpiTrax data and metadata
+  epitrax_obj <- list(
+    data = epitrax_data,
+    data_diseases = data_diseases,
+    yrs = data_yrs,
+    report_year = r_year,
+    report_month = r_month,
+    internal_reports = list(),
+    public_reports = list()
+  )
+  class(epitrax_obj) <- "epitrax"
+
+  epitrax_obj
 }
 
 #' Reshape data frame with each month as a separate column
