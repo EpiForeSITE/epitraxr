@@ -19,8 +19,6 @@
 
 # Load required libraries
 library(epitraxr)
-library(lubridate)
-library(writexl)
 
 # Set up file system -----------------------------------------------------------
 internal_folder <- "internal_reports"
@@ -137,8 +135,11 @@ xl_files[["ytd_report_counts"]] <- ytd_report_counts
 xl_files[["ytd_report_rates"]] <- ytd_report_rates
 
 # Combine internal reports into single .xlsx file ------------------------------
-write_xlsx(xl_files, file.path(internal_folder,
-                               "internal_reports_combined.xlsx"))
+write_report_xlsx(
+  data = xl_files,
+  filename = "internal_reports_combined.xlsx",
+  folder = internal_folder
+)
 
 
 # Prepare Public Reports -------------------------------------------------------
@@ -181,4 +182,8 @@ r <- create_public_report_ytd(
 xl_files[[r[["name"]]]] <- r[["report"]]
 
 # - Combine public reports into single .xlsx file
-write_xlsx(xl_files, file.path(public_folder, "public_reports_combined.xlsx"))
+write_report_xlsx(
+  data = xl_files,
+  filename = "public_reports_combined.xlsx",
+  folder = public_folder
+)
