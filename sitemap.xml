@@ -14,8 +14,10 @@
 <url><loc>https://epiforesite.github.io/epitraxr/reference/create_report_monthly_counts.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/create_report_ytd_counts.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/format_week_num.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/get_epitrax.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/get_internal_disease_list.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/get_public_disease_list.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/get_report_disease_lists.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/get_trend.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/get_yrs.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/index.html</loc></url>
@@ -25,7 +27,9 @@
 <url><loc>https://epiforesite.github.io/epitraxr/reference/reshape_annual_wide.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/reshape_monthly_wide.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/set_na_0.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/setup_filesystem.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/validate_data.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/write_report_csv.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/write_report_xlsx.html</loc></url>
 </urlset>
 

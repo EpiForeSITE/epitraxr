@@ -9,7 +9,7 @@ uses the default diseases, if the file doesn't exist."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,12 +69,23 @@ disease names (EpiTrax_name) to include in internal reports.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="va">list_file</span> <span class="op">&lt;-</span> <span class="st">"path/to/file"</span></span></span>
-<span class="r-in"><span>  <span class="va">default_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Measles"</span>, <span class="st">"Chickenpox"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Using default list (when file doesn't exist)</span></span></span>
+<span class="r-in"><span><span class="va">default_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Measles"</span>, <span class="st">"Chickenpox"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">disease_list</span> <span class="op">&lt;-</span> <span class="fu">get_internal_disease_list</span><span class="op">(</span><span class="st">""</span>, <span class="va">default_list</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>You have not provided a disease list for internal reports.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  - The program will default to using only the diseases found in the input dataset.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  - If you would like to use a different list, please include a file named </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> 	''</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  - The file must have a column named</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> 	'EpiTrax_name'</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="va">disease_list</span> <span class="op">&lt;-</span> <span class="fu">get_internal_disease_list</span><span class="op">(</span><span class="va">list_file</span>, <span class="va">default_list</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># Using a disease list file</span></span></span>
+<span class="r-in"><span><span class="va">list_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"tinytest/test_files/disease_lists/internal_list.csv"</span>,</span></span>
+<span class="r-in"><span>                        package <span class="op">=</span> <span class="st">"epitraxr"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">disease_list</span> <span class="op">&lt;-</span> <span class="fu">get_internal_disease_list</span><span class="op">(</span><span class="va">list_file</span>, <span class="va">default_list</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
