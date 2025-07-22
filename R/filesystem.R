@@ -357,6 +357,36 @@ get_public_disease_list <- function(filepath, default_diseases) {
 }
 
 
+#' Get both internal and public disease lists
+#'
+#' `get_report_disease_lists` is a convenience function that combines
+#' `get_internal_disease_list` and `get_public_disease_list`.
+#'
+#' @param internal_list_fp Filepath. Path to internal disease list CSV file.
+#' @param public_list_fp Filepath. Path to public disease list CSV file.
+#' @param default_diseases String vector. List of default diseases to use if
+#'   either file doesn't exist.
+#'
+#' @returns A list with two elements:
+#'   - internal: Dataframe with EpiTrax_name column
+#'   - public: Dataframe with EpiTrax_name and Public_name columns
+#' @export
+#'
+#' @examples
+#' # Using default lists (when files don't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_lists <- get_report_disease_lists("", "", default_list)
+#'
+#' # Using disease list files
+#' i_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                        package = "epitraxr")
+#' p_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' disease_lists <- get_report_disease_lists(
+#'   internal_list_fp = i_file,
+#'   public_list_fp = p_file,
+#'   default_diseases = default_list
+#' )
 get_report_disease_lists <- function(internal_list_fp, public_list_fp, default_diseases) {
   # Get internal disease list
   internal_diseases <- get_internal_disease_list(

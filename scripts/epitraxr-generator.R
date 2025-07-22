@@ -35,16 +35,20 @@ report_config <- read_report_config(file.path(fsys$settings,
                                               "report_config.yaml"))
 
 # Read in EpiTrax data ---------------------------------------------------------
+epitrax <- list(
+  data = read_epitrax_data(),
+  report_year,
+  report_month,
+  data_diseases,
+  yrs,
+  internal_reports,
+  public_reports
+)
 epitrax_data <- read_epitrax_data()
 epitrax_data_yrs <- get_yrs(epitrax_data$year)
 epitrax_data_diseases <- unique(epitrax_data$disease)
 report_year <- max(epitrax_data_yrs)
 report_month <- max(epitrax_data[epitrax_data$year == report_year,]$month)
-
-diseases <- get_internal_disease_list(
-  file.path(fsys$settings, "internal_report_diseases.csv"),
-  default_diseases = epitrax_data_diseases
-)
 
 report_diseases <- get_report_disease_lists(
   internal_list_fp = file.path(fsys$settings, "internal_report_diseases.csv"),
@@ -55,7 +59,7 @@ report_diseases <- get_report_disease_lists(
 # Annual counts for each disease -----------------------------------------------
 annual_counts <- create_report_annual_counts(
   epitrax_data,
-  diseases$EpiTrax_name
+  report_diseases$internal$EpiTrax_name
 )
 # - Write to CSV
 if (report_config$generate_csvs) {
@@ -71,7 +75,7 @@ for (y in epitrax_data_yrs) {
   m_df <- create_report_monthly_counts(
     data = epitrax_data,
     y = y,
-    disease_names = diseases$EpiTrax_name
+    disease_names = report_diseases$internal$EpiTrax_name
   )
 
   # - Write to CSV
@@ -91,7 +95,7 @@ epitrax_data_prev_yrs <- epitrax_data[epitrax_data$year != report_year,]
 
 internal_monthly_avgs <- create_report_monthly_avgs(
   data = epitrax_data_prev_yrs,
-  disease_names = diseases$EpiTrax_name,
+  disease_names = report_diseases$internal$EpiTrax_name,
   config = report_config
 )
 
@@ -109,7 +113,7 @@ xl_files[["monthly_avgs"]] <- internal_monthly_avgs
 # YTD reports for current month ------------------------------------------------
 ytd_report_counts <- create_report_ytd_counts(
   data = epitrax_data,
-  disease_names = diseases$EpiTrax_name,
+  disease_names = report_diseases$internal$EpiTrax_name,
   y = report_year,
   m = report_month,
   config = report_config,
@@ -118,7 +122,7 @@ ytd_report_counts <- create_report_ytd_counts(
 
 ytd_report_rates <- create_report_ytd_counts(
   data = epitrax_data,
-  disease_names = diseases$EpiTrax_name,
+  disease_names = report_diseases$internal$EpiTrax_name,
   y = report_year,
   m = report_month,
   config = report_config,
@@ -146,14 +150,9 @@ write_report_xlsx(
 # Prepare Public Reports -------------------------------------------------------
 xl_files <- list()
 
-diseases <- get_public_disease_list(
-  file.path(fsys$settings, "public_report_diseases.csv"),
-  default_diseases = epitrax_data_diseases
-)
-
 monthly_avgs <- create_report_monthly_avgs(
   data = epitrax_data_prev_yrs,
-  disease_names = diseases$EpiTrax_name,
+  disease_names = report_diseases$public$EpiTrax_name,
   config = report_config
 )
 
@@ -162,7 +161,7 @@ for (offset in 0:3) {
   r <- create_public_report_month(
     cases = month_counts,
     avgs = monthly_avgs,
-    d_list = diseases,
+    d_list = report_diseases$public,
     m = report_month - offset,
     y = report_year,
     config = report_config,
@@ -172,11 +171,14 @@ for (offset in 0:3) {
 }
 
 # - Create current YTD report
-ytd_report_rates <- prep_report_data(ytd_report_rates, diseases$EpiTrax_name)
+ytd_report_rates <- prep_report_data(
+  ytd_report_rates,
+  report_diseases$public$EpiTrax_name
+)
 
 r <- create_public_report_ytd(
   ytd_rates <- ytd_report_rates,
-  d_list = diseases,
+  d_list = report_diseases$public,
   config = report_config,
   r_folder = fsys$public
 )

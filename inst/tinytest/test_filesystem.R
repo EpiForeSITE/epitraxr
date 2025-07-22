@@ -200,8 +200,32 @@ expect_error(d_list <- get_public_disease_list(list_file, default_list),
              "is incorrectly formatted")
 
 
+# Test get_report_disease_lists() --------------------------------------------
+
+internal_file <- "test_files/disease_lists/internal_list.csv"
+public_file <- "test_files/disease_lists/public_list.csv"
+default_list <- c("Measles", "Chickenpox")
+
+expect_silent(disease_lists <- get_report_disease_lists(
+  internal_file, public_file, default_list
+))
+
+# Check structure
+expect_true(is.list(disease_lists))
+expect_true(all(c("internal", "public") %in% names(disease_lists)))
+
+# Check contents
+expect_equal(
+  disease_lists$internal,
+  get_internal_disease_list(internal_file, default_list)
+)
+expect_equal(
+  disease_lists$public,
+  get_public_disease_list(public_file, default_list)
+)
+
+
 # Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
 unlink(internal_folder, recursive = TRUE)
 unlink(public_folder, recursive = TRUE)
 unlink(settings_folder, recursive = TRUE)
-
