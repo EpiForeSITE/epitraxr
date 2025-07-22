@@ -22,6 +22,7 @@ then returns the data.
 # Interactive file chooser:
 read_epitrax_data()
 }
+
 # Using a file path:
 read_epitrax_data(system.file("sample_data/sample_epitrax_data.csv",
                               package = "epitraxr"))
