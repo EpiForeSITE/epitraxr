@@ -13,6 +13,44 @@ expect_true(dir.exists(internal_folder))
 expect_true(dir.exists(public_folder))
 expect_true(dir.exists(settings_folder))
 
+
+# Test setup_filesystem() -----------------------------------------------------
+# Clean start with fresh temp directories
+test_folders <- list(
+  internal = file.path(tempdir(), "test_internal"),
+  public = file.path(tempdir(), "test_public"),
+  settings = file.path(tempdir(), "test_settings")
+)
+
+# Test basic setup without clearing reports
+expect_silent(result <- setup_filesystem(test_folders))
+expect_equal(result, test_folders)  # Should return input unchanged
+expect_true(dir.exists(test_folders$internal))
+expect_true(dir.exists(test_folders$public))
+expect_true(dir.exists(test_folders$settings))
+
+# Create some test files
+test_file1 <- file.path(test_folders$internal, "test1.csv")
+test_file2 <- file.path(test_folders$public, "test2.csv")
+file.create(test_file1)
+file.create(test_file2)
+
+# Test with clear.reports = FALSE (should preserve files)
+expect_silent(setup_filesystem(test_folders, clear.reports = FALSE))
+expect_true(file.exists(test_file1))
+expect_true(file.exists(test_file2))
+
+# Test with clear.reports = TRUE (should remove files)
+expect_silent(setup_filesystem(test_folders, clear.reports = TRUE))
+expect_false(file.exists(test_file1))
+expect_false(file.exists(test_file2))
+
+# Cleanup test directories
+unlink(test_folders$internal, recursive = TRUE)
+unlink(test_folders$public, recursive = TRUE)
+unlink(test_folders$settings, recursive = TRUE)
+
+
 # Test clear_old_reports() -----------------------------------------------------
 # Copy test files into test folders
 i_report_name <- "internal_report.csv"

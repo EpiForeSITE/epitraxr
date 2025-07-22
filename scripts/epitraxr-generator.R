@@ -21,21 +21,17 @@
 library(epitraxr)
 
 # Set up file system -----------------------------------------------------------
-internal_folder <- "internal_reports"
-public_folder <- "public_reports"
-settings_folder <- "report_settings"
+fsys <- list(
+  internal = "internal_reports",
+  public = "public_reports",
+  settings = "report_settings"
+)
+
+fsys <- setup_filesystem(folders = fsys, clear.reports = TRUE)
 
 xl_files <- list() # Internal reports to combine into single .xlsx file
 
-create_filesystem(
-  internal = internal_folder,
-  public = public_folder,
-  settings = settings_folder
-)
-
-clear_old_reports(internal_folder, public_folder)
-
-report_config <- read_report_config(file.path(settings_folder,
+report_config <- read_report_config(file.path(fsys$settings,
                                               "report_config.yaml"))
 
 # Read in EpiTrax data ---------------------------------------------------------
@@ -46,7 +42,7 @@ report_year <- max(epitrax_data_yrs)
 report_month <- max(epitrax_data[epitrax_data$year == report_year,]$month)
 
 diseases <- get_internal_disease_list(
-  file.path(settings_folder, "internal_report_diseases.csv"),
+  file.path(fsys$settings, "internal_report_diseases.csv"),
   default_diseases = epitrax_data_diseases
 )
 
@@ -58,7 +54,7 @@ annual_counts <- create_report_annual_counts(
 )
 # - Write to CSV
 if (report_config$generate_csvs) {
-  write_report_csv(annual_counts, "annual_counts.csv", internal_folder)
+  write_report_csv(annual_counts, "annual_counts.csv", fsys$internal)
 }
 # - Add to Excel List
 xl_files[["annual_counts"]] <- annual_counts
@@ -76,7 +72,7 @@ for (y in epitrax_data_yrs) {
   # - Write to CSV
   fname <- paste0("monthly_counts_", y)
   if (report_config$generate_csvs) {
-    write_report_csv(m_df, paste0(fname, ".csv"), internal_folder)
+    write_report_csv(m_df, paste0(fname, ".csv"), fsys$internal)
   }
 
   # - Add to Excel List
@@ -98,7 +94,7 @@ internal_monthly_avgs <- create_report_monthly_avgs(
 if (report_config$generate_csvs) {
   avgs_fname <- with(epitrax_data_prev_yrs,
                      paste0("monthly_avgs_", min(year), "-", max(year), ".csv"))
-  write_report_csv(internal_monthly_avgs, avgs_fname, internal_folder)
+  write_report_csv(internal_monthly_avgs, avgs_fname, fsys$internal)
 }
 
 # - Add to Excel List
@@ -126,8 +122,8 @@ ytd_report_rates <- create_report_ytd_counts(
 
 # - Write to CSV
 if (report_config$generate_csvs) {
-  write_report_csv(ytd_report_counts, "ytd_report_counts.csv", internal_folder)
-  write_report_csv(ytd_report_rates, "ytd_report_rates.csv", internal_folder)
+  write_report_csv(ytd_report_counts, "ytd_report_counts.csv", fsys$internal)
+  write_report_csv(ytd_report_rates, "ytd_report_rates.csv", fsys$internal)
 }
 
 # - Add to Excel List
@@ -138,7 +134,7 @@ xl_files[["ytd_report_rates"]] <- ytd_report_rates
 write_report_xlsx(
   data = xl_files,
   filename = "internal_reports_combined.xlsx",
-  folder = internal_folder
+  folder = fsys$internal
 )
 
 
@@ -146,7 +142,7 @@ write_report_xlsx(
 xl_files <- list()
 
 diseases <- get_public_disease_list(
-  file.path(settings_folder, "public_report_diseases.csv"),
+  file.path(fsys$settings, "public_report_diseases.csv"),
   default_diseases = epitrax_data_diseases
 )
 
@@ -165,7 +161,7 @@ for (offset in 0:3) {
     m = report_month - offset,
     y = report_year,
     config = report_config,
-    r_folder = public_folder
+    r_folder = fsys$public
   )
   xl_files[[r[["name"]]]] <- r[["report"]]
 }
@@ -177,7 +173,7 @@ r <- create_public_report_ytd(
   ytd_rates <- ytd_report_rates,
   d_list = diseases,
   config = report_config,
-  r_folder = public_folder
+  r_folder = fsys$public
 )
 xl_files[[r[["name"]]]] <- r[["report"]]
 
@@ -185,5 +181,5 @@ xl_files[[r[["name"]]]] <- r[["report"]]
 write_report_xlsx(
   data = xl_files,
   filename = "public_reports_combined.xlsx",
-  folder = public_folder
+  folder = fsys$public
 )

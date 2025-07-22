@@ -10,17 +10,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'   internal_folder <- "internal_reports"
-#'   public_folder <- "public_reports"
-#'   settings_folder <- "report_settings"
+#'  internal_folder = file.path(tempdir(), "internal")
+#'  public_folder = file.path(tempdir(), "public")
+#'  settings_folder = file.path(tempdir(), "settings")
 #'
-#'   create_filesystem(
-#'     internal = internal_folder,
-#'     public = public_folder,
-#'     settings = settings_folder
-#'   )
-#' }
+#'  create_filesystem(
+#'    internal = internal_folder,
+#'    public = public_folder,
+#'    settings = settings_folder
+#'  )
 create_filesystem <- function(internal, public, settings) {
   # - Create folders if needed
   for (f in c(internal, public, settings)) {
@@ -54,6 +52,47 @@ clear_old_reports <- function(i_folder, p_folder) {
   do.call(file.remove, old_reports)
 
   old_reports
+}
+
+
+#' Setup the report filesystem
+#'
+#' `setup_filesystem` creates the necessary folder structure and optionally clears
+#' old reports. This is a convenience function that combines `create_filesystem`
+#' and `clear_old_reports`.
+#'
+#' @param folders List. Contains paths to report folders with elements:
+#'   - internal: Folder for internal reports
+#'   - public: Folder for public reports
+#'   - settings: Folder for settings files
+#' @param clear.reports Logical. Whether to clear old reports from the internal
+#'   and public folders. Defaults to FALSE.
+#'
+#' @returns The input folders list, unchanged.
+#' @export
+#'
+#' @examples
+#' # Create folders in a temporary directory
+#' folders <- list(
+#'   internal = file.path(tempdir(), "internal"),
+#'   public = file.path(tempdir(), "public"),
+#'   settings = file.path(tempdir(), "settings")
+#' )
+#' setup_filesystem(folders)
+setup_filesystem <- function(folders, clear.reports = FALSE) {
+  # Create the filesystem if it doesn't exist
+  create_filesystem(
+    internal = folders$internal,
+    public = folders$public,
+    settings = folders$settings
+  )
+
+  # Clear old reports if requested
+  if (clear.reports) {
+    clear_old_reports(folders$internal, folders$public)
+  }
+
+  folders
 }
 
 
