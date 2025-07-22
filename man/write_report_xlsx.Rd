@@ -22,16 +22,20 @@ NULL.
 given filename in Excel (.xlsx) format.
 }
 \examples{
-\dontrun{
-  r_data <- data.frame(
-    Disease = c("Measles", "Chickenpox"),
-    Counts = c(20, 43)
-  )
-  r_xl <- list()
-  r_xl[["report"]] <- r_data
-  r_file <- "report.xlsx"
-  r_folder <- "reports"
+# Create sample data with multiple sheets
+r_data1 <- data.frame(
+  Disease = c("Measles", "Chickenpox"),
+  Counts = c(20, 43)
+)
+r_data2 <- data.frame(
+  Disease = c("Measles", "Chickenpox"),
+  Rate = c(10.5, 22.7)
+)
+r_xl <- list(
+  counts = r_data1,
+  rates = r_data2
+)
 
-  write_report_xlsx(r_xl, r_file, r_folder)
-}
+# Write to temporary directory
+write_report_xlsx(r_xl, "report.xlsx", tempdir())
 }

@@ -25,10 +25,12 @@ The provided internal disease list file must contain one column of EpiTrax
 disease names (EpiTrax_name) to include in internal reports.
 }
 \examples{
-\dontrun{
-  list_file <- "path/to/file"
-  default_list <- c("Measles", "Chickenpox")
+# Using default list (when file doesn't exist)
+default_list <- c("Measles", "Chickenpox")
+disease_list <- get_internal_disease_list("", default_list)
 
-  disease_list <- get_internal_disease_list(list_file, default_list)
-}
+# Using a disease list file
+list_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+                        package = "epitraxr")
+disease_list <- get_internal_disease_list(list_file, default_list)
 }

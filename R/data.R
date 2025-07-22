@@ -122,9 +122,10 @@ format_week_num <- function(data) {
 #' \dontrun{
 #' # Interactive file chooser:
 #' read_epitrax_data()
-#' # Using a file path:
-#' read_epitrax_data("path/to/epitrax.csv")
 #' }
+#' # Using a file path:
+#' read_epitrax_data(system.file("sample_data/sample_epitrax_data.csv",
+#'                               package = "epitraxr"))
 read_epitrax_data <- function(data_file = NULL) {
 
   # If data_file is provided, use it; otherwise, prompt user to choose a file

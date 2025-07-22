@@ -43,9 +43,7 @@ create_filesystem <- function(internal, public, settings) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'   clear_old_reports("internal_reports", "public_reports")
-#' }
+#' clear_old_reports(tempdir(), tempdir())
 clear_old_reports <- function(i_folder, p_folder) {
   # - Remove old internal reports
   i_reports <- list(list.files(i_folder, full.names = TRUE))
@@ -71,10 +69,13 @@ clear_old_reports <- function(i_folder, p_folder) {
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' \dontrun{
-#'   config_file <- "path/to/config_file"
-#'   report_config <- read_report_config(config_file)
-#' }
+#' # Using default values (when file doesn't exist)
+#' report_config <- read_report_config("")
+#'
+#' # Using a config file
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                           package = "epitraxr")
+#' report_config <- read_report_config(config_file)
 read_report_config <- function(config_filepath) {
 
   if (file.exists(config_filepath)) {
@@ -143,16 +144,14 @@ read_report_config <- function(config_filepath) {
 #' @importFrom utils write.csv
 #'
 #' @examples
-#' \dontrun{
-#'   r_data <- data.frame(
-#'     Disease = c("Measles", "Chickenpox"),
-#'     Counts = c(20, 43)
-#'   )
-#'   r_file <- "report.csv"
-#'   r_folder <- "reports"
+#' # Create sample data
+#' r_data <- data.frame(
+#'   Disease = c("Measles", "Chickenpox"),
+#'   Counts = c(20, 43)
+#' )
 #'
-#'   write_report_csv(r_data, r_file, r_folder)
-#' }
+#' # Write to temporary directory
+#' write_report_csv(r_data, "report.csv", tempdir())
 write_report_csv <- function(data, filename, folder) {
   utils::write.csv(data, file.path(folder, filename), row.names = FALSE)
 }
@@ -174,18 +173,22 @@ write_report_csv <- function(data, filename, folder) {
 #' @importFrom writexl write_xlsx
 #'
 #' @examples
-#' \dontrun{
-#'   r_data <- data.frame(
-#'     Disease = c("Measles", "Chickenpox"),
-#'     Counts = c(20, 43)
-#'   )
-#'   r_xl <- list()
-#'   r_xl[["report"]] <- r_data
-#'   r_file <- "report.xlsx"
-#'   r_folder <- "reports"
+#' # Create sample data with multiple sheets
+#' r_data1 <- data.frame(
+#'   Disease = c("Measles", "Chickenpox"),
+#'   Counts = c(20, 43)
+#' )
+#' r_data2 <- data.frame(
+#'   Disease = c("Measles", "Chickenpox"),
+#'   Rate = c(10.5, 22.7)
+#' )
+#' r_xl <- list(
+#'   counts = r_data1,
+#'   rates = r_data2
+#' )
 #'
-#'   write_report_xlsx(r_xl, r_file, r_folder)
-#' }
+#' # Write to temporary directory
+#' write_report_xlsx(r_xl, "report.xlsx", tempdir())
 write_report_xlsx <- function(data, filename, folder) {
   writexl::write_xlsx(data, file.path(folder, filename))
 }
@@ -209,12 +212,14 @@ write_report_xlsx <- function(data, filename, folder) {
 #' @importFrom utils read.csv
 #'
 #' @examples
-#' \dontrun{
-#'   list_file <- "path/to/file"
-#'   default_list <- c("Measles", "Chickenpox")
+#' # Using default list (when file doesn't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_list <- get_internal_disease_list("", default_list)
 #'
-#'   disease_list <- get_internal_disease_list(list_file, default_list)
-#' }
+#' # Using a disease list file
+#' list_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                         package = "epitraxr")
+#' disease_list <- get_internal_disease_list(list_file, default_list)
 get_internal_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
@@ -268,12 +273,14 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 #' @importFrom utils read.csv
 #'
 #' @examples
-#' \dontrun{
-#'   list_file <- "path/to/file"
-#'   default_list <- c("Measles", "Chickenpox")
+#' # Using default list (when file doesn't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_list <- get_public_disease_list("", default_list)
 #'
-#'   disease_list <- get_public_disease_list(list_file, default_list)
-#' }
+#' # Using a disease list file
+#' list_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                         package = "epitraxr")
+#' disease_list <- get_public_disease_list(list_file, default_list)
 get_public_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
