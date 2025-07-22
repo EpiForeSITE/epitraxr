@@ -158,6 +158,32 @@ write_report_csv <- function(data, filename, folder) {
 }
 
 
+#' Write report Excel files
+#'
+#' `write_report_xlsx` writes the given data to the specified folder with the
+#' given filename in Excel (.xlsx) format.
+#'
+#' @param data List. Named list of dataframes. The name will be used as the
+#' sheet name.
+#' @param filename String. Report filename.
+#' @param folder Filepath. Report destination folder.
+#'
+#' @returns NULL.
+#' @export
+#'
+#' @importFrom writexl write_xlsx
+#'
+#' @examples
+#' \dontrun{
+#'   r_data <- data.frame(
+#'     Disease = c("Measles", "Chickenpox"),
+#'     Counts = c(20, 43)
+#'   )
+#'   r_file <- "report.xlsx"
+#'   r_folder <- "reports"
+#'
+#'   write_report_xlsx(r_data, r_file, r_folder)
+#' }
 write_report_xlsx <- function(data, filename, folder) {
   writexl::write_xlsx(data, file.path(folder, filename))
 }

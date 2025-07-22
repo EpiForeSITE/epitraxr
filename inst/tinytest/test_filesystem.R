@@ -102,6 +102,25 @@ csv_data <- utils::read.csv(csv_fp)
 expect_equal(csv_data, r_data)
 
 
+# Test write_report_xlsx() --------------------------------------------------
+r_data <- data.frame(
+  Disease = c("Measles", "Chickenpox"),
+  Counts = c(20, 43)
+)
+r_xl <- list()
+r_xl[["report"]] <- r_data
+r_file <- "report.xlsx"
+
+expect_silent(write_report_xlsx(r_data, r_file, public_folder))
+
+xlsx_fp <- file.path(public_folder, r_file)
+expect_true(file.exists(xlsx_fp))
+
+# Read Excel file back and compare
+xlsx_data <- readxl::read_excel(xlsx_fp)
+expect_equal(as.data.frame(xlsx_data), r_xl$report)
+
+
 # Test get_internal_disease_list() ---------------------------------------------
 list_file <-"test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
