@@ -18,4 +18,5 @@ repos:
       - id: roxygenize
         additional_dependencies:
         - lubridate
+        - writexl
       - id: use-tidy-description

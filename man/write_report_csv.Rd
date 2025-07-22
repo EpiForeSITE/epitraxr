@@ -21,14 +21,12 @@ NULL.
 given filename.
 }
 \examples{
-\dontrun{
-  r_data <- data.frame(
-    Disease = c("Measles", "Chickenpox"),
-    Counts = c(20, 43)
-  )
-  r_file <- "report.csv"
-  r_folder <- "reports"
+# Create sample data
+r_data <- data.frame(
+  Disease = c("Measles", "Chickenpox"),
+  Counts = c(20, 43)
+)
 
-  write_report_csv(r_data, r_file, r_folder)
-}
+# Write to temporary directory
+write_report_csv(r_data, "report.csv", tempdir())
 }

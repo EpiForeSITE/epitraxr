@@ -10,17 +10,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'   internal_folder <- "internal_reports"
-#'   public_folder <- "public_reports"
-#'   settings_folder <- "report_settings"
+#'  internal_folder = file.path(tempdir(), "internal")
+#'  public_folder = file.path(tempdir(), "public")
+#'  settings_folder = file.path(tempdir(), "settings")
 #'
-#'   create_filesystem(
-#'     internal = internal_folder,
-#'     public = public_folder,
-#'     settings = settings_folder
-#'   )
-#' }
+#'  create_filesystem(
+#'    internal = internal_folder,
+#'    public = public_folder,
+#'    settings = settings_folder
+#'  )
 create_filesystem <- function(internal, public, settings) {
   # - Create folders if needed
   for (f in c(internal, public, settings)) {
@@ -43,9 +41,7 @@ create_filesystem <- function(internal, public, settings) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'   clear_old_reports("internal_reports", "public_reports")
-#' }
+#' clear_old_reports(tempdir(), tempdir())
 clear_old_reports <- function(i_folder, p_folder) {
   # - Remove old internal reports
   i_reports <- list(list.files(i_folder, full.names = TRUE))
@@ -59,22 +55,66 @@ clear_old_reports <- function(i_folder, p_folder) {
 }
 
 
+#' Setup the report filesystem
+#'
+#' `setup_filesystem` creates the necessary folder structure and optionally clears
+#' old reports. This is a convenience function that combines `create_filesystem`
+#' and `clear_old_reports`.
+#'
+#' @param folders List. Contains paths to report folders with elements:
+#'   - internal: Folder for internal reports
+#'   - public: Folder for public reports
+#'   - settings: Folder for settings files
+#' @param clear.reports Logical. Whether to clear old reports from the internal
+#'   and public folders. Defaults to FALSE.
+#'
+#' @returns The input folders list, unchanged.
+#' @export
+#'
+#' @examples
+#' # Create folders in a temporary directory
+#' folders <- list(
+#'   internal = file.path(tempdir(), "internal"),
+#'   public = file.path(tempdir(), "public"),
+#'   settings = file.path(tempdir(), "settings")
+#' )
+#' setup_filesystem(folders)
+setup_filesystem <- function(folders, clear.reports = FALSE) {
+  # Create the filesystem if it doesn't exist
+  create_filesystem(
+    internal = folders$internal,
+    public = folders$public,
+    settings = folders$settings
+  )
+
+  # Clear old reports if requested
+  if (clear.reports) {
+    clear_old_reports(folders$internal, folders$public)
+  }
+
+  folders
+}
+
+
 #' Read in the report config YAML file
 #'
 #' 'read_report_config' reads in the config YAML file
 #'
 #' @param config_filepath Filepath. Path to report config file.
 #'
-#' @returns a named list with an attribute of 'keys' from the file.
+#' @returns A named list with an attribute of 'keys' from the file.
 #' @export
 #'
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' \dontrun{
-#'   config_file <- "path/to/config_file"
-#'   report_config <- read_report_config(config_file)
-#' }
+#' # Using default values (when file doesn't exist)
+#' report_config <- read_report_config("")
+#'
+#' # Using a config file
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                           package = "epitraxr")
+#' report_config <- read_report_config(config_file)
 read_report_config <- function(config_filepath) {
 
   if (file.exists(config_filepath)) {
@@ -143,18 +183,53 @@ read_report_config <- function(config_filepath) {
 #' @importFrom utils write.csv
 #'
 #' @examples
-#' \dontrun{
-#'   r_data <- data.frame(
-#'     Disease = c("Measles", "Chickenpox"),
-#'     Counts = c(20, 43)
-#'   )
-#'   r_file <- "report.csv"
-#'   r_folder <- "reports"
+#' # Create sample data
+#' r_data <- data.frame(
+#'   Disease = c("Measles", "Chickenpox"),
+#'   Counts = c(20, 43)
+#' )
 #'
-#'   write_report_csv(r_data, r_file, r_folder)
-#' }
+#' # Write to temporary directory
+#' write_report_csv(r_data, "report.csv", tempdir())
 write_report_csv <- function(data, filename, folder) {
   utils::write.csv(data, file.path(folder, filename), row.names = FALSE)
+}
+
+
+#' Write report Excel files
+#'
+#' `write_report_xlsx` writes the given data to the specified folder with the
+#' given filename in Excel (.xlsx) format.
+#'
+#' @param data List. Named list of dataframes. The name will be used as the
+#' sheet name.
+#' @param filename String. Report filename.
+#' @param folder Filepath. Report destination folder.
+#'
+#' @returns NULL.
+#' @export
+#'
+#' @importFrom writexl write_xlsx
+#'
+#' @examples
+#' # Create sample data with multiple sheets
+#' r_data1 <- data.frame(
+#'   Disease = c("Measles", "Chickenpox"),
+#'   Counts = c(20, 43)
+#' )
+#' r_data2 <- data.frame(
+#'   Disease = c("Measles", "Chickenpox"),
+#'   Rate = c(10.5, 22.7)
+#' )
+#' r_xl <- list(
+#'   counts = r_data1,
+#'   rates = r_data2
+#' )
+#'
+#' # Write to temporary directory
+#' write_report_xlsx(r_xl, "report.xlsx", tempdir())
+write_report_xlsx <- function(data, filename, folder) {
+  writexl::write_xlsx(data, file.path(folder, filename))
 }
 
 
@@ -176,12 +251,14 @@ write_report_csv <- function(data, filename, folder) {
 #' @importFrom utils read.csv
 #'
 #' @examples
-#' \dontrun{
-#'   list_file <- "path/to/file"
-#'   default_list <- c("Measles", "Chickenpox")
+#' # Using default list (when file doesn't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_list <- get_internal_disease_list("", default_list)
 #'
-#'   disease_list <- get_internal_disease_list(list_file, default_list)
-#' }
+#' # Using a disease list file
+#' list_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                         package = "epitraxr")
+#' disease_list <- get_internal_disease_list(list_file, default_list)
 get_internal_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
@@ -235,12 +312,14 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 #' @importFrom utils read.csv
 #'
 #' @examples
-#' \dontrun{
-#'   list_file <- "path/to/file"
-#'   default_list <- c("Measles", "Chickenpox")
+#' # Using default list (when file doesn't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_list <- get_public_disease_list("", default_list)
 #'
-#'   disease_list <- get_public_disease_list(list_file, default_list)
-#' }
+#' # Using a disease list file
+#' list_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                         package = "epitraxr")
+#' disease_list <- get_public_disease_list(list_file, default_list)
 get_public_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
@@ -275,4 +354,55 @@ get_public_disease_list <- function(filepath, default_diseases) {
 
     d_list
   }
+}
+
+
+#' Get both internal and public disease lists
+#'
+#' `get_report_disease_lists` is a convenience function that combines
+#' `get_internal_disease_list` and `get_public_disease_list`.
+#'
+#' @param internal_list_fp Filepath. Path to internal disease list CSV file.
+#' @param public_list_fp Filepath. Path to public disease list CSV file.
+#' @param default_diseases String vector. List of default diseases to use if
+#'   either file doesn't exist.
+#'
+#' @returns A list with two elements:
+#'   - internal: Dataframe with EpiTrax_name column
+#'   - public: Dataframe with EpiTrax_name and Public_name columns
+#' @export
+#'
+#' @examples
+#' # Using default lists (when files don't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_lists <- get_report_disease_lists("", "", default_list)
+#'
+#' # Using disease list files
+#' i_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                        package = "epitraxr")
+#' p_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' disease_lists <- get_report_disease_lists(
+#'   internal_list_fp = i_file,
+#'   public_list_fp = p_file,
+#'   default_diseases = default_list
+#' )
+get_report_disease_lists <- function(internal_list_fp, public_list_fp, default_diseases) {
+  # Get internal disease list
+  internal_diseases <- get_internal_disease_list(
+    filepath = internal_list_fp,
+    default_diseases = default_diseases
+  )
+
+  # Get public disease list
+  public_diseases <- get_public_disease_list(
+    filepath = public_list_fp,
+    default_diseases = default_diseases
+  )
+
+  # Return both lists
+  list(
+    internal = internal_diseases,
+    public = public_diseases
+  )
 }

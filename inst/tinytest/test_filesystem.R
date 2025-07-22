@@ -13,6 +13,44 @@ expect_true(dir.exists(internal_folder))
 expect_true(dir.exists(public_folder))
 expect_true(dir.exists(settings_folder))
 
+
+# Test setup_filesystem() -----------------------------------------------------
+# Clean start with fresh temp directories
+test_folders <- list(
+  internal = file.path(tempdir(), "test_internal"),
+  public = file.path(tempdir(), "test_public"),
+  settings = file.path(tempdir(), "test_settings")
+)
+
+# Test basic setup without clearing reports
+expect_silent(result <- setup_filesystem(test_folders))
+expect_equal(result, test_folders)  # Should return input unchanged
+expect_true(dir.exists(test_folders$internal))
+expect_true(dir.exists(test_folders$public))
+expect_true(dir.exists(test_folders$settings))
+
+# Create some test files
+test_file1 <- file.path(test_folders$internal, "test1.csv")
+test_file2 <- file.path(test_folders$public, "test2.csv")
+file.create(test_file1)
+file.create(test_file2)
+
+# Test with clear.reports = FALSE (should preserve files)
+expect_silent(setup_filesystem(test_folders, clear.reports = FALSE))
+expect_true(file.exists(test_file1))
+expect_true(file.exists(test_file2))
+
+# Test with clear.reports = TRUE (should remove files)
+expect_silent(setup_filesystem(test_folders, clear.reports = TRUE))
+expect_false(file.exists(test_file1))
+expect_false(file.exists(test_file2))
+
+# Cleanup test directories
+unlink(test_folders$internal, recursive = TRUE)
+unlink(test_folders$public, recursive = TRUE)
+unlink(test_folders$settings, recursive = TRUE)
+
+
 # Test clear_old_reports() -----------------------------------------------------
 # Copy test files into test folders
 i_report_name <- "internal_report.csv"
@@ -102,6 +140,25 @@ csv_data <- utils::read.csv(csv_fp)
 expect_equal(csv_data, r_data)
 
 
+# Test write_report_xlsx() --------------------------------------------------
+r_data <- data.frame(
+  Disease = c("Measles", "Chickenpox"),
+  Counts = c(20, 43)
+)
+r_xl <- list()
+r_xl[["report"]] <- r_data
+r_file <- "report.xlsx"
+
+expect_silent(write_report_xlsx(r_data, r_file, public_folder))
+
+xlsx_fp <- file.path(public_folder, r_file)
+expect_true(file.exists(xlsx_fp))
+
+# Read Excel file back and compare
+xlsx_data <- readxl::read_excel(xlsx_fp)
+expect_equal(as.data.frame(xlsx_data), r_xl$report)
+
+
 # Test get_internal_disease_list() ---------------------------------------------
 list_file <-"test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
@@ -143,8 +200,32 @@ expect_error(d_list <- get_public_disease_list(list_file, default_list),
              "is incorrectly formatted")
 
 
+# Test get_report_disease_lists() --------------------------------------------
+
+internal_file <- "test_files/disease_lists/internal_list.csv"
+public_file <- "test_files/disease_lists/public_list.csv"
+default_list <- c("Measles", "Chickenpox")
+
+expect_silent(disease_lists <- get_report_disease_lists(
+  internal_file, public_file, default_list
+))
+
+# Check structure
+expect_true(is.list(disease_lists))
+expect_true(all(c("internal", "public") %in% names(disease_lists)))
+
+# Check contents
+expect_equal(
+  disease_lists$internal,
+  get_internal_disease_list(internal_file, default_list)
+)
+expect_equal(
+  disease_lists$public,
+  get_public_disease_list(public_file, default_list)
+)
+
+
 # Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
 unlink(internal_folder, recursive = TRUE)
 unlink(public_folder, recursive = TRUE)
 unlink(settings_folder, recursive = TRUE)
-

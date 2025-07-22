@@ -122,9 +122,11 @@ format_week_num <- function(data) {
 #' \dontrun{
 #' # Interactive file chooser:
 #' read_epitrax_data()
-#' # Using a file path:
-#' read_epitrax_data("path/to/epitrax.csv")
 #' }
+#'
+#' # Using a file path:
+#' read_epitrax_data(system.file("sample_data/sample_epitrax_data.csv",
+#'                               package = "epitraxr"))
 read_epitrax_data <- function(data_file = NULL) {
 
   # If data_file is provided, use it; otherwise, prompt user to choose a file
@@ -135,14 +137,73 @@ read_epitrax_data <- function(data_file = NULL) {
   }
 
   # Read data from file
-  input_data <- utils::read.csv(fpath, header = TRUE)
+  data <- utils::read.csv(fpath, header = TRUE)
 
   # Validate and format data
-  input_data <- validate_data(input_data)
-  input_data <- format_week_num(input_data)
+  data <- validate_data(data)
+  data <- format_week_num(data)
 
   # Return data from file
-  input_data
+  data
+}
+
+
+#' Create an EpiTrax object from data file
+#'
+#' `get_epitrax` reads an EpiTrax data file and creates a structured object
+#' containing the data along with commonly used metadata and empty report lists.
+#'
+#' @param data_file Optional filepath. Data file should be a CSV. If this parameter
+#'   is NULL, the user will be prompted to choose a file interactively.
+#'
+#' @returns An object of class "epitrax" containing:
+#'   - data: The validated and formatted EpiTrax data
+#'   - diseases: Vector of unique diseases in the dataset
+#'   - yrs: Vector of years in the dataset
+#'   - report_year: Most recent year in the dataset
+#'   - report_month: Most recent month in report_year
+#'   - internal_reports: Empty list to store internal reports
+#'   - public_reports: Empty list to store public reports
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Interactive file chooser:
+#' get_epitrax()
+#' }
+#'
+#' # Using sample data included with package
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' epitrax <- get_epitrax(data_file)
+#'
+#' # Access components
+#' head(epitrax$data)
+#' epitrax$diseases
+#' epitrax$report_year
+get_epitrax <- function(data_file = NULL) {
+  # Read in EpiTrax data
+  epitrax_data <- read_epitrax_data(data_file)
+
+  # Compute common summary statistics and metadata
+  data_diseases <- unique(epitrax_data$disease)
+  data_yrs <- get_yrs(epitrax_data)
+  r_year <- max(data_yrs)
+  r_month <- max(epitrax_data[epitrax_data$year == r_year,]$month)
+
+  # Return list of EpiTrax data and metadata
+  epitrax_obj <- list(
+    data = epitrax_data,
+    diseases = data_diseases,
+    yrs = data_yrs,
+    report_year = r_year,
+    report_month = r_month,
+    internal_reports = list(),
+    public_reports = list()
+  )
+  class(epitrax_obj) <- "epitrax"
+
+  epitrax_obj
 }
 
 #' Reshape data frame with each month as a separate column

@@ -20,15 +20,13 @@ NULL.
 \code{create_filesystem} creates the given folders if they don't already exist.
 }
 \examples{
-\dontrun{
-  internal_folder <- "internal_reports"
-  public_folder <- "public_reports"
-  settings_folder <- "report_settings"
+ internal_folder = file.path(tempdir(), "internal")
+ public_folder = file.path(tempdir(), "public")
+ settings_folder = file.path(tempdir(), "settings")
 
-  create_filesystem(
-    internal = internal_folder,
-    public = public_folder,
-    settings = settings_folder
-  )
-}
+ create_filesystem(
+   internal = internal_folder,
+   public = public_folder,
+   settings = settings_folder
+ )
 }

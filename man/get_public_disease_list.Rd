@@ -25,10 +25,12 @@ The provided public disease list file must contain two columns that map the
 EpiTrax disease name to a public-facing name for the public report.
 }
 \examples{
-\dontrun{
-  list_file <- "path/to/file"
-  default_list <- c("Measles", "Chickenpox")
+# Using default list (when file doesn't exist)
+default_list <- c("Measles", "Chickenpox")
+disease_list <- get_public_disease_list("", default_list)
 
-  disease_list <- get_public_disease_list(list_file, default_list)
-}
+# Using a disease list file
+list_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+                        package = "epitraxr")
+disease_list <- get_public_disease_list(list_file, default_list)
 }

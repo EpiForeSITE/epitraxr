@@ -19,7 +19,5 @@ The list of old reports that were cleared.
 the reports that were deleted.
 }
 \examples{
-\dontrun{
-  clear_old_reports("internal_reports", "public_reports")
-}
+clear_old_reports(tempdir(), tempdir())
 }

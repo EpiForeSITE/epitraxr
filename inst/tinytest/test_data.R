@@ -72,19 +72,13 @@ expect_true(all(res$year >= max(input$patient_mmwr_year) - 5))
 
 # Test read_epitrax_data() -----------------------------------------------------
 
-# Test with valid file (minimal valid data)
-tmp_csv <- tempfile(fileext = ".csv")
-tmp_data <- data.frame(patient_mmwr_year=2020L,
-                       patient_mmwr_week=1L,
-                       patient_disease="A")
-utils::write.csv(tmp_data, tmp_csv, row.names=FALSE)
+# Test with valid file
+test_file <- "test_files/data/test_epitrax_data.csv"
+res <- read_epitrax_data(test_file)
 
-res <- read_epitrax_data(tmp_csv)
 expect_true(is.data.frame(res))
-expect_equal(nrow(res), 1)
-expect_equal(res$year, tmp_data$patient_mmwr_year)
-
-unlink(tmp_csv)
+expect_equal(nrow(res), 24683)
+expect_equal(res$year[1], 2020)
 
 # Test with non-existent file
 expect_error(read_epitrax_data("/tmp/this_file_does_not_exist.csv"),
@@ -96,6 +90,41 @@ file.create(wrong_file)
 expect_error(read_epitrax_data(wrong_file),
              "Please select an EpiTrax data file \\(.csv\\)\\.")
 unlink(wrong_file)
+
+
+# Test get_epitrax() ---------------------------------------------------------
+
+# Test with valid data file
+test_file <- "test_files/data/test_epitrax_data.csv"
+expect_silent(epitrax <- get_epitrax(test_file))
+
+# Check object class
+expect_true(inherits(epitrax, "epitrax"))
+
+# Check structure
+expected_names <- c("data", "diseases", "yrs", "report_year",
+                   "report_month", "internal_reports", "public_reports")
+expect_true(all(expected_names %in% names(epitrax)))
+
+# Check data component
+expect_true(is.data.frame(epitrax$data))
+expect_equal(colnames(epitrax$data),
+            c("disease", "month", "year", "counts"))
+
+# Check computed values
+expect_equal(epitrax$diseases, unique(epitrax$data$disease))
+expect_equal(epitrax$yrs, get_yrs(epitrax$data))
+expect_equal(epitrax$report_year, max(epitrax$data$year))
+expect_equal(epitrax$report_month,
+            max(epitrax$data[epitrax$data$year == epitrax$report_year,]$month))
+
+# Check report lists are empty
+expect_equal(length(epitrax$internal_reports), 0)
+expect_equal(length(epitrax$public_reports), 0)
+
+# Test with invalid file
+expect_error(get_epitrax("nonexistent.csv"),
+            "Please select an EpiTrax data file")
 
 
 # Test reshape_monthly_wide() --------------------------------------------------
