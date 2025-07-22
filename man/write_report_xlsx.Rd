@@ -27,9 +27,11 @@ given filename in Excel (.xlsx) format.
     Disease = c("Measles", "Chickenpox"),
     Counts = c(20, 43)
   )
+  r_xl <- list()
+  r_xl[["report"]] <- r_data
   r_file <- "report.xlsx"
   r_folder <- "reports"
 
-  write_report_xlsx(r_data, r_file, r_folder)
+  write_report_xlsx(r_xl, r_file, r_folder)
 }
 }
