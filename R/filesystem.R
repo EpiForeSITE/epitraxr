@@ -158,6 +158,11 @@ write_report_csv <- function(data, filename, folder) {
 }
 
 
+write_report_xlsx <- function(data, filename, folder) {
+  writexl::write_xlsx(data, file.path(folder, filename))
+}
+
+
 #' Get the internal disease list
 #'
 #' 'get_internal_disease_list' reads the internal list from a given CSV file or
