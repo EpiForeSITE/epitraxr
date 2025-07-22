@@ -1,6 +1,6 @@
 Package: epitraxr
 Title: Manipulate Epitrax Data And Generate Reports
-Version: 0.1.1
+Version: 0.1.2
 Authors@R:
     person("Andrew", "Pulsipher", , "pulsipher.a@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0773-3210"))

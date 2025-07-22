@@ -10,7 +10,7 @@ read_report_config(config_filepath)
 \item{config_filepath}{Filepath. Path to report config file.}
 }
 \value{
-a named list with an attribute of 'keys' from the file.
+A named list with an attribute of 'keys' from the file.
 }
 \description{
 'read_report_config' reads in the config YAML file

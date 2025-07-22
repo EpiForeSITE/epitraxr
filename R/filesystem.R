@@ -102,7 +102,7 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 #'
 #' @param config_filepath Filepath. Path to report config file.
 #'
-#' @returns a named list with an attribute of 'keys' from the file.
+#' @returns A named list with an attribute of 'keys' from the file.
 #' @export
 #'
 #' @importFrom yaml read_yaml
@@ -354,4 +354,25 @@ get_public_disease_list <- function(filepath, default_diseases) {
 
     d_list
   }
+}
+
+
+get_report_disease_lists <- function(internal_list_fp, public_list_fp, default_diseases) {
+  # Get internal disease list
+  internal_diseases <- get_internal_disease_list(
+    filepath = internal_list_fp,
+    default_diseases = default_diseases
+  )
+
+  # Get public disease list
+  public_diseases <- get_public_disease_list(
+    filepath = public_list_fp,
+    default_diseases = default_diseases
+  )
+
+  # Return both lists
+  list(
+    internal = internal_diseases,
+    public = public_diseases
+  )
 }

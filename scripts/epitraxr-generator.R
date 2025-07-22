@@ -46,6 +46,11 @@ diseases <- get_internal_disease_list(
   default_diseases = epitrax_data_diseases
 )
 
+report_diseases <- get_report_disease_lists(
+  internal_list_fp = file.path(fsys$settings, "internal_report_diseases.csv"),
+  public_list_fp = file.path(fsys$settings, "public_report_diseases.csv"),
+  default_diseases = epitrax_data_diseases
+)
 
 # Annual counts for each disease -----------------------------------------------
 annual_counts <- create_report_annual_counts(
