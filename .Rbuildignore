@@ -5,3 +5,6 @@
 ^\.github$
 ^\.pre-commit-config\.yaml$
 ^scripts$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
