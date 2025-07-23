@@ -149,3 +149,49 @@ setup_epitrax <- function(epitrax_file, config_file, disease_list_files) {
 
     epitrax
 }
+
+
+#' Create annual counts internal report from an EpiTrax object
+#'
+#' `epitrax_ireport_annual_counts` generates an internal report of annual
+#' counts for each disease in the EpiTrax object data.
+#'
+#' @param epitrax Object of class `epitrax`.
+#'
+#' @returns Updated EpiTrax object with `internal_reports$annual_counts` field
+#' set to the annual counts report.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                          package = "epitraxr"),
+#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_ireport_annual_counts()
+epitrax_ireport_annual_counts <- function(epitrax) {
+    # Check epitrax object
+    validate_epitrax(epitrax)
+
+    # Create annual counts report
+    annual_counts <- create_report_annual_counts(
+        epitrax$data,
+        epitrax$report_diseases$internal$EpiTrax_name
+    )
+
+    # Add to epitrax object
+    epitrax$internal_reports$annual_counts <- annual_counts
+
+    epitrax
+}

@@ -304,10 +304,8 @@ get_internal_disease_list <- function(filepath, default_diseases) {
             "\n - The program will default to using only the diseases ",
             "found in the input dataset.",
             "\n - If you would like to use a different list, ",
-            "please include a file named \n\n\t'",
-            filepath,
-            "'\n\n - The file must have a column named",
-            "\n\n\t'EpiTrax_name'")
+            "please include a file with a column named",
+            "\n\n\t'EpiTrax_name'\n")
 
     default_diseases <- sort(default_diseases)
 
@@ -366,10 +364,8 @@ get_public_disease_list <- function(filepath, default_diseases) {
             "\n - The program will default to using only the diseases ",
             "found in the input dataset.",
             "\n - If you would like to use a different list, ",
-            "please include a file named \n\n\t'",
-            filepath,
-            "'\n\n - The file must have columns named",
-            "\n\n\t'EpiTrax_name' and 'Public_name'")
+            "please include a file with columns named",
+            "\n\n\t'EpiTrax_name' and 'Public_name'\n")
 
     default_diseases <- sort(default_diseases)
 

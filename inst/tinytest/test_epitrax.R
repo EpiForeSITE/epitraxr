@@ -62,3 +62,26 @@ expect_equal(epitrax$data, get_epitrax(data_file)$data)
 expect_equal(epitrax$config, read_report_config(config_file))
 expect_equal(epitrax$report_diseases$internal, utils::read.csv(i_file))
 expect_equal(epitrax$report_diseases$public, utils::read.csv(p_file))
+
+
+# Test internal report functions -----------------------------------------------
+data_file <- "test_files/data/test_epitrax_data.csv"
+config_file <- "test_files/configs/good_config.yaml"
+disease_lists <- list(
+  internal = "use_defaults",
+  public = "use_defaults"
+)
+
+expect_warning(epitrax <- setup_epitrax(
+  epitrax_file = data_file,
+  config_file = config_file,
+  disease_list_files = disease_lists
+))
+
+# Test epitrax_ireport_annual_counts()
+epitrax <- epitrax_ireport_annual_counts(epitrax)
+expect_true(inherits(epitrax, "epitrax"))
+expect_true("annual_counts" %in% names(epitrax$internal_reports))
+expect_true(is.data.frame(epitrax$internal_reports$annual_counts))
+expect_equal(nrow(epitrax$internal_reports$annual_counts), 5)
+
