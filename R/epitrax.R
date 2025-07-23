@@ -158,8 +158,8 @@ setup_epitrax <- function(epitrax_file, config_file, disease_list_files) {
 #'
 #' @param epitrax Object of class `epitrax`.
 #'
-#' @returns Updated EpiTrax object with `internal_reports$annual_counts` field
-#' set to the annual counts report.
+#' @returns Updated EpiTrax object with `annual_counts` added to the
+#' `internal_reports` field.
 #' @export
 #'
 #' @examples
@@ -180,8 +180,10 @@ setup_epitrax <- function(epitrax_file, config_file, disease_list_files) {
 #'   disease_list_files = disease_lists
 #' ) |>
 #'  epitrax_ireport_annual_counts()
+#'
+#' epitrax$internal_reports$annual_counts
 epitrax_ireport_annual_counts <- function(epitrax) {
-    # Check epitrax object
+
     validate_epitrax(epitrax)
 
     # Create annual counts report
@@ -192,6 +194,57 @@ epitrax_ireport_annual_counts <- function(epitrax) {
 
     # Add to epitrax object
     epitrax$internal_reports$annual_counts <- annual_counts
+
+    epitrax
+}
+
+
+#' Create monthly counts internal report for all years from an EpiTrax object
+#'
+#' `epitrax_ireport_monthly_counts_all_yrs` generates internal reports of
+#' monthly counts for each year in the EpiTrax object data.
+#'
+#' @param epitrax Object of class `epitrax`.
+#'
+#' @returns Updated EpiTrax object with monthly counts reports for each year
+#' added to the `internal_reports` field.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                          package = "epitraxr"),
+#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_ireport_monthly_counts_all_yrs()
+#'
+#' names(epitrax$internal_reports)
+epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
+    # Check epitrax object
+    validate_epitrax(epitrax)
+
+    # Create monthly counts for each year
+    for (y in epitrax$yrs) {
+        m_df <- create_report_monthly_counts(
+            data = epitrax$data,
+            y = y,
+            disease_names = epitrax$report_diseases$internal$EpiTrax_name
+        )
+
+        # Add to internal reports
+        epitrax$internal_reports[[paste0("monthly_counts_", y)]] <- m_df
+    }
 
     epitrax
 }
