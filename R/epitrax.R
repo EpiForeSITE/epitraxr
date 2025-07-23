@@ -231,7 +231,7 @@ epitrax_ireport_annual_counts <- function(epitrax) {
 #'
 #' names(epitrax$internal_reports)
 epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
-    # Check epitrax object
+
     validate_epitrax(epitrax)
 
     # Create monthly counts for each year
@@ -245,6 +245,64 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
         # Add to internal reports
         epitrax$internal_reports[[paste0("monthly_counts_", y)]] <- m_df
     }
+
+    epitrax
+}
+
+
+#' Create monthly averages internal report from an EpiTrax object
+#'
+#' `epitrax_ireport_monthly_avgs` generates an internal report of monthly
+#' averages for all years in the EpiTrax object data, with the option to exclude
+#' the current report year.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param exclude.report.year Logical indicating whether to exclude the current
+#' report year from the averages. Defaults to FALSE.
+#'
+#' @returns Updated EpiTrax object with monthly averages report added to the
+#' `internal_reports` field.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                          package = "epitraxr"),
+#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_ireport_monthly_counts_all_yrs()
+#'
+#' names(epitrax$internal_reports)
+epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
+
+    validate_epitrax(epitrax)
+
+    # Create monthly averages
+    r_data <- epitrax$data
+    if (exclude.report.year) {
+        r_data <- r_data[r_data$year != epitrax$report_year,]
+    }
+
+    monthly_avgs <- create_report_monthly_avgs(
+        data = r_data,
+        disease_names = epitrax$report_diseases$internal$EpiTrax_name,
+        config = epitrax$config
+    )
+
+    # Add to internal reports
+    r_name <- paste0("monthly_avgs_", min(r_data$year), "-", max(r_data$year))
+    epitrax$internal_reports[[r_name]] <- monthly_avgs
 
     epitrax
 }
