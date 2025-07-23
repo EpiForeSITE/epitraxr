@@ -114,3 +114,10 @@ expect_true(all(c("public_report_Dec2024", "public_report_Nov2024") %in% names(e
 expect_equal(length(epitrax$public_reports), 2)
 expect_true(is.data.frame(epitrax$public_reports$public_report_Dec2024))
 expect_equal(nrow(epitrax$public_reports$public_report_Dec2024), 5)
+
+# Test epitrax_preport_ytd_rates()
+epitrax <- epitrax_preport_ytd_rates(epitrax)
+expect_true(inherits(epitrax, "epitrax"))
+expect_true("public_report_YTD" %in% names(epitrax$public_reports))
+expect_true(is.data.frame(epitrax$public_reports$public_report_YTD))
+expect_equal(nrow(epitrax$public_reports$public_report_YTD), 5)

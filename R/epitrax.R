@@ -417,3 +417,60 @@ epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
 
     epitrax
 }
+
+
+#' Create year-to-date (YTD) rates public report from an EpiTrax object
+#'
+#' `epitrax_preport_ytd_rates` generates a public report of year-to-date
+#' rates for the current month in the EpiTrax object data.
+#'
+#' @param epitrax Object of class `epitrax`.
+#'
+#' @returns Updated EpiTrax object with YTD rates report added to the
+#' `public_reports` field.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_preport_ytd_rates()
+#'
+#' names(epitrax$public_reports)
+epitrax_preport_ytd_rates <- function(epitrax) {
+
+    validate_epitrax(epitrax)
+
+    # Create YTD report using public disease list
+    ytd_rates <- create_report_ytd_counts(
+        data = epitrax$data,
+        disease_names = epitrax$report_diseases$public$EpiTrax_name,
+        y = epitrax$report_year,
+        m = epitrax$report_month,
+        config = epitrax$config,
+        as.rates = TRUE
+    )
+
+    # Create public report
+    r <- create_public_report_ytd(
+        ytd_rates = ytd_rates,
+        d_list = epitrax$report_diseases$public,
+        config = epitrax$config
+    )
+
+    # Add to public reports
+    epitrax$public_reports[[r$name]] <- r$report
+
+    epitrax
+}
