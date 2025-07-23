@@ -86,11 +86,15 @@ expect_error(validate_filesystem(list(
 # Test with valid config file
 good_config_file <- "test_files/configs/good_config.yaml"
 
+expected_config <- list(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE
+)
+
 expect_silent(report_config <- read_report_config(good_config_file))
-expect_equal(report_config$current_population, 56000)
-expect_equal(report_config$avg_5yr_population, 57000)
-expect_equal(report_config$rounding_decimals, 3)
-expect_equal(report_config$generate_csvs, FALSE)
+expect_equal(report_config, expected_config)
 
 
 has_config_defaults <- function(config) {
@@ -99,7 +103,6 @@ has_config_defaults <- function(config) {
   expect_equal(config$rounding_decimals, 2)
   expect_equal(config$generate_csvs, TRUE)
 }
-
 
 # Test with no config file
 expect_warning(report_config <- read_report_config(""),

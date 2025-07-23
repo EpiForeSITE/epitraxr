@@ -192,16 +192,18 @@ get_epitrax <- function(data_file = NULL) {
   r_month <- max(epitrax_data[epitrax_data$year == r_year,]$month)
 
   # Return list of EpiTrax data and metadata
-  epitrax_obj <- list(
-    data = epitrax_data,
-    diseases = data_diseases,
-    yrs = data_yrs,
-    report_year = r_year,
-    report_month = r_month,
-    internal_reports = list(),
-    public_reports = list()
+  epitrax_obj <- structure(
+    list(
+      data = epitrax_data,
+      diseases = data_diseases,
+      yrs = data_yrs,
+      report_year = r_year,
+      report_month = r_month,
+      internal_reports = list(),
+      public_reports = list()
+    ),
+    class = "epitrax"
   )
-  class(epitrax_obj) <- "epitrax"
 
   epitrax_obj
 }

@@ -26,3 +26,32 @@ validate_epitrax <- function(epitrax, report.check = TRUE) {
         stopifnot(is.list(epitrax$report_diseases))
     }
 }
+
+
+#' Add report configuration to EpiTrax object
+#'
+#' `epitrax_add_config` reads a report configuration file and adds it to the
+#' EpiTrax object.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param filepath Path to the report configuration file.
+#'
+#' @returns Updated EpiTrax object with `config` field set.
+#' @export
+#'
+#' @examples
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' epitrax <- structure(
+#'   list(data = c(1,2,3)),
+#'   class = "epitrax"
+#' )
+#' epitrax <- epitrax_add_config(epitrax, config_file)
+epitrax_add_config <- function(epitrax, filepath) {
+
+    validate_epitrax(epitrax, report.check = FALSE)
+
+    epitrax$config <- read_report_config(filepath)
+
+    epitrax
+}
