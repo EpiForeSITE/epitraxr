@@ -474,3 +474,66 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 
     epitrax
 }
+
+
+#' Write reports from EpiTrax object to CSV files
+#'
+#' `epitrax_write_csvs` writes the internal and public reports from an EpiTrax
+#' object to CSV files in the specified filesystem.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param fsys Filesystem list containing paths for internal and public reports.
+#'
+#' @returns The original EpiTrax object, unchanged.
+#' @export
+#'
+#' @examples
+#' fsys <- list(
+#'   internal = file.path(tempdir(), "internal_reports"),
+#'   public = file.path(tempdir(), "public_reports"),
+#'   settings = file.path(tempdir(), "report_settings")
+#' )
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_preport_ytd_rates() |>
+#'  epitrax_write_csvs(fsys = fsys)
+epitrax_write_csvs <- function(epitrax, fsys) {
+
+    validate_epitrax(epitrax)
+    validate_filesystem(fsys)
+
+    # Verify config allows CSV generation
+    if (epitrax$config$generate_csvs) {
+        # Write internal reports to CSV
+        for (name in names(epitrax$internal_reports)) {
+            write_report_csv(
+                epitrax$internal_reports[[name]],
+                paste0(name, ".csv"),
+                fsys$internal
+            )
+        }
+
+        # Write public reports to CSV
+        for (name in names(epitrax$public_reports)) {
+            write_report_csv(
+                epitrax$public_reports[[name]],
+                paste0(name, ".csv"),
+                fsys$public
+            )
+        }
+    }
+
+    epitrax
+}

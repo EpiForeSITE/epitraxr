@@ -121,3 +121,41 @@ expect_true(inherits(epitrax, "epitrax"))
 expect_true("public_report_YTD" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$public_report_YTD))
 expect_equal(nrow(epitrax$public_reports$public_report_YTD), 5)
+
+# Test epitrax_write_csvs()
+# - Create folders for testing
+fsys <- list(
+  internal = file.path(tempdir(), "test_internal"),
+  public = file.path(tempdir(), "test_public"),
+  settings = file.path(tempdir(), "test_settings")
+)
+setup_filesystem(fsys, clear.reports = TRUE)
+
+# - Test with config$generate_csvs == FALSE
+epitrax$config$generate_csvs <- FALSE
+epitrax <- epitrax_write_csvs(epitrax, fsys = fsys)
+
+expect_true(inherits(epitrax, "epitrax"))
+expect_equal(length(list.files(fsys$internal)), 0)
+expect_equal(length(list.files(fsys$public)), 0)
+
+# - Test with config$generate_csvs == TRUE
+epitrax$config$generate_csvs <- TRUE
+epitrax <- epitrax_write_csvs(epitrax, fsys = fsys)
+
+expect_true(inherits(epitrax, "epitrax"))
+expect_equal(length(list.files(fsys$internal)), 9)
+expect_equal(length(list.files(fsys$public)), 3)
+
+# - Check contents
+annual_counts_fp <- file.path(fsys$internal, "annual_counts.csv")
+public_report_YTD_fp <- file.path(fsys$public, "public_report_YTD.csv")
+
+expect_true(file.exists(annual_counts_fp))
+expect_true(file.exists(public_report_YTD_fp))
+
+expect_equal(epitrax$internal_reports$annual_counts,
+             utils::read.csv(annual_counts_fp, check.names = FALSE))
+expect_equal(epitrax$public_reports$public_report_YTD,
+             utils::read.csv(public_report_YTD_fp))
+
