@@ -175,7 +175,7 @@ expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
 # Test get_internal_disease_list() ---------------------------------------------
-list_file <-"test_files/disease_lists/internal_list.csv"
+list_file <- "test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
 # Test with valid list file

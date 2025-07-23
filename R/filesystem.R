@@ -289,7 +289,7 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
 
-    d_list <- read.csv(filepath, header = TRUE)
+    d_list <- utils::read.csv(filepath, header = TRUE)
 
     # Validate file
     if (is.null(d_list$EpiTrax_name)) {
@@ -350,7 +350,7 @@ get_public_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
 
-    d_list <- read.csv(filepath, header = TRUE)
+    d_list <- utils::read.csv(filepath, header = TRUE)
 
     # Validate file
     if (is.null(d_list$EpiTrax_name) || is.null(d_list$Public_name)) {

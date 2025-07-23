@@ -55,3 +55,54 @@ epitrax_add_config <- function(epitrax, filepath) {
 
     epitrax
 }
+
+
+#' Add report diseases to EpiTrax object
+#'
+#' `epitrax_add_report_diseases` reads internal and public disease lists and adds
+#' them to the EpiTrax object.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param disease_list_files List containing filepaths to internal and public disease
+#'   lists.
+#'
+#' @returns Updated EpiTrax object with `report_diseases` field set.
+#' @export
+#'
+#' @examples
+#' i_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                        package = "epitraxr")
+#' p_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#'
+#' epitrax <- structure(
+#'   list(data = c(1,2,3)),
+#'   class = "epitrax"
+#' )
+#'
+#' epitrax <- epitrax_add_report_diseases(
+#'   epitrax,
+#'   disease_list_files = list(
+#'     internal = i_file,
+#'     public = p_file
+#'   )
+#' )
+epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
+
+    validate_epitrax(epitrax, report.check = FALSE)
+
+    # Get internal and public disease lists
+    diseases <- get_report_disease_lists(
+        internal_list_fp = disease_list_files$internal,
+        public_list_fp = disease_list_files$public,
+        default_diseases = epitrax$diseases
+    )
+
+    # Add to epitrax object
+    epitrax$report_diseases <- list(
+        internal = diseases$internal,
+        public = diseases$public
+    )
+
+    epitrax
+}
