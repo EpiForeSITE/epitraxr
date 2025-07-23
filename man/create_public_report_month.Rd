@@ -4,7 +4,7 @@
 \alias{create_public_report_month}
 \title{Create a monthly cross-section public report}
 \usage{
-create_public_report_month(cases, avgs, d_list, m, y, config, r_folder)
+create_public_report_month(cases, avgs, d_list, m, y, config)
 }
 \arguments{
 \item{cases}{Dataframe. Disease case counts for each month and year. Must
@@ -21,8 +21,6 @@ columns: EpiTrax_name, Public_name.}
 \item{y}{Integer. The report year.}
 
 \item{config}{List. Settings to use for report.}
-
-\item{r_folder}{Filepath. Destination folder for the public report.}
 }
 \value{
 List containing the report name and data.
@@ -45,9 +43,8 @@ d_list <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1,
-  generate_csvs = TRUE
+  rounding_decimals = 1
 )
 
-create_public_report_month(cases, avgs, d_list, 1, 2024, config, tempdir())
+create_public_report_month(cases, avgs, d_list, 1, 2024, config)
 }

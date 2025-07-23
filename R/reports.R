@@ -11,7 +11,6 @@
 #' @param m Integer. The report month (1-12).
 #' @param y Integer. The report year.
 #' @param config List. Settings to use for report.
-#' @param r_folder Filepath. Destination folder for the public report.
 #'
 #' @returns List containing the report name and data.
 #' @export
@@ -33,12 +32,11 @@
 #' config <- list(
 #'   current_population = 100000,
 #'   avg_5yr_population = 100000,
-#'   rounding_decimals = 1,
-#'   generate_csvs = TRUE
+#'   rounding_decimals = 1
 #' )
 #'
-#' create_public_report_month(cases, avgs, d_list, 1, 2024, config, tempdir())
-create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_folder) {
+#' create_public_report_month(cases, avgs, d_list, 1, 2024, config)
+create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
 
   month_name <- month.abb[[m]]
 
@@ -84,13 +82,9 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
   # - Add Trends column last
   m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate)
 
-  # - Write to CSV file if enabled in config
+  # - Name and return report
   r_name <- paste0("public_report_", month_name, y)
-  if (config$generate_csvs) {
-    write_report_csv(m_report, paste0(r_name, ".csv"), r_folder)
-  }
-
-  list("name" = r_name, "report" = m_report)
+  list(name = r_name, report = m_report)
 }
 
 
@@ -103,7 +97,6 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
 #' @param d_list Dataframe. List of diseases to use for the report. Must have
 #' columns: EpiTrax_name, Public_name.
 #' @param config List. Settings to use for report.
-#' @param r_folder Filepath. Destination folder for the public report.
 #'
 #' @returns List containing the report name and data.
 #' @export
@@ -121,8 +114,8 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config, r_fold
 #'   Public_name = c("Alpha","Beta")
 #' )
 #' config <- list(generate_csvs = TRUE)
-#' create_public_report_ytd(ytd_rates, d_list, config, tempdir())
-create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
+#' create_public_report_ytd(ytd_rates, d_list, config)
+create_public_report_ytd <- function(ytd_rates, d_list, config) {
 
   # - Create the report data frame initializing the Rate_per_100k column to 0
   m_report <- data.frame(
@@ -145,13 +138,9 @@ create_public_report_ytd <- function(ytd_rates, d_list, config, r_folder) {
   # - Add Trends column last
   m_report$Trend <- get_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate)
 
-  # - Write to CSV file if enabled in config
+  # - Name and return report
   r_name <- "public_report_YTD"
-  if (config$generate_csvs) {
-    write_report_csv(m_report, paste0(r_name, ".csv"), r_folder)
-  }
-
-  list("name" = r_name, "report" = m_report)
+  list(name = r_name, report = m_report)
 }
 
 
@@ -210,8 +199,6 @@ create_report_annual_counts <- function(data, disease_names) {
 #' per month (Jan through Dec).
 #' @export
 #'
-#' @importFrom stats aggregate
-#'
 #' @examples
 #' data <- data.frame(
 #'   disease = c("A", "A", "B", "B"),
@@ -221,10 +208,8 @@ create_report_annual_counts <- function(data, disease_names) {
 #' )
 #' create_report_monthly_counts(data, 2024, disease_names = c("A", "B", "C"))
 create_report_monthly_counts <- function(data, y, disease_names) {
-  # - Aggregate monthly counts by disease, year, and month
-  month_counts <- stats::aggregate(counts ~ disease + year + month,
-                              data = data,
-                              FUN = sum)
+  # - Get monthly counts by disease, year, and month
+  month_counts <- get_month_counts(data)
 
   # - Extract counts for given year
   month_counts <- month_counts[month_counts$year == y, ]
@@ -274,10 +259,10 @@ create_report_monthly_counts <- function(data, y, disease_names) {
 create_report_monthly_avgs <- function(data, disease_names, config) {
   # - Compute average counts for each month
   monthly_avgs <- stats::aggregate(counts ~ disease + month,
-                          data = data,
-                          FUN = sum)
+                                   data = data,
+                                   FUN = sum)
 
-  num_yrs <- length(unique(data$year))
+  num_yrs <- length(get_yrs(data))
 
   monthly_avgs$counts <- round(monthly_avgs$counts / num_yrs,
                                digits = config$rounding_decimals)
@@ -331,9 +316,7 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates = FALSE) {
 
   # - Aggregate monthly counts by disease, year, and month
-  month_counts <- stats::aggregate(counts ~ disease + year + month,
-                                   data = data,
-                                   FUN = sum)
+  month_counts <- get_month_counts(data)
 
   num_prev_yrs <- length(unique(data[data$year != y,]$year))
 
