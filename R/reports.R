@@ -283,7 +283,8 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 #' Create year-to-date (YTD) counts report
 #'
 #' 'create_report_ytd_counts' generates a data frame of year-to-date counts
-#' for each disease, comparing the given year to the average of other years.
+#' for each disease up to the given month, comparing the given year to the
+#' average of other years.
 #'
 #' @param data Dataframe. Input data with columns: disease, year, month, counts.
 #' @param disease_names Character vector. List of diseases to include in the

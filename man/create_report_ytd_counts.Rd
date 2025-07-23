@@ -27,7 +27,8 @@ average YTD values (either counts or rates per 100k).
 }
 \description{
 'create_report_ytd_counts' generates a data frame of year-to-date counts
-for each disease, comparing the given year to the average of other years.
+for each disease up to the given month, comparing the given year to the
+average of other years.
 }
 \examples{
 data <- data.frame(

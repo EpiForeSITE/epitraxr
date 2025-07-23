@@ -281,7 +281,7 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
-#'  epitrax_ireport_monthly_counts_all_yrs()
+#'  epitrax_ireport_monthly_avgs()
 #'
 #' names(epitrax$internal_reports)
 epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
@@ -303,6 +303,60 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
     # Add to internal reports
     r_name <- paste0("monthly_avgs_", min(r_data$year), "-", max(r_data$year))
     epitrax$internal_reports[[r_name]] <- monthly_avgs
+
+    epitrax
+}
+
+
+#' Create year-to-date (YTD) counts internal report for a given month
+#' from an EpiTrax object
+#'
+#' `epitrax_ireport_ytd_counts_for_month` generates an internal report of
+#' year-to-date counts up to a specific month in the EpiTrax object data.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param as.rates Logical. If TRUE, returns rates per 100k instead of raw counts.
+#'
+#' @returns Updated EpiTrax object with report added to the `internal_reports` field.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                          package = "epitraxr"),
+#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_ireport_ytd_counts_for_month(as.rates = TRUE)
+#'
+#' names(epitrax$internal_reports)
+epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
+
+    validate_epitrax(epitrax)
+
+    # Create YTD counts
+    ytd_counts <- create_report_ytd_counts(
+        data = epitrax$data,
+        disease_names = epitrax$report_diseases$internal$EpiTrax_name,
+        y = epitrax$report_year,
+        m = epitrax$report_month,
+        config = epitrax$config,
+        as.rates = as.rates
+    )
+
+    # Add to internal reports
+    r_name <- ifelse(as.rates, "ytd_rates", "ytd_counts")
+    epitrax$internal_reports[[r_name]] <- ytd_counts
 
     epitrax
 }
