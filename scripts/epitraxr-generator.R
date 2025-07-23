@@ -154,7 +154,10 @@ for (offset in 0:3) {
     config = report_config,
     r_folder = fsys$public
   )
-  xl_files[[r[["name"]]]] <- r[["report"]]
+  if (report_config$generate_csvs) {
+    write_report_csv(r$report, paste0(r$name, ".csv"), fsys$public)
+  }
+  xl_files[[r$name]] <- r$report
 }
 
 # - Create current YTD report
@@ -166,9 +169,11 @@ ytd_report_rates <- prep_report_data(
 r <- create_public_report_ytd(
   ytd_rates <- ytd_report_rates,
   d_list = report_diseases$public,
-  config = report_config,
-  r_folder = fsys$public
+  config = report_config
 )
+if (report_config$generate_csvs) {
+  write_report_csv(r$report, paste0(r$name, ".csv"), fsys$public)
+}
 xl_files[[r[["name"]]]] <- r[["report"]]
 
 # - Combine public reports into single .xlsx file
