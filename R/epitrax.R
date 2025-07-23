@@ -479,7 +479,8 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 #' Write reports from EpiTrax object to CSV files
 #'
 #' `epitrax_write_csvs` writes the internal and public reports from an EpiTrax
-#' object to CSV files in the specified filesystem.
+#' object to CSV files in the specified filesystem. Doesn't write files if
+#' the EpiTrax config setting `generate_csvs` is set to false.
 #'
 #' @param epitrax Object of class `epitrax`.
 #' @param fsys Filesystem list containing paths for internal and public reports.
@@ -534,6 +535,66 @@ epitrax_write_csvs <- function(epitrax, fsys) {
             )
         }
     }
+
+    epitrax
+}
+
+
+#' Write reports from EpiTrax object to Excel files
+#'
+#' `epitrax_write_xlsxs` writes the internal and public reports from an EpiTrax
+#' object to Excel files in the specified filesystem. Combines all internal reports
+#' into one Excel file with separate sheets for each report. Likewise with public
+#' reports.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param fsys Filesystem list containing paths for internal and public reports.
+#'
+#' @returns The original EpiTrax object, unchanged.
+#' @export
+#'
+#' @examples
+#' fsys <- list(
+#'   internal = file.path(tempdir(), "internal_reports"),
+#'   public = file.path(tempdir(), "public_reports"),
+#'   settings = file.path(tempdir(), "report_settings")
+#' )
+#' fsys <- setup_filesystem(fsys)
+#'
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_preport_ytd_rates() |>
+#'  epitrax_write_xlsxs(fsys = fsys)
+epitrax_write_xlsxs <- function(epitrax, fsys) {
+
+    validate_epitrax(epitrax)
+    validate_filesystem(fsys)
+
+    # Write internal reports to Excel
+    write_report_xlsx(
+        data = epitrax$internal_reports,
+        filename = "internal_reports_combined.xlsx",
+        folder = fsys$internal
+    )
+
+    # Write public reports to Excel
+    write_report_xlsx(
+        data = epitrax$public_reports,
+        filename = "public_reports_combined.xlsx",
+        folder = fsys$public
+    )
 
     epitrax
 }

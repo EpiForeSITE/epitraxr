@@ -159,3 +159,35 @@ expect_equal(epitrax$internal_reports$annual_counts,
 expect_equal(epitrax$public_reports$public_report_YTD,
              utils::read.csv(public_report_YTD_fp))
 
+# Test epitrax_write_xlsxs()
+# - Create folders for testing
+fsys <- list(
+  internal = file.path(tempdir(), "test_internal"),
+  public = file.path(tempdir(), "test_public"),
+  settings = file.path(tempdir(), "test_settings")
+)
+setup_filesystem(fsys, clear.reports = TRUE)
+
+# - Check overall results
+epitrax <- epitrax_write_xlsxs(epitrax, fsys = fsys)
+
+expect_true(inherits(epitrax, "epitrax"))
+expect_equal(length(list.files(fsys$internal)), 1)
+expect_equal(length(list.files(fsys$public)), 1)
+
+# - Check file contents
+internal_xlsx <- file.path(fsys$internal, "internal_reports_combined.xlsx")
+public_xlsx <- file.path(fsys$public, "public_reports_combined.xlsx")
+
+expect_true(file.exists(internal_xlsx))
+expect_true(file.exists(public_xlsx))
+
+internal_xlsx_data <- readxl::read_excel(internal_xlsx,
+                                         sheet = "annual_counts")
+public_xlsx_data <- readxl::read_excel(public_xlsx,
+                                       sheet = "public_report_Dec2024")
+
+expect_equal(as.data.frame(internal_xlsx_data),
+             epitrax$internal_reports$annual_counts)
+expect_equal(as.data.frame(public_xlsx_data),
+             epitrax$public_reports$public_report_Dec2024)
