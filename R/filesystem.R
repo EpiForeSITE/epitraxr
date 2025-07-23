@@ -96,6 +96,32 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 }
 
 
+#' Validate the filesystem structure
+#'
+#' `validate_filesystem` checks that the filesystem structure is valid.
+#'
+#' @param fsys List. Contains paths to report folders with elements:
+#'   - internal: Folder for internal reports
+#'   - public: Folder for public reports
+#'   - settings: Folder for settings files
+#'
+#' @returns NULL if valid, otherwise throws an error.
+#' @export
+#'
+#' @examples
+#' fsys <- list(
+#'   internal = "internal_reports",
+#'   public = "public_reports",
+#'   settings = "report_settings"
+#' )
+#' validate_filesystem(fsys)
+validate_filesystem <- function(fsys) {
+  stopifnot(is.character(fsys$internal))
+  stopifnot(is.character(fsys$public))
+  stopifnot(is.character(fsys$settings))
+}
+
+
 #' Read in the report config YAML file
 #'
 #' 'read_report_config' reads in the config YAML file
@@ -263,7 +289,7 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
 
-    d_list <- read.csv(filepath, header = TRUE)
+    d_list <- utils::read.csv(filepath, header = TRUE)
 
     # Validate file
     if (is.null(d_list$EpiTrax_name)) {
@@ -278,10 +304,8 @@ get_internal_disease_list <- function(filepath, default_diseases) {
             "\n - The program will default to using only the diseases ",
             "found in the input dataset.",
             "\n - If you would like to use a different list, ",
-            "please include a file named \n\n\t'",
-            filepath,
-            "'\n\n - The file must have a column named",
-            "\n\n\t'EpiTrax_name'")
+            "please include a file with a column named",
+            "\n\n\t'EpiTrax_name'\n")
 
     default_diseases <- sort(default_diseases)
 
@@ -324,7 +348,7 @@ get_public_disease_list <- function(filepath, default_diseases) {
 
   if (file.exists(filepath)) {
 
-    d_list <- read.csv(filepath, header = TRUE)
+    d_list <- utils::read.csv(filepath, header = TRUE)
 
     # Validate file
     if (is.null(d_list$EpiTrax_name) || is.null(d_list$Public_name)) {
@@ -340,10 +364,8 @@ get_public_disease_list <- function(filepath, default_diseases) {
             "\n - The program will default to using only the diseases ",
             "found in the input dataset.",
             "\n - If you would like to use a different list, ",
-            "please include a file named \n\n\t'",
-            filepath,
-            "'\n\n - The file must have columns named",
-            "\n\n\t'EpiTrax_name' and 'Public_name'")
+            "please include a file with columns named",
+            "\n\n\t'EpiTrax_name' and 'Public_name'\n")
 
     default_diseases <- sort(default_diseases)
 

@@ -192,16 +192,18 @@ get_epitrax <- function(data_file = NULL) {
   r_month <- max(epitrax_data[epitrax_data$year == r_year,]$month)
 
   # Return list of EpiTrax data and metadata
-  epitrax_obj <- list(
-    data = epitrax_data,
-    diseases = data_diseases,
-    yrs = data_yrs,
-    report_year = r_year,
-    report_month = r_month,
-    internal_reports = list(),
-    public_reports = list()
+  epitrax_obj <- structure(
+    list(
+      data = epitrax_data,
+      diseases = data_diseases,
+      yrs = data_yrs,
+      report_year = r_year,
+      report_month = r_month,
+      internal_reports = list(),
+      public_reports = list()
+    ),
+    class = "epitrax"
   )
-  class(epitrax_obj) <- "epitrax"
 
   epitrax_obj
 }
@@ -323,4 +325,33 @@ prep_report_data <- function(data, report_d_list) {
   }
 
   data
+}
+
+
+
+#' Calculate monthly counts by disease
+#'
+#' `get_month_counts` aggregates disease counts by month and year. This is a helper
+#' function used internally by report generation functions to summarize monthly
+#' disease counts.
+#'
+#' @param data Dataframe. Must contain columns:
+#'   - disease: The disease name
+#'   - year: The year of the counts
+#'   - month: The month of the counts (1-12)
+#'   - counts: The number of cases
+#'
+#' @returns A dataframe with the aggregated monthly counts
+#' @export
+#'
+#' @examples
+#' df <- data.frame(
+#'   disease = c("Flu", "Flu", "Measles"),
+#'   year = c(2020, 2020, 2020),
+#'   month = c(1, 1, 2),
+#'   counts = c(5, 3, 2)
+#' )
+#' get_month_counts(df)
+get_month_counts <- function(data) {
+  stats::aggregate(counts ~ disease + year + month, data = data, FUN = sum)
 }

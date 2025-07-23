@@ -14,6 +14,26 @@ expect_true(dir.exists(public_folder))
 expect_true(dir.exists(settings_folder))
 
 
+# Test clear_old_reports() -----------------------------------------------------
+# Copy test files into test folders
+i_report_name <- "internal_report.csv"
+p_report_name <- "public_report.csv"
+
+file.copy(file.path("test_files/reports/", i_report_name), internal_folder)
+file.copy(file.path("test_files/reports/", p_report_name), public_folder)
+
+# Test files deleted
+i_file <- file.path(internal_folder, i_report_name)
+p_file <- file.path(public_folder, p_report_name)
+
+expect_silent(old_files <- clear_old_reports(internal_folder, public_folder))
+expect_equal(old_files[[1]], i_file)
+expect_equal(old_files[[2]], p_file)
+
+expect_false(file.exists(i_file))
+expect_false(file.exists(p_file))
+
+
 # Test setup_filesystem() -----------------------------------------------------
 # Clean start with fresh temp directories
 test_folders <- list(
@@ -51,34 +71,30 @@ unlink(test_folders$public, recursive = TRUE)
 unlink(test_folders$settings, recursive = TRUE)
 
 
-# Test clear_old_reports() -----------------------------------------------------
-# Copy test files into test folders
-i_report_name <- "internal_report.csv"
-p_report_name <- "public_report.csv"
+# Test validate_filesystem() ---------------------------------------------------
+expect_silent(validate_filesystem(list(
+  internal = "test_internal",
+  public = "test_public",
+  settings = "test_settings"
+)))
+expect_error(validate_filesystem(list(
+  internal = "test_internal"
+)))
 
-file.copy(file.path("test_files/reports/", i_report_name), internal_folder)
-file.copy(file.path("test_files/reports/", p_report_name), public_folder)
-
-# Test files deleted
-i_file <- file.path(internal_folder, i_report_name)
-p_file <- file.path(public_folder, p_report_name)
-
-expect_silent(old_files <- clear_old_reports(internal_folder, public_folder))
-expect_equal(old_files[[1]], i_file)
-expect_equal(old_files[[2]], p_file)
-
-expect_false(file.exists(i_file))
-expect_false(file.exists(p_file))
 
 # Test read_report_config() ----------------------------------------------------
 # Test with valid config file
 good_config_file <- "test_files/configs/good_config.yaml"
 
+expected_config <- list(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE
+)
+
 expect_silent(report_config <- read_report_config(good_config_file))
-expect_equal(report_config$current_population, 56000)
-expect_equal(report_config$avg_5yr_population, 57000)
-expect_equal(report_config$rounding_decimals, 3)
-expect_equal(report_config$generate_csvs, FALSE)
+expect_equal(report_config, expected_config)
 
 
 has_config_defaults <- function(config) {
@@ -87,7 +103,6 @@ has_config_defaults <- function(config) {
   expect_equal(config$rounding_decimals, 2)
   expect_equal(config$generate_csvs, TRUE)
 }
-
 
 # Test with no config file
 expect_warning(report_config <- read_report_config(""),
@@ -160,7 +175,7 @@ expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
 # Test get_internal_disease_list() ---------------------------------------------
-list_file <-"test_files/disease_lists/internal_list.csv"
+list_file <- "test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
 # Test with valid list file
