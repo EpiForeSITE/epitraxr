@@ -9,15 +9,15 @@ epitrax_add_report_diseases(epitrax, disease_list_files)
 \arguments{
 \item{epitrax}{Object of class \code{epitrax}.}
 
-\item{disease_list_files}{List containing filepaths to internal and public disease
-lists.}
+\item{disease_list_files}{List containing filepaths to internal and public
+disease lists.}
 }
 \value{
 Updated EpiTrax object with \code{report_diseases} field set.
 }
 \description{
-\code{epitrax_add_report_diseases} reads internal and public disease lists and adds
-them to the EpiTrax object.
+\code{epitrax_add_report_diseases} reads internal and public disease lists and
+adds them to the EpiTrax object.
 }
 \examples{
 i_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",

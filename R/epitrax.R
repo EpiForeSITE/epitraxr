@@ -59,12 +59,12 @@ epitrax_add_config <- function(epitrax, filepath) {
 
 #' Add report diseases to EpiTrax object
 #'
-#' `epitrax_add_report_diseases` reads internal and public disease lists and adds
-#' them to the EpiTrax object.
+#' `epitrax_add_report_diseases` reads internal and public disease lists and
+#' adds them to the EpiTrax object.
 #'
 #' @param epitrax Object of class `epitrax`.
-#' @param disease_list_files List containing filepaths to internal and public disease
-#'   lists.
+#' @param disease_list_files List containing filepaths to internal and public
+#'  disease lists.
 #'
 #' @returns Updated EpiTrax object with `report_diseases` field set.
 #' @export
@@ -103,6 +103,49 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
         internal = diseases$internal,
         public = diseases$public
     )
+
+    epitrax
+}
+
+
+#' Setup EpiTrax object with configuration and disease lists
+#'
+#' `setup_epitrax` initializes an EpiTrax object with configuration and report
+#' disease lists. It is a convenience function that combines `get_epitrax`,
+#' `epitrax_add_config`, and `epitrax_add_report_diseases`.
+#'
+#' @param epitrax_file Optional path to the EpiTrax data file. Data file should
+#' be a CSV. If this parameter is NULL, the user will be prompted to choose a
+#' file interactively.
+#' @param config_file Path to the report configuration file.
+#' @param disease_list_files List containing filepaths to internal and public
+#' report disease lists.
+#'
+#' @returns An EpiTrax object with configuration and report diseases set.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                          package = "epitraxr"),
+#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' )
+setup_epitrax <- function(epitrax_file, config_file, disease_list_files) {
+
+    epitrax <- get_epitrax(epitrax_file) |>
+        epitrax_add_config(config_file) |>
+        epitrax_add_report_diseases(disease_list_files)
 
     epitrax
 }
