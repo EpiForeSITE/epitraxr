@@ -14,6 +14,26 @@ expect_true(dir.exists(public_folder))
 expect_true(dir.exists(settings_folder))
 
 
+# Test clear_old_reports() -----------------------------------------------------
+# Copy test files into test folders
+i_report_name <- "internal_report.csv"
+p_report_name <- "public_report.csv"
+
+file.copy(file.path("test_files/reports/", i_report_name), internal_folder)
+file.copy(file.path("test_files/reports/", p_report_name), public_folder)
+
+# Test files deleted
+i_file <- file.path(internal_folder, i_report_name)
+p_file <- file.path(public_folder, p_report_name)
+
+expect_silent(old_files <- clear_old_reports(internal_folder, public_folder))
+expect_equal(old_files[[1]], i_file)
+expect_equal(old_files[[2]], p_file)
+
+expect_false(file.exists(i_file))
+expect_false(file.exists(p_file))
+
+
 # Test setup_filesystem() -----------------------------------------------------
 # Clean start with fresh temp directories
 test_folders <- list(
@@ -51,24 +71,16 @@ unlink(test_folders$public, recursive = TRUE)
 unlink(test_folders$settings, recursive = TRUE)
 
 
-# Test clear_old_reports() -----------------------------------------------------
-# Copy test files into test folders
-i_report_name <- "internal_report.csv"
-p_report_name <- "public_report.csv"
+# Test validate_filesystem() ---------------------------------------------------
+expect_silent(validate_filesystem(list(
+  internal = "test_internal",
+  public = "test_public",
+  settings = "test_settings"
+)))
+expect_error(validate_filesystem(list(
+  internal = "test_internal"
+)))
 
-file.copy(file.path("test_files/reports/", i_report_name), internal_folder)
-file.copy(file.path("test_files/reports/", p_report_name), public_folder)
-
-# Test files deleted
-i_file <- file.path(internal_folder, i_report_name)
-p_file <- file.path(public_folder, p_report_name)
-
-expect_silent(old_files <- clear_old_reports(internal_folder, public_folder))
-expect_equal(old_files[[1]], i_file)
-expect_equal(old_files[[2]], p_file)
-
-expect_false(file.exists(i_file))
-expect_false(file.exists(p_file))
 
 # Test read_report_config() ----------------------------------------------------
 # Test with valid config file
