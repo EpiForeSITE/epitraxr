@@ -25,10 +25,8 @@ data_file <- system.file("sample_data/sample_epitrax_data.csv",
 config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
                            package = "epitraxr")
 disease_lists <- list(
-  internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
-                         package = "epitraxr"),
-  public = system.file("tinytest/test_files/disease_lists/public_list.csv",
-                       package = "epitraxr")
+  internal = "use_defaults",
+  public = "use_defaults"
 )
 
 epitrax <- setup_epitrax(

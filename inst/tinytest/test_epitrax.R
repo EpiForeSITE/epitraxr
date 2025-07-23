@@ -64,7 +64,7 @@ expect_equal(epitrax$report_diseases$internal, utils::read.csv(i_file))
 expect_equal(epitrax$report_diseases$public, utils::read.csv(p_file))
 
 
-# Test internal report functions -----------------------------------------------
+# Test report functions --------------------------------------------------------
 data_file <- "test_files/data/test_epitrax_data.csv"
 config_file <- "test_files/configs/good_config.yaml"
 disease_lists <- list(
@@ -106,3 +106,11 @@ expect_false("ytd_counts" %in% names(epitrax$internal_reports))
 expect_true("ytd_rates" %in% names(epitrax$internal_reports))
 expect_true(is.data.frame(epitrax$internal_reports$ytd_rates))
 expect_equal(nrow(epitrax$internal_reports$ytd_rates), 5)
+
+# Test epitrax_preport_month_crosssections()
+epitrax <- epitrax_preport_month_crosssections(epitrax, month_offsets = 0:1)
+expect_true(inherits(epitrax, "epitrax"))
+expect_true(all(c("public_report_Dec2024", "public_report_Nov2024") %in% names(epitrax$public_reports)))
+expect_equal(length(epitrax$public_reports), 2)
+expect_true(is.data.frame(epitrax$public_reports$public_report_Dec2024))
+expect_equal(nrow(epitrax$public_reports$public_report_Dec2024), 5)

@@ -168,10 +168,8 @@ setup_epitrax <- function(epitrax_file, config_file, disease_list_files) {
 #' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                            package = "epitraxr")
 #' disease_lists <- list(
-#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
-#'                          package = "epitraxr"),
-#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
-#'                        package = "epitraxr")
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
 #' )
 #'
 #' epitrax <- setup_epitrax(
@@ -216,10 +214,8 @@ epitrax_ireport_annual_counts <- function(epitrax) {
 #' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                            package = "epitraxr")
 #' disease_lists <- list(
-#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
-#'                          package = "epitraxr"),
-#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
-#'                        package = "epitraxr")
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
 #' )
 #'
 #' epitrax <- setup_epitrax(
@@ -270,10 +266,8 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
 #' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                            package = "epitraxr")
 #' disease_lists <- list(
-#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
-#'                          package = "epitraxr"),
-#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
-#'                        package = "epitraxr")
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
 #' )
 #'
 #' epitrax <- setup_epitrax(
@@ -326,10 +320,8 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 #' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                            package = "epitraxr")
 #' disease_lists <- list(
-#'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
-#'                          package = "epitraxr"),
-#'   public = system.file("tinytest/test_files/disease_lists/public_list.csv",
-#'                        package = "epitraxr")
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
 #' )
 #'
 #' epitrax <- setup_epitrax(
@@ -357,6 +349,71 @@ epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
     # Add to internal reports
     r_name <- ifelse(as.rates, "ytd_rates", "ytd_counts")
     epitrax$internal_reports[[r_name]] <- ytd_counts
+
+    epitrax
+}
+
+
+#' Create monthly cross-section reports from an EpiTrax object
+#'
+#' `epitrax_preport_month_crosssections` generates monthly cross-section
+#' reports. These compare the counts for a given month against the
+#' monthly averages for the same month across previous years.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param month_offsets Numeric vector of month offsets to create reports for.
+#' Defaults to 0:3, which generates reports for the current month and the three
+#' previous months.
+#'
+#' @returns Updated EpiTrax object with monthly cross-section reports added to
+#' the `public_reports` field.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_preport_month_crosssections(month_offsets = 0:1)
+#'
+#' names(epitrax$public_reports)
+epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
+
+    validate_epitrax(epitrax)
+
+    # Get needed statistics
+    month_counts <- get_month_counts(epitrax$data)
+    r_data <- epitrax$data[epitrax$data$year != epitrax$report_year,]
+    monthly_avgs <- create_report_monthly_avgs(
+        data = r_data,
+        disease_names = epitrax$report_diseases$public$EpiTrax_name,
+        config = epitrax$config
+    )
+
+    # Create monthly cross-section reports
+    for (offset in month_offsets) {
+        r <- create_public_report_month(
+            cases = month_counts,
+            avgs = monthly_avgs,
+            d_list = epitrax$report_diseases$public,
+            y = epitrax$report_year,
+            m = epitrax$report_month - offset,
+            config = epitrax$config
+        )
+
+        # Add to public reports
+        epitrax$public_reports[[r$name]] <- r$report
+    }
 
     epitrax
 }
