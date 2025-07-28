@@ -4,13 +4,13 @@
 \alias{epitrax_add_report_diseases}
 \title{Add report diseases to EpiTrax object}
 \usage{
-epitrax_add_report_diseases(epitrax, disease_list_files)
+epitrax_add_report_diseases(epitrax, disease_list_files = NULL)
 }
 \arguments{
 \item{epitrax}{Object of class \code{epitrax}.}
 
-\item{disease_list_files}{List containing filepaths to internal and public
-disease lists.}
+\item{disease_list_files}{Optional list containing filepaths to internal and public
+disease lists. If omitted, the default lists will be used and a warning will be thrown.}
 }
 \value{
 Updated EpiTrax object with \code{report_diseases} field set.

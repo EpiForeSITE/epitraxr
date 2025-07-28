@@ -52,6 +52,13 @@ expect_true(inherits(epitrax, "epitrax"))
 expect_equal(epitrax$report_diseases$internal, utils::read.csv(i_file))
 expect_equal(epitrax$report_diseases$public, utils::read.csv(p_file))
 
+# Test with NULL disease lists
+expect_warning(epitrax <- epitrax_add_report_diseases(epitrax),
+               "You have not provided a disease list")
+expect_equal(epitrax$report_diseases$internal$EpiTrax_name, sort(epitrax$diseases))
+expect_equal(epitrax$report_diseases$public$EpiTrax_name, sort(epitrax$diseases))
+expect_equal(epitrax$report_diseases$public$Public_name, sort(epitrax$diseases))
+
 
 # Test setup_epitrax() ---------------------------------------------------------
 data_file <- "test_files/data/test_epitrax_data.csv"
@@ -110,7 +117,7 @@ expect_equal(epitrax_3$report_diseases, epitrax_1$report_diseases)
 expect_error(epitrax_4 <- setup_epitrax(
   epitrax_file = data_file,
   config_list = config_list,
-  config_file = config_file, 
+  config_file = config_file,
   disease_list_files = disease_lists
 ), "may not both be specified")
 
