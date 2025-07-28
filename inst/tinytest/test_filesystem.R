@@ -71,17 +71,6 @@ unlink(test_folders$public, recursive = TRUE)
 unlink(test_folders$settings, recursive = TRUE)
 
 
-# Test validate_filesystem() ---------------------------------------------------
-expect_silent(validate_filesystem(list(
-  internal = "test_internal",
-  public = "test_public",
-  settings = "test_settings"
-)))
-expect_error(validate_filesystem(list(
-  internal = "test_internal"
-)))
-
-
 # Test read_report_config() ----------------------------------------------------
 # Test with valid config file
 good_config_file <- "test_files/configs/good_config.yaml"

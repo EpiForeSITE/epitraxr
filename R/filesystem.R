@@ -96,32 +96,6 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 }
 
 
-#' Validate the filesystem structure
-#'
-#' `validate_filesystem` checks that the filesystem structure is valid.
-#'
-#' @param fsys List. Contains paths to report folders with elements:
-#'   - internal: Folder for internal reports
-#'   - public: Folder for public reports
-#'   - settings: Folder for settings files
-#'
-#' @returns NULL if valid, otherwise throws an error.
-#' @export
-#'
-#' @examples
-#' fsys <- list(
-#'   internal = "internal_reports",
-#'   public = "public_reports",
-#'   settings = "report_settings"
-#' )
-#' validate_filesystem(fsys)
-validate_filesystem <- function(fsys) {
-  stopifnot(is.character(fsys$internal))
-  stopifnot(is.character(fsys$public))
-  stopifnot(is.character(fsys$settings))
-}
-
-
 #' Read in the report config YAML file
 #'
 #' 'read_report_config' reads in the config YAML file
