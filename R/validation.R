@@ -54,6 +54,56 @@ validate_filesystem <- function(fsys) {
 }
 
 
+#' Validate a config list
+#'
+#' `validate_config` checks the values of the given config list. If any values
+#' are missing or invalid, they are set to default values.
+#'
+#' @param config Named list.
+#'
+#' @returns A named list with 'keys' corresponding to config options.
+#' @export
+#'
+#' @examples
+#' validate_config(config = list())
+validate_config <- function(config) {
+
+    warnings <- c()
+
+    if (is.null(config$current_population) ||
+        !inherits(config$current_population, c("numeric", "integer"))) {
+      warnings <- c(warnings, "\n - 'current_population' set to 100,000")
+      config$current_population <- 100000
+    }
+
+    if (is.null(config$avg_5yr_population) ||
+        !inherits(config$avg_5yr_population, c("numeric", "integer"))) {
+      warnings <- c(warnings,
+                    "\n - 'avg_5yr_population' set to 'current_population'")
+      config$avg_5yr_population <- config$current_population
+    }
+
+    if (is.null(config$rounding_decimals) ||
+        !inherits(config$rounding_decimals, c("numeric", "integer"))) {
+      warnings <- c(warnings, "\n - 'rounding_decimals' set to 2")
+      config$rounding_decimals <- 2
+    }
+
+    if (is.null(config$generate_csvs) ||
+        !inherits(config$generate_csvs, "logical")) {
+      warnings <- c(warnings, "\n - 'generate_csvs' set to TRUE")
+      config$generate_csvs <- TRUE
+    }
+
+    if (length(warnings) > 0) {
+        warning("These config fields are missing/invalid and will be set to
+                defaults:\n", warnings)
+    }
+
+    config
+}
+
+
 #' Validate input EpiTrax data
 #'
 #' 'validate_data' checks the data for expected columns and data types, removes
@@ -67,7 +117,11 @@ validate_filesystem <- function(fsys) {
 #' @importFrom stats na.omit
 #'
 #' @examples
-#' df <- data.frame(patient_mmwr_year=2020L, patient_mmwr_week=1L, patient_disease="A")
+#' df <- data.frame(
+#'   patient_mmwr_year = 2020L,
+#'   patient_mmwr_week = 1L,
+#'   patient_disease = "A"
+#' )
 #' validate_data(df)
 validate_data <- function(data) {
 

@@ -26,6 +26,40 @@ expect_error(validate_filesystem(list(
 )))
 
 
+# Test validate_config() -------------------------------------------------------
+valid_config <- list(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE
+)
+
+bad_config <- list(
+  current_population = "not numeric",
+  avg_5yr_population = "not numeric",
+  rounding_decimals = "not numeric",
+  generate_csvs = "not logical"
+)
+
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE
+)
+
+expect_silent(result_config <- validate_config(valid_config))
+expect_equal(result_config, valid_config)
+
+expect_warning(result_config <- validate_config(config = list()),
+               "config fields are missing/invalid")
+expect_equal(result_config, default_config)
+
+expect_warning(result_config <- validate_config(config = bad_config),
+               "config fields are missing/invalid")
+expect_equal(result_config, default_config)
+
+
 # Test validate_data() ---------------------------------------------------------
 
 expected_cols <- c("patient_mmwr_year", "patient_mmwr_week", "patient_disease")

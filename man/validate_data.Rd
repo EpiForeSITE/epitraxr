@@ -17,6 +17,10 @@ The validated data with all unneeded columns removed.
 unneeded columns, and returns the resulting data.
 }
 \examples{
-df <- data.frame(patient_mmwr_year=2020L, patient_mmwr_week=1L, patient_disease="A")
+df <- data.frame(
+  patient_mmwr_year = 2020L,
+  patient_mmwr_week = 1L,
+  patient_disease = "A"
+)
 validate_data(df)
 }

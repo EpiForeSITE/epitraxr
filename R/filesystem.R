@@ -108,10 +108,6 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' # Using default values (when file doesn't exist)
-#' report_config <- read_report_config("")
-#'
-#' # Using a config file
 #' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                           package = "epitraxr")
 #' report_config <- read_report_config(config_file)
@@ -120,51 +116,52 @@ read_report_config <- function(config_filepath) {
   if (file.exists(config_filepath)) {
     config <- yaml::read_yaml(config_filepath)
 
-    # - Validate or set defaults
-    if (is.null(config$current_population) ||
-        !inherits(config$current_population, "integer")) {
-      warning("In '", config_filepath, "', 'current_population' is missing or
-            invalid. Using default value of 100,000 instead.")
-      config$current_population <- 100000
-    }
-
-    if (is.null(config$avg_5yr_population) ||
-        !inherits(config$avg_5yr_population, "integer")) {
-      warning("In '", config_filepath, "', 'avg_5yr_population' is missing or
-            invalid. Using default value of 'current_population' instead.")
-      config$avg_5yr_population <- config$current_population
-    }
-
-    if (is.null(config$rounding_decimals) ||
-        !inherits(config$rounding_decimals, "integer")) {
-      warning("In '", config_filepath, "', 'rounding_decimals' is missing or
-            invalid. Using default value of 2 instead.")
-      config$rounding_decimals <- 2
-    }
-
-    if (is.null(config$generate_csvs) ||
-        !inherits(config$generate_csvs, "logical")) {
-      warning("In '", config_filepath, "', 'generate_csvs' is missing or
-            invalid. Using default value of TRUE instead.")
-      config$generate_csvs <- TRUE
-    }
+    config <- validate_config(config)
 
     config
   } else {
-
-    warning("No report configuration file provided. Using default values:
-            'current_population' = 100,000
-            'avg_5yr_population' = 100,000
-            'rounding_decimals' = 2
-            'generate_csvs' = TRUE")
-
-    config <- list(current_population = 100000,
-                   avg_5yr_population = 100000,
-                   rounding_decimals = 2,
-                   generate_csvs = TRUE)
-
-    config
+    stop("No report configuration file provided. Please provide a valid file or
+         use `epitraxr_config()` to create a config programmatically.")
   }
+}
+
+
+#' Create epitraxr config object
+#'
+#' `epitraxr_config` creates a list of configuration options used for generating
+#' reports.
+#'
+#' @param current_population Integer. Defaults to 100,000.
+#' @param avg_5yr_population Integer. Defaults to 100,000.
+#' @param rounding_decimals Integer. Defaults to 2.
+#' @param generate_csvs Logical. Defaults to TRUE.
+#'
+#' @returns A named list with 'keys' corresponding to config options.
+#' @export
+#'
+#' @examples
+#' epitraxr_config(
+#'   current_population = 56000,
+#'   avg_5yr_population = 57000,
+#'   rounding_decimals = 3,
+#'   generate_csvs = FALSE
+#' )
+epitraxr_config <- function(
+    current_population = 100000,
+    avg_5yr_population = 100000,
+    rounding_decimals = 2,
+    generate_csvs = TRUE) {
+
+  config <- list(
+    current_population = current_population,
+    avg_5yr_population = avg_5yr_population,
+    rounding_decimals = rounding_decimals,
+    generate_csvs = generate_csvs
+  )
+
+  config <- validate_config(config)
+
+  config
 }
 
 

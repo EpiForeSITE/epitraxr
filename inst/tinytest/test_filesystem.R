@@ -82,51 +82,62 @@ expected_config <- list(
   generate_csvs = FALSE
 )
 
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE
+)
+
 expect_silent(report_config <- read_report_config(good_config_file))
 expect_equal(report_config, expected_config)
 
-
-has_config_defaults <- function(config) {
-  expect_equal(config$current_population, 100000)
-  expect_equal(config$avg_5yr_population, 100000)
-  expect_equal(config$rounding_decimals, 2)
-  expect_equal(config$generate_csvs, TRUE)
-}
-
 # Test with no config file
-expect_warning(report_config <- read_report_config(""),
+expect_error(report_config <- read_report_config(""),
                "No report configuration file provided.")
-
-has_config_defaults(report_config)
 
 # Test missing config fields
 empty_config_file <- "test_files/configs/empty_config.yaml"
-
 expect_warning(report_config <- read_report_config(empty_config_file),
-               "'current_population' is missing")
-expect_warning(report_config <- read_report_config(empty_config_file),
-               "'avg_5yr_population' is missing")
-expect_warning(report_config <- read_report_config(empty_config_file),
-               "'rounding_decimals' is missing")
-expect_warning(report_config <- read_report_config(empty_config_file),
-               "'generate_csvs' is missing")
-
-has_config_defaults(report_config)
-
+                "config fields are missing/invalid")
+expect_equal(report_config, default_config)
 
 # Test invalid config fields
 invalid_config_file <- "test_files/configs/invalid_config.yaml"
+expect_warning(report_config <- read_report_config(invalid_config_file),
+               "config fields are missing/invalid")
+expect_equal(report_config, default_config)
 
-expect_warning(report_config <- read_report_config(invalid_config_file),
-               "'current_population' is missing")
-expect_warning(report_config <- read_report_config(invalid_config_file),
-               "'avg_5yr_population' is missing")
-expect_warning(report_config <- read_report_config(invalid_config_file),
-               "'rounding_decimals' is missing")
-expect_warning(report_config <- read_report_config(empty_config_file),
-               "'generate_csvs' is missing")
 
-has_config_defaults(report_config)
+# Test epitraxr_config() -------------------------------------------------------
+expected_config <- list(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE
+)
+
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE
+)
+
+expect_equal(epitraxr_config(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE
+), expected_config)
+expect_equal(do.call(epitraxr_config, list()), default_config)
+expect_warning(result_config <- epitraxr_config(
+  current_population = "not numeric",
+  avg_5yr_population = "not numeric",
+  rounding_decimals = "not numeric",
+  generate_csvs = "not logical"
+), "config fields are missing/invalid")
+expect_equal(result_config, default_config)
 
 
 # Test write_report_csv() ------------------------------------------------------

@@ -27,6 +27,11 @@ epitrax_add_config <- function(epitrax, filepath) {
 }
 
 
+epitrax_use_default_config <- function(epitrax, config) {
+
+}
+
+
 epitrax_set_config <- function(epitrax, config) {
 
 }
