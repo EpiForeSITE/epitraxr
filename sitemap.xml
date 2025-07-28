@@ -13,7 +13,6 @@
 <url><loc>https://epiforesite.github.io/epitraxr/reference/create_report_monthly_avgs.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/create_report_monthly_counts.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/create_report_ytd_counts.html</loc></url>
-<url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_add_config.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_add_report_diseases.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_ireport_annual_counts.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_ireport_monthly_avgs.html</loc></url>
@@ -21,8 +20,11 @@
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_ireport_ytd_counts_for_month.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_preport_month_crosssections.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_preport_ytd_rates.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_set_config_from_file.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_set_config_from_list.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_write_csvs.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/epitrax_write_xlsxs.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/epitraxr_config.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/format_week_num.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/get_epitrax.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/get_internal_disease_list.html</loc></url>
@@ -40,6 +42,7 @@
 <url><loc>https://epiforesite.github.io/epitraxr/reference/set_na_0.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/setup_epitrax.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/setup_filesystem.html</loc></url>
+<url><loc>https://epiforesite.github.io/epitraxr/reference/validate_config.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/validate_data.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/validate_epitrax.html</loc></url>
 <url><loc>https://epiforesite.github.io/epitraxr/reference/validate_filesystem.html</loc></url>
