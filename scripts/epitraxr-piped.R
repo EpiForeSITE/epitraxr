@@ -11,12 +11,14 @@ fsys <- list(
 fsys <- setup_filesystem(folders = fsys, clear.reports = TRUE)
 
 # Generate reports -------------------------------------------------------------
+message("Generating reports...")
+
 epitrax <- setup_epitrax(
     config_file = file.path(fsys$settings, "report_config.yaml"),
     disease_list_files = list(
       internal = file.path(fsys$settings, "internal_report_diseases.csv"),
       public = file.path(fsys$settings, "public_report_diseases.csv")
-    ))
+    )) |>
   epitrax_ireport_annual_counts() |>
   epitrax_ireport_monthly_counts_all_yrs() |>
   epitrax_ireport_monthly_avgs(exclude.report.year = TRUE) |>
@@ -26,3 +28,5 @@ epitrax <- setup_epitrax(
   epitrax_preport_ytd_rates() |>
   epitrax_write_csvs(fsys = fsys) |>
   epitrax_write_xlsxs(fsys = fsys)
+
+message(".......Done.")
