@@ -5,21 +5,24 @@
 \title{Setup EpiTrax object with configuration and disease lists}
 \usage{
 setup_epitrax(
-  epitrax_file,
-  disease_list_files,
+  epitrax_file = NULL,
+  disease_list_files = NULL,
   config_list = NULL,
   config_file = NULL
 )
 }
 \arguments{
 \item{epitrax_file}{Optional path to the EpiTrax data file. Data file should
-be a CSV. If this parameter is NULL, the user will be prompted to choose a
-file interactively.}
+be a CSV. If omitted, the user will be prompted to choose a file interactively.}
 
-\item{disease_list_files}{List containing filepaths to internal and public
-report disease lists.}
+\item{disease_list_files}{Optional list containing filepaths to internal and
+public report disease lists. If omitted, the default lists will be used and
+a warning will be thrown.}
 
-\item{config_list, config_file}{Configuration options may be specified as a list or as a path to a YAML config file, respectively. Only one can be specified at a time. If both are specified, the function will return an error. If both are omitted, the default config values will be used.}
+\item{config_list, config_file}{Configuration options may be specified as a
+list or as a path to a YAML config file, respectively. Only one can be
+specified at a time. If both are specified, the function will return an
+error. If both are omitted, the default config values will be used.}
 }
 \value{
 An EpiTrax object with configuration and report diseases set.

@@ -73,8 +73,8 @@ epitrax_set_config_from_list <- function(epitrax, config = NULL) {
 #' adds them to the EpiTrax object.
 #'
 #' @param epitrax Object of class `epitrax`.
-#' @param disease_list_files List containing filepaths to internal and public
-#'  disease lists.
+#' @param disease_list_files Optional list containing filepaths to internal and public
+#'  disease lists. If omitted, the default lists will be used and a warning will be thrown.
 #'
 #' @returns Updated EpiTrax object with `report_diseases` field set.
 #' @export
@@ -97,14 +97,14 @@ epitrax_set_config_from_list <- function(epitrax, config = NULL) {
 #'     public = p_file
 #'   )
 #' )
-epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
+epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
 
     validate_epitrax(epitrax, report.check = FALSE)
 
     # Get internal and public disease lists
     diseases <- get_report_disease_lists(
-        internal_list_fp = disease_list_files$internal,
-        public_list_fp = disease_list_files$public,
+        internal_list_fp = disease_list_files$internal %||% "use_defaults",
+        public_list_fp = disease_list_files$public %||% "use_defaults",
         default_diseases = epitrax$diseases
     )
 
@@ -125,11 +125,14 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
 #' `epitrax_set_config_from_file`, and `epitrax_add_report_diseases`.
 #'
 #' @param epitrax_file Optional path to the EpiTrax data file. Data file should
-#' be a CSV. If this parameter is NULL, the user will be prompted to choose a
-#' file interactively.
-#' @param disease_list_files List containing filepaths to internal and public
-#' report disease lists.
-#' @param config_list,config_file Configuration options may be specified as a list or as a path to a YAML config file, respectively. Only one can be specified at a time. If both are specified, the function will return an error. If both are omitted, the default config values will be used.
+#' be a CSV. If omitted, the user will be prompted to choose a file interactively.
+#' @param disease_list_files Optional list containing filepaths to internal and
+#' public report disease lists. If omitted, the default lists will be used and
+#' a warning will be thrown.
+#' @param config_list,config_file Configuration options may be specified as a
+#' list or as a path to a YAML config file, respectively. Only one can be
+#' specified at a time. If both are specified, the function will return an
+#' error. If both are omitted, the default config values will be used.
 #'
 #' @returns An EpiTrax object with configuration and report diseases set.
 #' @export
@@ -148,7 +151,7 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
 #'   epitrax_file = data_file,
 #'   disease_list_files = disease_lists
 #' )
-setup_epitrax <- function(epitrax_file, disease_list_files, config_list = NULL, config_file = NULL) {
+setup_epitrax <- function(epitrax_file = NULL, disease_list_files = NULL, config_list = NULL, config_file = NULL) {
 
     if (!is.null(config_list) && !is.null(config_file)) {
         stop("'config_list' and 'config_file' may not both be specified. Please specify one or the other.")
