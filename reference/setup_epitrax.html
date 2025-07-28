@@ -11,7 +11,7 @@ epitrax_set_config_from_file, and epitrax_add_report_diseases."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,8 +44,8 @@ disease lists. It is a convenience function that combines <code>get_epitrax</cod
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">setup_epitrax</span><span class="op">(</span></span>
-<span>  <span class="va">epitrax_file</span>,</span>
-<span>  <span class="va">disease_list_files</span>,</span>
+<span>  epitrax_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  disease_list_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  config_list <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  config_file <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -57,17 +57,20 @@ disease lists. It is a convenience function that combines <code>get_epitrax</cod
 
 <dl><dt id="arg-epitrax-file">epitrax_file<a class="anchor" aria-label="anchor" href="#arg-epitrax-file"></a></dt>
 <dd><p>Optional path to the EpiTrax data file. Data file should
-be a CSV. If this parameter is NULL, the user will be prompted to choose a
-file interactively.</p></dd>
+be a CSV. If omitted, the user will be prompted to choose a file interactively.</p></dd>
 
 
 <dt id="arg-disease-list-files">disease_list_files<a class="anchor" aria-label="anchor" href="#arg-disease-list-files"></a></dt>
-<dd><p>List containing filepaths to internal and public
-report disease lists.</p></dd>
+<dd><p>Optional list containing filepaths to internal and
+public report disease lists. If omitted, the default lists will be used and
+a warning will be thrown.</p></dd>
 
 
 <dt id="arg-config-list-config-file">config_list, config_file<a class="anchor" aria-label="anchor" href="#arg-config-list-config-file"></a></dt>
-<dd><p>Configuration options may be specified as a list or as a path to a YAML config file, respectively. Only one can be specified at a time. If both are specified, the function will return an error. If both are omitted, the default config values will be used.</p></dd>
+<dd><p>Configuration options may be specified as a
+list or as a path to a YAML config file, respectively. Only one can be
+specified at a time. If both are specified, the function will return an
+error. If both are omitted, the default config values will be used.</p></dd>
 
 </dl></div>
     <div class="section level2">
