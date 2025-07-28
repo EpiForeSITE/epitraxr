@@ -16,10 +16,6 @@ A named list with an attribute of 'keys' from the file.
 'read_report_config' reads in the config YAML file
 }
 \examples{
-# Using default values (when file doesn't exist)
-report_config <- read_report_config("")
-
-# Using a config file
 config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
                           package = "epitraxr")
 report_config <- read_report_config(config_file)

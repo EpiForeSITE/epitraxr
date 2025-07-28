@@ -1,36 +1,6 @@
-#' Validate an EpiTrax object
+#' Set report configuration of EpiTrax object from config file
 #'
-#' `validate_epitrax` checks that the EpiTrax object is valid.
-#'
-#' @param epitrax Object of class `epitrax`.
-#' @param report.check Logical indicating whether to check report-related fields.
-#'
-#' @returns NULL if valid, otherwise throws an error.
-#' @export
-#'
-#' @examples
-#' epitrax <- structure(
-#'   list(
-#'     data = c(1,2,3),
-#'     config = list(rounding_decimals = 2, generate_csvs = TRUE),
-#'     report_diseases = list(internal = "internal_list", public = "public_list")
-#'   ),
-#'   class = "epitrax"
-#' )
-#' validate_epitrax(epitrax, report.check = TRUE)
-validate_epitrax <- function(epitrax, report.check = TRUE) {
-    stopifnot(inherits(epitrax, "epitrax"))
-
-    if (report.check) {
-        stopifnot(is.list(epitrax$config))
-        stopifnot(is.list(epitrax$report_diseases))
-    }
-}
-
-
-#' Add report configuration to EpiTrax object
-#'
-#' `epitrax_add_config` reads a report configuration file and adds it to the
+#' `epitrax_set_config_from_file` reads a report configuration file and adds it to the
 #' EpiTrax object.
 #'
 #' @param epitrax Object of class `epitrax`.
@@ -46,12 +16,52 @@ validate_epitrax <- function(epitrax, report.check = TRUE) {
 #'   list(data = c(1,2,3)),
 #'   class = "epitrax"
 #' )
-#' epitrax <- epitrax_add_config(epitrax, config_file)
-epitrax_add_config <- function(epitrax, filepath) {
+#' epitrax <- epitrax_set_config_from_file(epitrax, config_file)
+epitrax_set_config_from_file <- function(epitrax, filepath) {
 
     validate_epitrax(epitrax, report.check = FALSE)
 
     epitrax$config <- read_report_config(filepath)
+
+    epitrax
+}
+
+
+#' Set report configuration of EpiTrax object from list
+#'
+#' `epitrax_set_config_from_list` sets the report configuration from the given list.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param config Optional list of config parameters. If omitted, default values will be used.
+#'
+#' @returns Updated EpiTrax object with `config` field set.
+#' @export
+#'
+#' @examples
+#' config <- list(
+#'  current_population = 56000,
+#'  avg_5yr_population = 57000,
+#'  rounding_decimals = 3,
+#'  generate_csvs = FALSE
+#' )
+#' epitrax <- structure(
+#'   list(data = c(1,2,3)),
+#'   class = "epitrax"
+#' )
+#' epitrax <- epitrax_set_config_from_list(epitrax, config)
+epitrax_set_config_from_list <- function(epitrax, config = NULL) {
+
+    validate_epitrax(epitrax, report.check = FALSE)
+
+    if (is.null(config)) {
+        config <- list()
+    }
+
+    if (inherits(config, "list")) {
+        epitrax$config <- do.call(epitraxr_config, config)
+    } else {
+        stop("'config' must be a list.")
+    }
 
     epitrax
 }
@@ -112,14 +122,14 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
 #'
 #' `setup_epitrax` initializes an EpiTrax object with configuration and report
 #' disease lists. It is a convenience function that combines `get_epitrax`,
-#' `epitrax_add_config`, and `epitrax_add_report_diseases`.
+#' `epitrax_set_config_from_file`, and `epitrax_add_report_diseases`.
 #'
 #' @param epitrax_file Optional path to the EpiTrax data file. Data file should
 #' be a CSV. If this parameter is NULL, the user will be prompted to choose a
 #' file interactively.
-#' @param config_file Path to the report configuration file.
 #' @param disease_list_files List containing filepaths to internal and public
 #' report disease lists.
+#' @param config_list,config_file Configuration options may be specified as a list or as a path to a YAML config file, respectively. Only one can be specified at a time. If both are specified, the function will return an error. If both are omitted, the default config values will be used.
 #'
 #' @returns An EpiTrax object with configuration and report diseases set.
 #' @export
@@ -127,8 +137,6 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
 #' @examples
 #' data_file <- system.file("sample_data/sample_epitrax_data.csv",
 #'                          package = "epitraxr")
-#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
-#'                            package = "epitraxr")
 #' disease_lists <- list(
 #'   internal = system.file("tinytest/test_files/disease_lists/internal_list.csv",
 #'                          package = "epitraxr"),
@@ -138,14 +146,22 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files) {
 #'
 #' epitrax <- setup_epitrax(
 #'   epitrax_file = data_file,
-#'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' )
-setup_epitrax <- function(epitrax_file, config_file, disease_list_files) {
+setup_epitrax <- function(epitrax_file, disease_list_files, config_list = NULL, config_file = NULL) {
+
+    if (!is.null(config_list) && !is.null(config_file)) {
+        stop("'config_list' and 'config_file' may not both be specified. Please specify one or the other.")
+    }
 
     epitrax <- get_epitrax(epitrax_file) |>
-        epitrax_add_config(config_file) |>
         epitrax_add_report_diseases(disease_list_files)
+
+    if (!is.null(config_file)) {
+        epitrax <- epitrax_set_config_from_file(epitrax, filepath = config_file)
+    } else {
+        epitrax <- epitrax_set_config_from_list(epitrax, config = config_list)
+    }
 
     epitrax
 }

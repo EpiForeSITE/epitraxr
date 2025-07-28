@@ -1,29 +1,38 @@
-# Test validate_epitrax() ---------------------------------------------------
-
-expect_error(validate_epitrax(list(data = c(1,2,3))))
-
-epitrax <- structure(
-  list(data = c(1,2,3)),
-  class = "epitrax"
-)
-expect_silent(validate_epitrax(epitrax, report.check = FALSE))
-expect_error(validate_epitrax(epitrax, report.check = TRUE))
-
-epitrax$config = list(rounding_decimals = 2, generate_csvs = TRUE)
-epitrax$report_diseases = list(internal = "internal_list", public = "public_list")
-
-expect_silent(validate_epitrax(epitrax, report.check = TRUE))
-
-
-# Test epitrax_add_config() ----------------------------------------------------
+# Test epitrax_set_config_from_file() ------------------------------------------
 config_file <- "test_files/configs/good_config.yaml"
 epitrax <- structure(
   list(data = c(1,2,3)),
   class = "epitrax"
 )
-expect_silent(epitrax <- epitrax_add_config(epitrax, config_file))
+expect_silent(epitrax <- epitrax_set_config_from_file(epitrax, config_file))
 expect_true(inherits(epitrax, "epitrax"))
 expect_equal(epitrax$config, read_report_config(config_file))
+
+
+# Test epitrax_set_config_from_list() ------------------------------------------
+config <- list(
+ current_population = 56000,
+ avg_5yr_population = 57000,
+ rounding_decimals = 3,
+ generate_csvs = FALSE
+)
+
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE
+)
+
+epitrax <- structure(
+  list(data = c(1,2,3)),
+  class = "epitrax"
+)
+epitrax <- epitrax_set_config_from_list(epitrax, config)
+expect_true(inherits(epitrax, "epitrax"))
+expect_equal(epitrax$config, config)
+expect_equal(epitrax_set_config_from_list(epitrax)$config, default_config)
+expect_error(epitrax_set_config_from_list(epitrax, "no list"), "must be a list")
 
 
 # Test epitrax_add_report_diseases() -------------------------------------------
@@ -52,16 +61,58 @@ disease_lists <- list(
   public = "test_files/disease_lists/public_list.csv"
 )
 
-expect_silent(epitrax <- setup_epitrax(
+# Test with config file
+expect_silent(epitrax_1 <- setup_epitrax(
   epitrax_file = data_file,
   config_file = config_file,
   disease_list_files = disease_lists
 ))
 expect_true(inherits(epitrax, "epitrax"))
-expect_equal(epitrax$data, get_epitrax(data_file)$data)
-expect_equal(epitrax$config, read_report_config(config_file))
-expect_equal(epitrax$report_diseases$internal, utils::read.csv(i_file))
-expect_equal(epitrax$report_diseases$public, utils::read.csv(p_file))
+expect_equal(epitrax_1$data, get_epitrax(data_file)$data)
+expect_equal(epitrax_1$config, read_report_config(config_file))
+expect_equal(epitrax_1$report_diseases$internal, utils::read.csv(i_file))
+expect_equal(epitrax_1$report_diseases$public, utils::read.csv(p_file))
+
+# Test with config list
+config_list <- list(
+ current_population = 50000,
+ avg_5yr_population = 70000,
+ rounding_decimals = 4,
+ generate_csvs = FALSE
+)
+expect_silent(epitrax_2 <- setup_epitrax(
+  epitrax_file = data_file,
+  config_list = config_list,
+  disease_list_files = disease_lists
+))
+expect_true(inherits(epitrax_2, "epitrax"))
+expect_equal(epitrax_2$data, epitrax_1$data)
+expect_equal(epitrax_2$config, config_list)
+expect_equal(epitrax_2$report_diseases, epitrax_1$report_diseases)
+
+# Test with neither
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE
+)
+expect_silent(epitrax_3 <- setup_epitrax(
+  epitrax_file = data_file,
+  disease_list_files = disease_lists
+))
+expect_true(inherits(epitrax_3, "epitrax"))
+expect_equal(epitrax_3$data, epitrax_1$data)
+expect_equal(epitrax_3$config, default_config)
+expect_equal(epitrax_3$report_diseases, epitrax_1$report_diseases)
+
+# Test with both
+expect_error(epitrax_4 <- setup_epitrax(
+  epitrax_file = data_file,
+  config_list = config_list,
+  config_file = config_file, 
+  disease_list_files = disease_lists
+), "may not both be specified")
 
 
 # Test report functions --------------------------------------------------------
