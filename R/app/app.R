@@ -1,0 +1,577 @@
+library(shiny)
+library(DT)
+library(devtools)
+library(writexl)
+library(shinyjs)
+library(lubridate)
+library(yaml)
+
+# Try to load epitraxr package first
+tryCatch({
+  cat("Trying to load epitraxr as package...\n")
+  devtools::load_all("../..")  # Load from package root
+  cat("✓ Successfully loaded epitraxr package\n")
+}, error = function(e) {
+  cat("Failed to load as package:", e$message, "\n")
+  cat("Falling back to sourcing individual files...\n")
+  
+  # Source epitraxr functions from parent directory
+  tryCatch({
+    cat("Current working directory:", getwd(), "\n")
+    cat("Attempting to source epitraxr functions...\n")
+    
+    # Check if files exist
+    files_to_source <- c("../data.R", "../epitrax.R", "../filesystem.R", "../helpers.R", "../reports.R", "../validation.R")
+    for (file in files_to_source) {
+      if (file.exists(file)) {
+        cat("✓ Found:", file, "\n")
+      } else {
+        cat("✗ Missing:", file, "\n")
+      }
+    }
+    
+    source("../data.R")
+    cat("✓ Sourced data.R\n")
+    source("../epitrax.R")
+    cat("✓ Sourced epitrax.R\n")
+    source("../filesystem.R")
+    cat("✓ Sourced filesystem.R\n")
+    source("../helpers.R")
+    cat("✓ Sourced helpers.R\n")
+    source("../reports.R")
+    cat("✓ Sourced reports.R\n")
+    source("../validation.R")
+    cat("✓ Sourced validation.R\n")
+    
+  }, error = function(e2) {
+    cat("Error sourcing files:", e2$message, "\n")
+    print(e2)
+  })
+})
+
+# Test if key functions are available
+if (exists("setup_epitrax")) {
+  cat("✓ setup_epitrax function is available\n")
+} else {
+  cat("✗ setup_epitrax function NOT found\n")
+}
+
+# Dictionary constant for multiselect options matching epitraxr functions
+REPORT_OPTIONS <- list(
+  "Annual Counts" = "annual_counts",
+  "Monthly Counts All Years" = "monthly_counts_all_yrs", 
+  "Monthly Averages" = "monthly_avgs",
+  "YTD Counts" = "ytd_counts",
+  "YTD Rates" = "ytd_rates",
+  "Monthly Cross-sections" = "month_crosssections",
+  "Public YTD Rates" = "public_ytd_rates"
+)
+
+# Function to display DataFrame as table
+display_dataframe_table <- function(df) {
+  if (is.null(df) || nrow(df) == 0) {
+    return("No data available")
+  }
+  
+  # Return DT datatable for interactive display
+  DT::datatable(df, 
+                options = list(
+                  pageLength = 10,
+                  scrollX = TRUE,
+                  autoWidth = TRUE
+                ),
+                class = 'cell-border stripe')
+}
+
+# Define UI
+ui <- fluidPage(
+  useShinyjs(),  # Enable shinyjs functionality
+  titlePanel("EpiTrax Report Generator"),
+
+  sidebarLayout(
+    sidebarPanel(
+      # File upload field for CSV
+      fileInput("epitrax_file",
+                "EpiTrax Data Export:",
+                accept = c(".csv", ".CSV"),
+                placeholder = "Choose CSV file..."),
+      
+      # File upload for internal disease list
+      fileInput("internal_disease_file",
+                "Internal Disease List:",
+                accept = c(".csv", ".CSV"),
+                placeholder = "Choose internal disease CSV..."),
+      
+      # File upload for public disease list  
+      fileInput("public_disease_file",
+                "Public Disease List:",
+                accept = c(".csv", ".CSV"),
+                placeholder = "Choose public disease CSV..."),
+      
+      # Multiselect with epitraxr function options
+      selectInput("report_options",
+        "Reports to Generate:",
+        choices = REPORT_OPTIONS,
+        multiple = TRUE,
+        selected = NULL
+        ),
+      
+      # Current Population input
+      numericInput("current_population",
+                   "Current Population:",
+                   value = 100000,
+                   min = 1,
+                   step = 1000),
+      
+      # Average 5-Year Population input
+      numericInput("avg_population",
+                   "Average 5-Year Population:",
+                   value = 100000,
+                   min = 1,
+                   step = 1000),
+      
+      # Rounding Decimal Places input
+      numericInput("decimal_places",
+                   "Rounding Decimal Places:",
+                   value = 2,
+                   min = 0,
+                   max = 10,
+                   step = 1),
+      
+      # Generate Reports button
+      actionButton("generate",
+                   "Generate Reports",
+                   class = "btn-success"),
+      
+      br(), br(),
+      
+      # Download buttons in a row
+      fluidRow(
+        column(4, 
+               downloadButton("download_csv",
+                              "Download CSV",
+                              class = "btn-primary",
+                              style = "width: 100%;")),
+        column(4, 
+               downloadButton("download_excel", 
+                              "Download Excel",
+                              class = "btn-info",
+                              style = "width: 100%;")),
+        column(4, 
+               downloadButton("download_all",
+                              "Download All",
+                              class = "btn-warning",
+                              style = "width: 100%;"))
+      )
+    ),
+    
+    mainPanel(
+      h3("Generated Reports"),
+      
+      # Dynamic tabset panel based on selected reports
+      uiOutput("report_tabs")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output, session) {
+  
+  # Reactive values to store data and reports
+  epitrax_obj <- reactiveVal(NULL)
+  
+  # Disable download buttons initially
+  observe({
+    shinyjs::disable("download_csv")
+    shinyjs::disable("download_excel")
+    shinyjs::disable("download_all")
+  })
+  
+  # Generate Reports button click handler
+  observeEvent(input$generate, {
+    cat("Generate button clicked!\n")
+    cat("epitrax_file:", !is.null(input$epitrax_file), "\n")
+    cat("report_options:", !is.null(input$report_options), "length:", length(input$report_options), "\n")
+    cat("report_options values:", paste(input$report_options, collapse = ", "), "\n")
+    
+    req(input$epitrax_file, input$report_options)
+    
+    cat("Passed req() validation, starting tryCatch...\n")
+    
+    tryCatch({
+      # Show progress
+      showNotification("Generating reports...", type = "message", duration = 2)
+      cat("Showed notification\n")
+      
+      # Create config list from frontend inputs
+      config_list <- list(
+        current_population = input$current_population,
+        avg_5yr_population = input$avg_population,
+        rounding_decimals = input$decimal_places
+      )
+      cat("Created config_list:", paste(names(config_list), collapse = ", "), "\n")
+      
+      # Conditionally build disease_list_files based on provided files
+      disease_list_files <- list()
+      if (!is.null(input$internal_disease_file)) {
+        disease_list_files$internal <- input$internal_disease_file$datapath
+        cat("Added internal disease file\n")
+      }
+      if (!is.null(input$public_disease_file)) {
+        disease_list_files$public <- input$public_disease_file$datapath
+        cat("Added public disease file\n")
+      }
+      cat("Disease list files:", paste(names(disease_list_files), collapse = ", "), "\n")
+      
+      # Test if setup_epitrax function exists before calling
+      if (!exists("setup_epitrax")) {
+        stop("setup_epitrax function not found!")
+      }
+      
+      cat("About to call setup_epitrax...\n")
+      # Setup epitrax object
+      epitrax <- setup_epitrax(
+        epitrax_file = input$epitrax_file$datapath,
+        config_list = config_list,
+        disease_list_files = disease_list_files
+      )
+      cat("setup_epitrax completed successfully\n")
+      
+      # Generate selected reports
+      selected_reports <- input$report_options
+      
+      # Generate internal reports
+      if ("annual_counts" %in% selected_reports) {
+        epitrax <- epitrax_ireport_annual_counts(epitrax)
+      }
+      
+      if ("monthly_counts_all_yrs" %in% selected_reports) {
+        epitrax <- epitrax_ireport_monthly_counts_all_yrs(epitrax)
+      }
+      
+      if ("monthly_avgs" %in% selected_reports) {
+        epitrax <- epitrax_ireport_monthly_avgs(epitrax, exclude.report.year = TRUE)
+      }
+      
+      if ("ytd_counts" %in% selected_reports) {
+        epitrax <- epitrax_ireport_ytd_counts_for_month(epitrax, as.rates = FALSE)
+      }
+      
+      if ("ytd_rates" %in% selected_reports) {
+        epitrax <- epitrax_ireport_ytd_counts_for_month(epitrax, as.rates = TRUE)
+      }
+      
+      # Generate public reports
+      if ("month_crosssections" %in% selected_reports) {
+        epitrax <- epitrax_preport_month_crosssections(epitrax, month_offsets = 0:3)
+      }
+      
+      if ("public_ytd_rates" %in% selected_reports) {
+        epitrax <- epitrax_preport_ytd_rates(epitrax)
+      }
+      
+      # Store the epitrax object
+      epitrax_obj(epitrax)
+      
+      # Enable download buttons
+      shinyjs::enable("download_csv")
+      shinyjs::enable("download_excel")
+      shinyjs::enable("download_all")
+      
+      showNotification("Reports generated successfully!", type = "message")
+      cat("Reports generated successfully!\n")
+      
+    }, error = function(e) {
+      cat("ERROR in generate reports:", e$message, "\n")
+      cat("Full error details:", toString(e), "\n")
+      print(traceback())
+      showNotification(paste("Error generating reports:", e$message), type = "error")
+      epitrax_obj(NULL)
+      shinyjs::disable("download_csv")
+      shinyjs::disable("download_excel")
+      shinyjs::disable("download_all")
+    })
+  })
+  
+  # Download CSV files as ZIP
+  output$download_csv <- downloadHandler(
+    filename = function() {
+      paste0("epitrax_csv_reports_", Sys.Date(), ".zip")
+    },
+    content = function(file) {
+      req(epitrax_obj())
+      
+      # Create temporary directory
+      temp_dir <- tempdir()
+      csv_dir <- file.path(temp_dir, "csv_reports")
+      dir.create(csv_dir, showWarnings = FALSE, recursive = TRUE)
+      
+      tryCatch({
+        epitrax <- epitrax_obj()
+        
+        # Write internal reports to CSV
+        if (!is.null(epitrax$internal_reports) && length(epitrax$internal_reports) > 0) {
+          internal_dir <- file.path(csv_dir, "internal")
+          dir.create(internal_dir, showWarnings = FALSE)
+          
+          for (name in names(epitrax$internal_reports)) {
+            write.csv(epitrax$internal_reports[[name]], 
+                     file.path(internal_dir, paste0(name, ".csv")), 
+                     row.names = FALSE)
+          }
+        }
+        
+        # Write public reports to CSV
+        if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+          public_dir <- file.path(csv_dir, "public")
+          dir.create(public_dir, showWarnings = FALSE)
+          
+          for (name in names(epitrax$public_reports)) {
+            write.csv(epitrax$public_reports[[name]], 
+                     file.path(public_dir, paste0(name, ".csv")), 
+                     row.names = FALSE)
+          }
+        }
+        
+        # Create ZIP file
+        zip_files <- list.files(csv_dir, recursive = TRUE, full.names = TRUE)
+        zip_names <- list.files(csv_dir, recursive = TRUE)
+        
+        zip(file, zip_files, flags = "-j")
+        
+      }, error = function(e) {
+        showNotification(paste("Error creating CSV download:", e$message), type = "error")
+      })
+    },
+    contentType = "application/zip"
+  )
+  
+  # Download Excel files
+  output$download_excel <- downloadHandler(
+    filename = function() {
+      paste0("epitrax_excel_reports_", Sys.Date(), ".zip")
+    },
+    content = function(file) {
+      req(epitrax_obj())
+      
+      # Create temporary directory
+      temp_dir <- tempdir()
+      excel_dir <- file.path(temp_dir, "excel_reports")
+      dir.create(excel_dir, showWarnings = FALSE, recursive = TRUE)
+      
+      tryCatch({
+        epitrax <- epitrax_obj()
+        
+        # Write internal reports to Excel
+        if (!is.null(epitrax$internal_reports) && length(epitrax$internal_reports) > 0) {
+          if (requireNamespace("writexl", quietly = TRUE)) {
+            writexl::write_xlsx(epitrax$internal_reports, 
+                               path = file.path(excel_dir, "internal_reports_combined.xlsx"))
+          } else {
+            # Fallback to individual CSV files if writexl not available
+            internal_dir <- file.path(excel_dir, "internal_csv")
+            dir.create(internal_dir, showWarnings = FALSE)
+            for (name in names(epitrax$internal_reports)) {
+              write.csv(epitrax$internal_reports[[name]], 
+                       file.path(internal_dir, paste0(name, ".csv")), 
+                       row.names = FALSE)
+            }
+          }
+        }
+        
+        # Write public reports to Excel
+        if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+          if (requireNamespace("writexl", quietly = TRUE)) {
+            writexl::write_xlsx(epitrax$public_reports, 
+                               path = file.path(excel_dir, "public_reports_combined.xlsx"))
+          } else {
+            # Fallback to CSV files if writexl not available
+            public_dir <- file.path(excel_dir, "public_csv")
+            dir.create(public_dir, showWarnings = FALSE)
+            for (name in names(epitrax$public_reports)) {
+              write.csv(epitrax$public_reports[[name]], 
+                       file.path(public_dir, paste0(name, ".csv")), 
+                       row.names = FALSE)
+            }
+          }
+        }
+        
+        # Create ZIP file
+        zip_files <- list.files(excel_dir, recursive = TRUE, full.names = TRUE)
+        zip(file, zip_files, flags = "-j")
+        
+      }, error = function(e) {
+        showNotification(paste("Error creating Excel download:", e$message), type = "error")
+      })
+    },
+    contentType = "application/zip"
+  )
+
+  # Download All files (both CSV and Excel)
+  output$download_all <- downloadHandler(
+    filename = function() {
+      paste0("epitrax_all_reports_", Sys.Date(), ".zip")
+    },
+    content = function(file) {
+      req(epitrax_obj())
+      
+      # Create temporary directory
+      temp_dir <- tempdir()
+      all_dir <- file.path(temp_dir, "all_reports")
+      dir.create(all_dir, showWarnings = FALSE, recursive = TRUE)
+      
+      tryCatch({
+        epitrax <- epitrax_obj()
+        
+        # Create CSV subdirectory
+        csv_dir <- file.path(all_dir, "csv_reports")
+        dir.create(csv_dir, showWarnings = FALSE, recursive = TRUE)
+        
+        # Write internal reports to CSV
+        if (!is.null(epitrax$internal_reports) && length(epitrax$internal_reports) > 0) {
+          internal_csv_dir <- file.path(csv_dir, "internal")
+          dir.create(internal_csv_dir, showWarnings = FALSE)
+          
+          for (name in names(epitrax$internal_reports)) {
+            write.csv(epitrax$internal_reports[[name]], 
+                     file.path(internal_csv_dir, paste0(name, ".csv")), 
+                     row.names = FALSE)
+          }
+        }
+        
+        # Write public reports to CSV
+        if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+          public_csv_dir <- file.path(csv_dir, "public")
+          dir.create(public_csv_dir, showWarnings = FALSE)
+          
+          for (name in names(epitrax$public_reports)) {
+            write.csv(epitrax$public_reports[[name]], 
+                     file.path(public_csv_dir, paste0(name, ".csv")), 
+                     row.names = FALSE)
+          }
+        }
+        
+        # Create Excel subdirectory
+        excel_dir <- file.path(all_dir, "excel_reports")
+        dir.create(excel_dir, showWarnings = FALSE, recursive = TRUE)
+        
+        # Write internal reports to Excel
+        if (!is.null(epitrax$internal_reports) && length(epitrax$internal_reports) > 0) {
+          if (requireNamespace("writexl", quietly = TRUE)) {
+            writexl::write_xlsx(epitrax$internal_reports, 
+                               path = file.path(excel_dir, "internal_reports_combined.xlsx"))
+          } else {
+            # Fallback to individual CSV files if writexl not available
+            internal_dir <- file.path(excel_dir, "internal_csv")
+            dir.create(internal_dir, showWarnings = FALSE)
+            for (name in names(epitrax$internal_reports)) {
+              write.csv(epitrax$internal_reports[[name]], 
+                       file.path(internal_dir, paste0(name, ".csv")), 
+                       row.names = FALSE)
+            }
+          }
+        }
+        
+        # Write public reports to Excel
+        if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+          if (requireNamespace("writexl", quietly = TRUE)) {
+            writexl::write_xlsx(epitrax$public_reports, 
+                               path = file.path(excel_dir, "public_reports_combined.xlsx"))
+          } else {
+            # Fallback to CSV files if writexl not available
+            public_dir <- file.path(excel_dir, "public_csv")
+            dir.create(public_dir, showWarnings = FALSE)
+            for (name in names(epitrax$public_reports)) {
+              write.csv(epitrax$public_reports[[name]], 
+                       file.path(public_dir, paste0(name, ".csv")), 
+                       row.names = FALSE)
+            }
+          }
+        }
+        
+        # Create ZIP file
+        zip_files <- list.files(all_dir, recursive = TRUE, full.names = TRUE)
+        zip(file, zip_files, flags = "-j")
+        
+      }, error = function(e) {
+        showNotification(paste("Error creating combined download:", e$message), type = "error")
+      })
+    },
+    contentType = "application/zip"
+  )
+
+  # Dynamic UI for report tabs
+  output$report_tabs <- renderUI({
+    epitrax <- epitrax_obj()
+    if (is.null(epitrax)) {
+      return(div(h4("No reports generated yet. Please upload files and click 'Generate Reports'.")))
+    }
+    
+    # Create tabs for available reports
+    tab_panels <- list()
+    
+    # Internal reports tabs
+    if (!is.null(epitrax$internal_reports) && length(epitrax$internal_reports) > 0) {
+      for (report_name in names(epitrax$internal_reports)) {
+        tab_panels[[length(tab_panels) + 1]] <- tabPanel(
+          title = paste("Internal:", gsub("_", " ", stringr::str_to_title(report_name))),
+          value = report_name,
+          div(style = "margin-top: 10px;",
+              DT::dataTableOutput(paste0("table_", report_name)))
+        )
+      }
+    }
+    
+    # Public reports tabs
+    if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+      for (report_name in names(epitrax$public_reports)) {
+        tab_panels[[length(tab_panels) + 1]] <- tabPanel(
+          title = paste("Public:", gsub("_", " ", stringr::str_to_title(report_name))),
+          value = report_name,
+          div(style = "margin-top: 10px;",
+              DT::dataTableOutput(paste0("table_", report_name)))
+        )
+      }
+    }
+    
+    if (length(tab_panels) == 0) {
+      return(div(h4("No report data available.")))
+    }
+    
+    do.call(tabsetPanel, tab_panels)
+  })
+  
+  # Dynamic table outputs for each report
+  observe({
+    epitrax <- epitrax_obj()
+    if (!is.null(epitrax)) {
+      
+      # Render internal report tables
+      if (!is.null(epitrax$internal_reports)) {
+        for (report_name in names(epitrax$internal_reports)) {
+          local({
+            local_name <- report_name
+            output[[paste0("table_", local_name)]] <- DT::renderDataTable({
+              display_dataframe_table(epitrax$internal_reports[[local_name]])
+            })
+          })
+        }
+      }
+      
+      # Render public report tables  
+      if (!is.null(epitrax$public_reports)) {
+        for (report_name in names(epitrax$public_reports)) {
+          local({
+            local_name <- report_name
+            output[[paste0("table_", local_name)]] <- DT::renderDataTable({
+              display_dataframe_table(epitrax$public_reports[[local_name]])
+            })
+          })
+        }
+      }
+    }
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server, options = list(port = 4747))
