@@ -3,58 +3,13 @@ library(DT)
 library(devtools)
 library(writexl)
 library(shinyjs)
-library(lubridate)
-library(yaml)
 
-# Try to load epitraxr package first
-tryCatch({
-  cat("Trying to load epitraxr as package...\n")
-  devtools::load_all("../..")  # Load from package root
-  cat("✓ Successfully loaded epitraxr package\n")
-}, error = function(e) {
-  cat("Failed to load as package:", e$message, "\n")
-  cat("Falling back to sourcing individual files...\n")
-  
-  # Source epitraxr functions from parent directory
-  tryCatch({
-    cat("Current working directory:", getwd(), "\n")
-    cat("Attempting to source epitraxr functions...\n")
-    
-    # Check if files exist
-    files_to_source <- c("../data.R", "../epitrax.R", "../filesystem.R", "../helpers.R", "../reports.R", "../validation.R")
-    for (file in files_to_source) {
-      if (file.exists(file)) {
-        cat("✓ Found:", file, "\n")
-      } else {
-        cat("✗ Missing:", file, "\n")
-      }
-    }
-    
-    source("../data.R")
-    cat("✓ Sourced data.R\n")
-    source("../epitrax.R")
-    cat("✓ Sourced epitrax.R\n")
-    source("../filesystem.R")
-    cat("✓ Sourced filesystem.R\n")
-    source("../helpers.R")
-    cat("✓ Sourced helpers.R\n")
-    source("../reports.R")
-    cat("✓ Sourced reports.R\n")
-    source("../validation.R")
-    cat("✓ Sourced validation.R\n")
-    
-  }, error = function(e2) {
-    cat("Error sourcing files:", e2$message, "\n")
-    print(e2)
-  })
-})
-
-# Test if key functions are available
-if (exists("setup_epitrax")) {
-  cat("✓ setup_epitrax function is available\n")
-} else {
-  cat("✗ setup_epitrax function NOT found\n")
-}
+source("../epitrax.R")
+source("../validation.R")
+source("../data.R")
+source("../helpers.R")
+source("../filesystem.R")
+source("../reports.R")
 
 # Dictionary constant for multiselect options matching epitraxr functions
 REPORT_OPTIONS <- list(
@@ -189,19 +144,11 @@ server <- function(input, output, session) {
   
   # Generate Reports button click handler
   observeEvent(input$generate, {
-    cat("Generate button clicked!\n")
-    cat("epitrax_file:", !is.null(input$epitrax_file), "\n")
-    cat("report_options:", !is.null(input$report_options), "length:", length(input$report_options), "\n")
-    cat("report_options values:", paste(input$report_options, collapse = ", "), "\n")
-    
     req(input$epitrax_file, input$report_options)
-    
-    cat("Passed req() validation, starting tryCatch...\n")
     
     tryCatch({
       # Show progress
       showNotification("Generating reports...", type = "message", duration = 2)
-      cat("Showed notification\n")
       
       # Create config list from frontend inputs
       config_list <- list(
@@ -209,33 +156,22 @@ server <- function(input, output, session) {
         avg_5yr_population = input$avg_population,
         rounding_decimals = input$decimal_places
       )
-      cat("Created config_list:", paste(names(config_list), collapse = ", "), "\n")
       
       # Conditionally build disease_list_files based on provided files
       disease_list_files <- list()
       if (!is.null(input$internal_disease_file)) {
         disease_list_files$internal <- input$internal_disease_file$datapath
-        cat("Added internal disease file\n")
       }
       if (!is.null(input$public_disease_file)) {
         disease_list_files$public <- input$public_disease_file$datapath
-        cat("Added public disease file\n")
-      }
-      cat("Disease list files:", paste(names(disease_list_files), collapse = ", "), "\n")
-      
-      # Test if setup_epitrax function exists before calling
-      if (!exists("setup_epitrax")) {
-        stop("setup_epitrax function not found!")
       }
       
-      cat("About to call setup_epitrax...\n")
       # Setup epitrax object
       epitrax <- setup_epitrax(
         epitrax_file = input$epitrax_file$datapath,
         config_list = config_list,
         disease_list_files = disease_list_files
       )
-      cat("setup_epitrax completed successfully\n")
       
       # Generate selected reports
       selected_reports <- input$report_options
@@ -279,12 +215,8 @@ server <- function(input, output, session) {
       shinyjs::enable("download_all")
       
       showNotification("Reports generated successfully!", type = "message")
-      cat("Reports generated successfully!\n")
       
     }, error = function(e) {
-      cat("ERROR in generate reports:", e$message, "\n")
-      cat("Full error details:", toString(e), "\n")
-      print(traceback())
       showNotification(paste("Error generating reports:", e$message), type = "error")
       epitrax_obj(NULL)
       shinyjs::disable("download_csv")
@@ -335,7 +267,6 @@ server <- function(input, output, session) {
         
         # Create ZIP file
         zip_files <- list.files(csv_dir, recursive = TRUE, full.names = TRUE)
-        zip_names <- list.files(csv_dir, recursive = TRUE)
         
         zip(file, zip_files, flags = "-j")
         
