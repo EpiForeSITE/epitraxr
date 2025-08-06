@@ -1,7 +1,7 @@
-EpiTrax_name
-Acinetobacter species - Carbapenem resistant
-Acute Flaccid Myelitis
-African Tick Bite Fever
-Amebiasis
-Anaplasma phagocytophilum Infection
-Anthrax
+EpiTrax_name,Group_name
+Acinetobacter species - Carbapenem resistant,Healthcare-Associated Diseases
+Acute Flaccid Myelitis,Other Communicable Disease
+African Tick Bite Fever,Tick-Borne Disease
+Amebiasis,Parasitic Enteric Disease
+Anaplasma phagocytophilum Infection,Tick-Borne Disease
+Anthrax,Zoonotic Disease

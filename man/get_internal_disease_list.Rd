@@ -13,8 +13,8 @@ get_internal_disease_list(filepath, default_diseases)
 above file doesn't exist.}
 }
 \value{
-A dataframe containing the diseases to include in the public report
-and the name to use for each disease in the public report.
+A dataframe containing the diseases to include in the internal report
+and possibly the disease groupings.
 }
 \description{
 'get_internal_disease_list' reads the internal list from a given CSV file or
@@ -22,7 +22,9 @@ uses the default diseases, if the file doesn't exist.
 }
 \details{
 The provided internal disease list file must contain one column of EpiTrax
-disease names (EpiTrax_name) to include in internal reports.
+disease names (EpiTrax_name) to include in internal reports. It can optionally
+contain a column for disease_groupings (Group_name) for reports that group
+diseases together.
 }
 \examples{
 # Using default list (when file doesn't exist)

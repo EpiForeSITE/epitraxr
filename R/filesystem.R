@@ -236,13 +236,15 @@ write_report_xlsx <- function(data, filename, folder) {
 #' uses the default diseases, if the file doesn't exist.
 #'
 #' The provided internal disease list file must contain one column of EpiTrax
-#' disease names (EpiTrax_name) to include in internal reports.
+#' disease names (EpiTrax_name) to include in internal reports. It can optionally
+#' contain a column for disease_groupings (Group_name) for reports that group
+#' diseases together.
 #' @param filepath Filepath. Internal disease list CSV file.
 #' @param default_diseases String vector. List of default diseases to use if the
 #' above file doesn't exist.
 #'
-#' @returns A dataframe containing the diseases to include in the public report
-#' and the name to use for each disease in the public report.
+#' @returns A dataframe containing the diseases to include in the internal report
+#' and possibly the disease groupings.
 #' @export
 #'
 #' @importFrom utils read.csv
@@ -295,13 +297,16 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 #' the default diseases if the file doesn't exist.
 #'
 #' The provided public disease list file must contain two columns that map the
-#' EpiTrax disease name to a public-facing name for the public report.
+#' EpiTrax disease name to a public-facing name for the public report. It can
+#' optionally contain a column for disease_groupings (Group_name) for reports
+#' that group diseases together.
 #' @param filepath Filepath. Public disease list CSV file.
 #' @param default_diseases String vector. List of default diseases to use if the
 #' above file doesn't exist.
 #'
 #' @returns A dataframe containing the diseases to include in the public report
-#' and the name to use for each disease in the public report.
+#' and the name to use for each disease in the public report. It may also contain
+#' the disease groupings.
 #' @export
 #'
 #' @importFrom utils read.csv

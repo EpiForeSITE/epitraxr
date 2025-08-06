@@ -14,7 +14,8 @@ above file doesn't exist.}
 }
 \value{
 A dataframe containing the diseases to include in the public report
-and the name to use for each disease in the public report.
+and the name to use for each disease in the public report. It may also contain
+the disease groupings.
 }
 \description{
 'get_public_disease_list' reads the public list from a given CSV file or uses
@@ -22,7 +23,9 @@ the default diseases if the file doesn't exist.
 }
 \details{
 The provided public disease list file must contain two columns that map the
-EpiTrax disease name to a public-facing name for the public report.
+EpiTrax disease name to a public-facing name for the public report. It can
+optionally contain a column for disease_groupings (Group_name) for reports
+that group diseases together.
 }
 \examples{
 # Using default list (when file doesn't exist)
