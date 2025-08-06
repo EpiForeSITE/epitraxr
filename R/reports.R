@@ -362,3 +362,74 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
 
   ytd_report
 }
+
+
+#' @export
+create_report_grouped_stats <- function(data, diseases, y, m, config) {
+
+  disease_names <- diseases$EpiTrax_name
+  disease_groups <- diseases$Group_name
+
+  month_abb <- month.abb[m]
+  month_name <- month.name[m]
+
+  grouped_r <- create_report_monthly_counts(data, y, disease_names)
+  grouped_r <- grouped_r[, c("disease", month_abb)]
+  colnames(grouped_r) <- c("disease", "m_counts")
+
+  grouped_r$m_rates <- convert_counts_to_rate(
+    counts = grouped_r$m_counts,
+    pop = config$current_population,
+    digits = config$rounding_decimals
+  )
+
+  m_hist_avg_count <- create_report_monthly_avgs(
+    data = data[data$year != y,],
+    disease_names = disease_names,
+    config = config
+  )
+  m_hist_avg_count <- m_hist_avg_count[, c("disease", month_abb)]
+  colnames(m_hist_avg_count) <- c("disease", "counts")
+  grouped_r$m_hist_avg_count <- m_hist_avg_count$counts
+
+  ## TODO: compute hist_m_median_count
+  ## TODO: use cbind()
+
+  y_ytd_stats <- create_report_ytd_counts(
+    data = data,
+    disease_names = disease_names,
+    y = y,
+    m = m,
+    config = config,
+    as.rates = FALSE
+  )
+  colnames(y_ytd_stats) <- c("disease", "y_YTD_count", "hist_y_ytd_avg_count")
+  grouped_r$y_YTD_count <- y_ytd_stats$y_YTD_count
+  grouped_r$hist_y_ytd_avg_count <- y_ytd_stats$hist_y_ytd_avg_count
+
+  # TODO: Compute hist_y_ytd_median_count
+
+  # TODO: update get_trend to take a % modifier, default to ±15%
+  grouped_r$y_ytd_trend <- get_trend(
+    col1 = grouped_r$y_YTD_count,
+    col2 = grouped_r$hist_y_ytd_avg_count
+  )
+
+  grouped_r <- cbind(disease_groups, grouped_r)
+
+  # Update column names
+  new_colnames <- c(
+    "Group",
+    "Disease",
+    paste(month_name, y),
+    paste(month_name, y, "Rate"),
+    paste("Historical", month_name, "Avg"),
+    paste(y, "YTD"),
+    paste("Historical", y, "YTD Avg"),
+    "YTD Trend"
+  )
+
+  colnames(grouped_r) <- new_colnames
+
+  grouped_r
+}
