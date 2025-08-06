@@ -673,7 +673,7 @@ epitrax_write_pdf_month_crosssections <- function(epitrax, fsys) {
       gt::tab_header(
         title = "Infectious Diseases Surveillance Report",
         subtitle = paste(month.name[epitrax$report_month], epitrax$report_year)
-      )|>
+      ) |>
       gt::tab_footnote(
         footnote = "Rate of cases per 100,000 people for the current year",
         locations = gt::cells_column_labels(columns = Rate)
