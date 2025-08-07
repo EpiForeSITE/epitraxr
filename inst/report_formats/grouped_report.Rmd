@@ -24,7 +24,11 @@ r_data <- r_data[order(r_data$Group),]
 for (g in unique(r_data$Group)) {
     gr_data <- r_data[r_data$Group == g, ]
     gr_data$Group <- NULL  # Remove Group column for display
-    print(knitr::kable(gr_data, row.names = FALSE, caption = paste("Group:", g)))
+    print(knitr::kable(
+        gr_data,
+        align = "lccccccc",
+        row.names = FALSE,
+        caption = paste("Group:", g)))
     cat("\n\n")
 }
 ```
