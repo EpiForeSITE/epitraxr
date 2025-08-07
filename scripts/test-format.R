@@ -41,6 +41,17 @@ gr <- create_report_grouped_stats(
   epitrax$config
 )
 
+rmarkdown::render(
+  input = "inst/report_formats/grouped_report.Rmd",
+  params = list(
+    title = "Grouped Report",
+    author = "TriCounty Health Department",
+    report_data = gr
+  ),
+  output_dir = fsys$internal,
+  quiet = TRUE
+)
+
 message(".......Done.")
 
-print(head(gr))
+# print(head(gr))
