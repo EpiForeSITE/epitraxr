@@ -280,6 +280,32 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 }
 
 
+create_report_monthly_medians <- function(data, disease_names, config) {
+  # - Compute counts for each month
+  monthly_meds <- stats::aggregate(counts ~ disease + month + year,
+                                   data = data,
+                                   FUN = sum)
+
+  # TODO: median incorrect when there are no counts for a disease in a month
+
+  # - Compute median counts for each month
+  monthly_meds <- stats::aggregate(counts ~ disease + month,
+                                   data = monthly_meds,
+                                   FUN = median)
+
+  # - Reshape data to use months as columns and disease as rows
+  monthly_meds <- reshape_monthly_wide(monthly_meds)
+
+  # - Add missing diseases
+  monthly_meds <- prep_report_data(monthly_meds, disease_names)
+
+  # - Clear row names
+  rownames(monthly_meds) <- NULL
+
+  monthly_meds
+}
+
+
 #' Create year-to-date (YTD) counts report
 #'
 #' 'create_report_ytd_counts' generates a data frame of year-to-date counts
@@ -392,8 +418,16 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   colnames(m_hist_avg_count) <- c("disease", "counts")
   grouped_r$m_hist_avg_count <- m_hist_avg_count$counts
 
-  ## TODO: compute hist_m_median_count
-  ## TODO: use cbind()
+  m_hist_median_count <- create_report_monthly_medians(
+    data = data[data$year != y,],
+    disease_names = disease_names,
+    config = config
+  )
+  m_hist_median_count <- m_hist_median_count[, c("disease", month_abb)]
+  colnames(m_hist_median_count) <- c("disease", "counts")
+  grouped_r$m_hist_median_count <- m_hist_median_count$counts
+
+  # TODO: use cbind()
 
   y_ytd_stats <- create_report_ytd_counts(
     data = data,
@@ -424,6 +458,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     paste(month_name, y),
     paste(month_name, y, "Rate"),
     paste("Historical", month_name, "Avg"),
+    paste("Historical", month_name, "Median"),
     paste(y, "YTD"),
     paste("Historical", y, "YTD Avg"),
     "YTD Trend"
