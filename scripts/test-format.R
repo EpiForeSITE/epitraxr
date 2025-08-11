@@ -46,6 +46,7 @@ epitrax <- setup_epitrax(
     public = file.path(fsys$settings, "public_report_diseases.csv")
   )) |>
   epitrax_ireport_monthly_counts_all_yrs() |>
+  epitrax_ireport_annual_counts() |>
   epitrax_write_xlsxs(fsys = fsys)
 
 gr <- create_report_grouped_stats(

@@ -310,9 +310,7 @@ create_report_monthly_medians <- function(data, disease_names) {
   all_months <- 1:12
 
   # - Compute counts for each month, aggregating by disease/month/year
-  monthly_meds <- stats::aggregate(counts ~ disease + month + year,
-                                   data = data,
-                                   FUN = sum)
+  monthly_meds <- get_month_counts(data)
 
   # - Create a complete grid of all disease/year/month combinations
   # This ensures missing combinations are filled with 0
@@ -435,6 +433,49 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
 }
 
 
+
+create_report_ytd_medians <- function(data, disease_names, m) {
+
+  # - Get the full range of years in the data
+  all_years <- get_yrs(data)
+  all_months <- 1:m
+
+  # - Get YTD month counts
+  ytd_medians <- get_month_counts(data)
+  ytd_medians <- with(ytd_medians, ytd_medians[month <= m, ])
+
+  # - Create a complete grid of all disease/year/month combinations
+  # This ensures missing combinations are filled with 0
+  complete_grid <- expand.grid(
+    disease = disease_names,
+    year = all_years,
+    month = all_months,
+    stringsAsFactors = FALSE
+  )
+
+  # - Merge with actual data, filling missing values with 0
+  ytd_medians <- merge(complete_grid, ytd_medians,
+                        by = c("disease", "year", "month"),
+                        all.x = TRUE)
+  ytd_medians$counts[is.na(ytd_medians$counts)] <- 0
+
+  # Sum counts by disease and year
+  ytd_medians <- stats::aggregate(counts ~ disease + year,
+                                   data = ytd_medians,
+                                   FUN = sum)
+
+  # Compute median counts for each disease/year
+  ytd_medians <- stats::aggregate(counts ~ disease,
+                                   data = ytd_medians,
+                                   FUN = median)
+
+  colnames(ytd_medians) <- c("disease", "median_counts")
+
+  ytd_medians
+
+}
+
+
 #' Create grouped disease statistics report
 #'
 #' 'create_report_grouped_stats' generates a comprehensive report with current
@@ -468,16 +509,19 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   month_abb <- month.abb[m]
   month_name <- month.name[m]
 
+  # Get current monthy/year counts
   grouped_r <- create_report_monthly_counts(data, y, disease_names)
   grouped_r <- grouped_r[, c("disease", month_abb)]
   colnames(grouped_r) <- c("disease", "m_counts")
 
+  # Get current monthy/year rate
   grouped_r$m_rates <- convert_counts_to_rate(
     counts = grouped_r$m_counts,
     pop = config$current_population,
     digits = config$rounding_decimals
   )
 
+  # Get historical counts
   m_hist_avg_count <- create_report_monthly_avgs(
     data = data[data$year != y,],
     disease_names = disease_names,
@@ -487,6 +531,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   colnames(m_hist_avg_count) <- c("disease", "counts")
   grouped_r$m_hist_avg_count <- m_hist_avg_count$counts
 
+  # Get historical median
   m_hist_median_count <- create_report_monthly_medians(
     data = data[data$year != y,],
     disease_names = disease_names
@@ -495,8 +540,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   colnames(m_hist_median_count) <- c("disease", "counts")
   grouped_r$m_hist_median_count <- m_hist_median_count$counts
 
-  # TODO: use cbind()
-
+  # Get current and historical YTD counts
   y_ytd_stats <- create_report_ytd_counts(
     data = data,
     disease_names = disease_names,
@@ -509,14 +553,21 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   grouped_r$y_YTD_count <- y_ytd_stats$y_YTD_count
   grouped_r$hist_y_ytd_avg_count <- y_ytd_stats$hist_y_ytd_avg_count
 
-  # TODO: Compute hist_y_ytd_median_count
+  # Get historical YTD median
+  y_ytd_medians <- create_report_ytd_medians(
+    data = data[data$year != y,],
+    disease_names = disease_names,
+    m = m
+  )
+  grouped_r$hist_y_ytd_median_count <- y_ytd_medians$median_counts
 
-  # TODO: update get_trend to take a % modifier, default to ±15%
+  # Get trend for YTD counts
   grouped_r$y_ytd_trend <- get_trend(
     col1 = grouped_r$y_YTD_count,
     col2 = grouped_r$hist_y_ytd_avg_count
   )
 
+  # Add disease groups to the report
   grouped_r <- cbind(disease_groups, grouped_r)
 
   # Update column names
@@ -529,9 +580,9 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     paste("Historical", month_name, "Median"),
     paste(y, "YTD"),
     paste("Historical", y, "YTD Avg"),
+    paste("Historical", y, "YTD Median"),
     "YTD Trend"
   )
-
   colnames(grouped_r) <- new_colnames
 
   grouped_r
