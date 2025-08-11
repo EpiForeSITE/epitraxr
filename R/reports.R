@@ -546,6 +546,19 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   disease_names <- diseases$EpiTrax_name
   disease_groups <- diseases$Group_name
 
+  # Check that disease groups were included
+  if (is.null(disease_groups)) {
+    warning(
+      "No disease groups were provided. The parameter 'diseases'
+      should contain a 'Group_name' column. All diseases will be grouped under
+      'Uncategorized'."
+    )
+    disease_groups <- rep("Uncategorized", length(disease_names))
+  }
+
+  # Replace any NA values with "Uncategorized"
+  disease_groups[is.na(disease_groups)] <- "Uncategorized"
+
   month_abb <- month.abb[m]
   month_name <- month.name[m]
 

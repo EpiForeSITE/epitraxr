@@ -317,3 +317,32 @@ expected_result <- data.frame(
 
 expect_true(is.data.frame(result))
 expect_equal(result, expected_result)
+
+# Test with missing Group_name column (NULL case)
+diseases_no_group <- data.frame(
+  EpiTrax_name = c("Flu", "Measles", "COVID")
+)
+
+# Should issue a warning and set all groups to "Uncategorized"
+expect_warning(
+  result_no_group <- create_report_grouped_stats(data, diseases_no_group, 2024, 3, config),
+  "No disease groups were provided"
+)
+
+expected_result$Group <- c("Uncategorized", "Uncategorized", "Uncategorized")
+
+expect_true(is.data.frame(result_no_group))
+expect_equal(result_no_group, expected_result)
+
+# Test with NA values in Group_name column
+diseases_with_na <- data.frame(
+  EpiTrax_name = c("Flu", "Measles", "COVID"),
+  Group_name = c("Respiratory", NA, "Respiratory")
+)
+
+result_with_na <- create_report_grouped_stats(data, diseases_with_na, 2024, 3, config)
+
+expected_result$Group <- c("Respiratory", "Uncategorized", "Respiratory")
+
+expect_true(is.data.frame(result_with_na))
+expect_equal(result_with_na, expected_result)
