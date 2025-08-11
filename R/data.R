@@ -148,7 +148,7 @@ get_epitrax <- function(data_file = NULL) {
 #' df <- data.frame(disease=c("A","B"), month=c(1,2), counts=c(5,6))
 #' reshape_monthly_wide(df)
 reshape_monthly_wide <- function(df) {
-  m_df <- with(df, reshape(
+  m_df <- with(df, stats::reshape(
     merge(
       df,
       expand.grid(
@@ -189,7 +189,7 @@ reshape_monthly_wide <- function(df) {
 #' )
 #' reshape_annual_wide(df)
 reshape_annual_wide <- function(df) {
-  a_df <- with(df, reshape(
+  a_df <- with(df, stats::reshape(
     merge(
       df,
       expand.grid(

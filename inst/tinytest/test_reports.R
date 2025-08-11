@@ -154,14 +154,39 @@ disease_names <- c("A", "B", "C", "D")
 
 result <- create_report_monthly_medians(data, disease_names)
 
+# With the fix, medians should be calculated across all years (2022-2024)
+# Disease A: Jan has [10,20,30] → median = 20
+# Disease B: Feb has [5,15,25] → median = 15, Jan has [0,0,0] → median = 0  
+# Disease C: Jan has [8,0,0] → median = 0, Feb has [0,0,0] → median = 0
+# Disease D: all months have [0,0,0] → median = 0
 expected_result <- data.frame(
   disease = disease_names,
-  Jan = c(20, 0, 8, 0),  # median of [10,20,30], no data, [8], no data
-  Feb = c(0, 15, 0, 0)   # no data, median of [5,15,25], no data, no data
+  Jan = c(20, 0, 0, 0),
+  Feb = c(0, 15, 0, 0)
 )
 
 expect_true(is.data.frame(result))
-expect_equal(result, expected_result)
+expect_equal(result[,c("disease","Jan","Feb")], expected_result)
+
+# Test the specific bug case: missing year/disease combinations
+test_data <- data.frame(
+  disease = c("A", "A", "B"),  # A has 2022,2023 but not 2024; B only has 2024
+  year = c(2022, 2023, 2024),
+  month = c(1, 1, 1),
+  counts = c(10, 20, 5)
+)
+
+bug_result <- create_report_monthly_medians(test_data, c("A", "B"))
+
+# A: Jan should have [10,20,0] → median = 10
+# B: Jan should have [0,0,5] → median = 0  
+bug_expected <- data.frame(
+  disease = c("A", "B"),
+  Jan = c(10, 0),
+  Feb = c(0, 0)
+)
+
+expect_equal(bug_result[,c("disease","Jan","Feb")], bug_expected)
 
 
 # Test create_report_ytd_counts() ----------------------------------------------

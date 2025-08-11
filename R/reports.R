@@ -294,7 +294,7 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 #' per month (Jan through Dec).
 #' @export
 #'
-#' @importFrom stats aggregate median
+#' @importFrom stats aggregate median reshape
 #'
 #' @examples
 #' data <- data.frame(
@@ -305,23 +305,44 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 #' )
 #' create_report_monthly_medians(data, c("A", "B", "C"))
 create_report_monthly_medians <- function(data, disease_names) {
-  # - Compute counts for each month
+  # - Get the full range of years in the data
+  all_years <- get_yrs(data)
+  all_months <- 1:12
+
+  # - Compute counts for each month, aggregating by disease/month/year
   monthly_meds <- stats::aggregate(counts ~ disease + month + year,
                                    data = data,
                                    FUN = sum)
 
-  # TODO: median incorrect when there are no counts for a disease in a month
+  # - Create a complete grid of all disease/year/month combinations
+  # This ensures missing combinations are filled with 0
+  complete_grid <- expand.grid(
+    disease = disease_names,
+    year = all_years,
+    month = all_months,
+    stringsAsFactors = FALSE
+  )
 
-  # - Compute median counts for each month
+  # - Merge with actual data, filling missing values with 0
+  monthly_meds <- merge(complete_grid, monthly_meds,
+                        by = c("disease", "year", "month"),
+                        all.x = TRUE)
+  monthly_meds$counts[is.na(monthly_meds$counts)] <- 0
+
+  # - Compute median counts for each disease/month across all years
   monthly_meds <- stats::aggregate(counts ~ disease + month,
                                    data = monthly_meds,
                                    FUN = median)
 
   # - Reshape data to use months as columns and disease as rows
-  monthly_meds <- reshape_monthly_wide(monthly_meds)
-
-  # - Add missing diseases
-  monthly_meds <- prep_report_data(monthly_meds, disease_names)
+  monthly_meds <- stats::reshape(
+    monthly_meds,
+    direction = "wide",
+    idvar = "disease",
+    timevar = "month"
+  )
+  # - Update column names to more human-readable format
+  colnames(monthly_meds) <- c("disease", month.abb[1:(ncol(monthly_meds) - 1)])
 
   # - Clear row names
   rownames(monthly_meds) <- NULL
