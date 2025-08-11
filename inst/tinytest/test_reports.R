@@ -276,3 +276,44 @@ expected_jan <- data.frame(
 
 expect_true(is.data.frame(result_jan))
 expect_equal(result_jan, expected_jan)
+
+
+# Test create_report_grouped_stats() -------------------------------------------
+
+data <- data.frame(
+  disease = c("Flu", "Flu", "Flu", "Flu", "Measles", "Measles", "Measles", "Measles", "COVID"),
+  year = c(2023, 2024, 2023, 2024, 2023, 2024, 2023, 2024, 2023),
+  month = c(3, 3, 1, 1, 3, 3, 2, 2, 1),
+  counts = c(15, 25, 10, 12, 8, 5, 6, 4, 20)
+)
+
+diseases <- data.frame(
+  EpiTrax_name = c("Flu", "Measles", "COVID"),
+  Group_name = c("Respiratory", "Vaccine-Preventable", "Respiratory")
+)
+
+config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 1
+)
+
+# Test with March (month 3) 2024
+result <- create_report_grouped_stats(data, diseases, 2024, 3, config)
+
+expected_result <- data.frame(
+  Group = c("Respiratory", "Vaccine-Preventable", "Respiratory"),
+  Disease = c("COVID", "Flu", "Measles"),
+  `March 2024` = c(0, 25, 5),
+  `March 2024 Rate` = c(0, 25, 5),
+  `Historical March Avg` = c(0, 15, 8),
+  `Historical March Median` = c(0, 15, 8),
+  `2024 YTD` = c(0, 37, 9),
+  `Historical 2024 YTD Avg` = c(20, 25, 14),
+  `Historical 2024 YTD Median` = c(20, 25, 14),
+  `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+  check.names = FALSE
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result, expected_result)

@@ -525,7 +525,22 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #' @export
 #'
 #' @examples
-#' # TODO
+#' data <- data.frame(
+#'   disease = c("A", "A", "B", "B"),
+#'   year = c(2023, 2024, 2023, 2024),
+#'   month = c(1, 1, 2, 2),
+#'   counts = c(10, 20, 15, 25)
+#' )
+#' diseases <- data.frame(
+#'   EpiTrax_name = c("A", "B", "C"),
+#'   Group_name = c("Group1", "Group1", "Group2")
+#' )
+#' config <- list(
+#'   current_population = 100000,
+#'   avg_5yr_population = 100000,
+#'   rounding_decimals = 1
+#' )
+#' create_report_grouped_stats(data, diseases, 2024, 2, config)
 create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
   disease_names <- diseases$EpiTrax_name
