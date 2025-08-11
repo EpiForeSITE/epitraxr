@@ -509,7 +509,8 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #'
 #' @param data Dataframe. Input data with columns: disease, year, month, counts.
 #' @param diseases Dataframe. Disease configuration with columns: EpiTrax_name,
-#' Group_name. Used to define disease names and their groupings.
+#' Group_name. Used to define disease names and their groupings. If Group_name
+#' is missing, diseases will be grouped under "Uncategorized".
 #' @param y Integer. Current report year.
 #' @param m Integer. Current report month (1-12).
 #' @param config List. Configuration with current_population, avg_5yr_population,

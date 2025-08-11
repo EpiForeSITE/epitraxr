@@ -10,7 +10,8 @@ create_report_grouped_stats(data, diseases, y, m, config)
 \item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
 
 \item{diseases}{Dataframe. Disease configuration with columns: EpiTrax_name,
-Group_name. Used to define disease names and their groupings.}
+Group_name. Used to define disease names and their groupings. If Group_name
+is missing, diseases will be grouped under "Uncategorized".}
 
 \item{y}{Integer. Current report year.}
 
