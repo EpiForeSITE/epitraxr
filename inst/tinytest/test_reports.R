@@ -242,3 +242,37 @@ expected_result <- data.frame(
 
 expect_true(is.data.frame(result))
 expect_equal(result, expected_result)
+
+
+# Test create_report_ytd_medians() ---------------------------------------------
+
+data <- data.frame(
+  disease = c("A", "A", "A", "A", "B", "B", "B", "B", "C"),
+  year = c(2020, 2021, 2022, 2023, 2020, 2021, 2022, 2023, 2020),
+  month = c(1, 1, 2, 1, 2, 2, 3, 2, 1),
+  counts = c(10, 20, 30, 25, 5, 15, 8, 12, 7)
+)
+
+disease_names <- c("A", "B", "C", "D")
+
+# Test with m = 2 (Jan-Feb YTD)
+result <- create_report_ytd_medians(data, disease_names, 2)
+
+expected_result <- data.frame(
+  disease = disease_names,
+  median_counts = c(22.5, 8.5, 0, 0)
+)
+
+expect_true(is.data.frame(result))
+expect_equal(result, expected_result)
+
+# Test with m = 1 (January only)
+result_jan <- create_report_ytd_medians(data, disease_names, 1)
+
+expected_jan <- data.frame(
+  disease = disease_names,
+  median_counts = c(15, 0, 0, 0)
+)
+
+expect_true(is.data.frame(result_jan))
+expect_equal(result_jan, expected_jan)
