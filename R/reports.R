@@ -280,7 +280,31 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 }
 
 
-create_report_monthly_medians <- function(data, disease_names, config) {
+#' Create monthly medians report
+#'
+#' 'create_report_monthly_medians' generates a data frame of median monthly case
+#' counts for each disease across all years in the input data. This provides a
+#' more robust central tendency measure compared to averages for skewed data.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#'
+#' @returns Dataframe of monthly medians with one row per disease and one column
+#' per month (Jan through Dec).
+#' @export
+#'
+#' @importFrom stats aggregate median
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "A", "B", "B", "B"),
+#'   year = c(2022, 2023, 2024, 2022, 2023, 2024),
+#'   month = c(1, 1, 1, 2, 2, 2),
+#'   counts = c(10, 20, 30, 5, 15, 25)
+#' )
+#' create_report_monthly_medians(data, c("A", "B", "C"))
+create_report_monthly_medians <- function(data, disease_names) {
   # - Compute counts for each month
   monthly_meds <- stats::aggregate(counts ~ disease + month + year,
                                    data = data,
@@ -390,7 +414,31 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
 }
 
 
+#' Create grouped disease statistics report
+#'
+#' 'create_report_grouped_stats' generates a comprehensive report with current
+#' and historical statistics for diseases organized by group. The report includes
+#' monthly counts/rates, year-to-date counts, and trend analysis.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param diseases Dataframe. Disease configuration with columns: EpiTrax_name,
+#' Group_name. Used to define disease names and their groupings.
+#' @param y Integer. Current report year.
+#' @param m Integer. Current report month (1-12).
+#' @param config List. Configuration with current_population, avg_5yr_population,
+#' and rounding_decimals settings.
+#'
+#' @returns Dataframe with one row per disease containing:
+#'   - Group: Disease group name
+#'   - Disease: Disease name
+#'   - Monthly counts and rates for current year/month
+#'   - Historical monthly averages and medians
+#'   - Year-to-date counts and historical averages and medians
+#'   - YTD trend indicators
 #' @export
+#'
+#' @examples
+#' # TODO
 create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
   disease_names <- diseases$EpiTrax_name
@@ -420,8 +468,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
   m_hist_median_count <- create_report_monthly_medians(
     data = data[data$year != y,],
-    disease_names = disease_names,
-    config = config
+    disease_names = disease_names
   )
   m_hist_median_count <- m_hist_median_count[, c("disease", month_abb)]
   colnames(m_hist_median_count) <- c("disease", "counts")

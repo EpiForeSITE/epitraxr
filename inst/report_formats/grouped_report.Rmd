@@ -9,6 +9,8 @@ params:
     report_data: NULL
 ---
 
+<!-- grouped_report.Rmd is a template R Markdown document used for generating a pretty report with diseases grouped into categories -->
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
