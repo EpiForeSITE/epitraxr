@@ -1,3 +1,18 @@
+# ------------------------------------------------------------------------------
+# title: Test Script for Epitrax Reports with Pretty Formatting
+# author: Andrew Pulsipher
+# date: 2025-07-10
+#
+# This script is for testing the pretty formatting and PDF exports of EpiTrax
+# reports.
+#
+# The script is maintained by the Insight Net center ForeSITE. All the code is
+# available on GitHub at
+# https://github.com/EpiForeSITE/epitraxr.
+#
+# For questions, updates, or bug reports, please visit the GitHub repository.
+# ------------------------------------------------------------------------------
+
 # Load required libraries
 library(epitraxr)
 
