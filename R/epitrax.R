@@ -495,7 +495,7 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 }
 
 
-#' Create monthly medians internal or public report from an EpiTrax object
+#' Create monthly medians report from an EpiTrax object
 #'
 #' `epitrax_report_monthly_medians` generates a report of monthly medians for all years
 #' in the EpiTrax object data, with the option to exclude the current report year.
@@ -567,7 +567,7 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
 }
 
 
-#' Create year-to-date (YTD) medians internal or public report from an EpiTrax object
+#' Create year-to-date (YTD) medians report from an EpiTrax object
 #'
 #' `epitrax_report_ytd_medians` generates a report of median year-to-date counts
 #' for each disease up to the current report month across all years in the EpiTrax
@@ -640,15 +640,50 @@ epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.repor
 }
 
 
+#' Create grouped disease statistics report from an EpiTrax object
+#'
+#' `epitrax_report_grouped_stats` generates a comprehensive report with current
+#' and historical statistics for diseases organized by group. The report includes
+#' monthly counts/rates, historical averages and medians, year-to-date counts, and
+#' trend analysis. It can be run for either internal or public reports.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param is.public Logical indicating whether to generate a public report using
+#' the public disease list. If FALSE (default), generates an internal report using
+#' the internal disease list.
+#'
+#' @returns Updated EpiTrax object with grouped statistics report added to either
+#' the `internal_reports` or `public_reports` field, depending on the `is.public`
+#' parameter.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_report_grouped_stats()
+#'
+#' names(epitrax$internal_reports)
 epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
 
     validate_epitrax(epitrax)
 
     # Select disease list
     if (is.public) {
-        report_diseases <- epitrax$report_diseases$public$EpiTrax_name
+        report_diseases <- epitrax$report_diseases$public
     } else {
-        report_diseases <- epitrax$report_diseases$internal$EpiTrax_name
+        report_diseases <- epitrax$report_diseases$internal
     }
 
     # Create grouped stats report

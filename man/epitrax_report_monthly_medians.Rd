@@ -2,7 +2,7 @@
 % Please edit documentation in R/epitrax.R
 \name{epitrax_report_monthly_medians}
 \alias{epitrax_report_monthly_medians}
-\title{Create monthly medians internal or public report from an EpiTrax object}
+\title{Create monthly medians report from an EpiTrax object}
 \usage{
 epitrax_report_monthly_medians(
   epitrax,

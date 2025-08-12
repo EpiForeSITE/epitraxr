@@ -189,7 +189,11 @@ expect_true(is.data.frame(epitrax$internal_reports$`monthly_medians_2019-2024`))
 expect_equal(nrow(epitrax$internal_reports$`monthly_medians_2019-2024`), 5)
 
 # - Test public report generation
-epitrax <- epitrax_report_monthly_medians(epitrax, is.public = TRUE, exclude.report.year = TRUE)
+epitrax <- epitrax_report_monthly_medians(
+  epitrax,
+  is.public = TRUE,
+  exclude.report.year = TRUE
+)
 expect_true(inherits(epitrax, "epitrax"))
 expect_true("monthly_medians_2019-2023" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$`monthly_medians_2019-2023`))
@@ -204,11 +208,35 @@ expect_true(is.data.frame(epitrax$internal_reports$`ytd_medians_2019-2024`))
 expect_equal(nrow(epitrax$internal_reports$`ytd_medians_2019-2024`), 5)
 
 # - Test public report generation
-epitrax <- epitrax_report_ytd_medians(epitrax, is.public = TRUE, exclude.report.year = TRUE)
+epitrax <- epitrax_report_ytd_medians(
+  epitrax,
+  is.public = TRUE,
+  exclude.report.year = TRUE
+)
 expect_true(inherits(epitrax, "epitrax"))
 expect_true("ytd_medians_2019-2023" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$`ytd_medians_2019-2023`))
 expect_equal(nrow(epitrax$public_reports$`ytd_medians_2019-2023`), 5)
+
+# Test epitrax_report_grouped_stats() ------------------------------------------
+# - Test internal report generation
+expect_warning(epitrax <- epitrax_report_grouped_stats(epitrax),
+               "No disease groups were provided.")
+
+expect_true(inherits(epitrax, "epitrax"))
+expect_true("grouped_stats_2019-2024" %in% names(epitrax$internal_reports))
+expect_true(is.data.frame(epitrax$internal_reports$`grouped_stats_2019-2024`))
+expect_equal(nrow(epitrax$internal_reports$`grouped_stats_2019-2024`), 5)
+
+# - Test public report generation
+expect_warning(epitrax <- epitrax_report_grouped_stats(
+  epitrax,
+  is.public = TRUE
+), "No disease groups were provided.")
+expect_true(inherits(epitrax, "epitrax"))
+expect_true("grouped_stats_2019-2024" %in% names(epitrax$public_reports))
+expect_true(is.data.frame(epitrax$public_reports$`grouped_stats_2019-2024`))
+expect_equal(nrow(epitrax$public_reports$`grouped_stats_2019-2024`), 5)
 
 # Test epitrax_write_csvs() ----------------------------------------------------
 # - Create folders for testing
@@ -232,8 +260,8 @@ epitrax$config$generate_csvs <- TRUE
 epitrax <- epitrax_write_csvs(epitrax, fsys = fsys)
 
 expect_true(inherits(epitrax, "epitrax"))
-expect_equal(length(list.files(fsys$internal)), 11)
-expect_equal(length(list.files(fsys$public)), 5)
+expect_equal(length(list.files(fsys$internal)), 12)
+expect_equal(length(list.files(fsys$public)), 6)
 
 # - Check contents
 annual_counts_fp <- file.path(fsys$internal, "annual_counts.csv")
