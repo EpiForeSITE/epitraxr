@@ -321,6 +321,36 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 }
 
 
+
+epitrax_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
+
+    validate_epitrax(epitrax)
+
+    # Create monthly medians
+    r_data <- epitrax$data
+    if (exclude.report.year) {
+        r_data <- r_data[r_data$year != epitrax$report_year,]
+    }
+
+    report_diseases <- ifelse(
+        is.public,
+        epitrax$report_diseases$public$EpiTrax_name,
+        epitrax$report_diseases$internal$EpiTrax_name
+    )
+
+    monthly_medians <- create_report_monthly_medians(
+        data = r_data,
+        disease_names = report_diseases
+    )
+
+    # Add to internal reports
+    r_name <- paste0("monthly_medians_", min(r_data$year), "-", max(r_data$year))
+    epitrax$internal_reports[[r_name]] <- monthly_medians
+
+    epitrax
+}
+
+
 #' Create year-to-date (YTD) counts internal report for a given month
 #' from an EpiTrax object
 #'
