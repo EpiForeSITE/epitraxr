@@ -26,32 +26,35 @@ an EpiTrax object to PDF files using a formatted template. It processes both
 internal and public grouped statistics reports.
 }
 \examples{
-fsys <- list(
-  internal = file.path(tempdir(), "internal_reports"),
-  public = file.path(tempdir(), "public_reports"),
-  settings = file.path(tempdir(), "report_settings")
-)
-fsys <- setup_filesystem(fsys)
+# Don't run PDF examples in case missing LaTeX
+\dontrun{
+ fsys <- list(
+   internal = file.path(tempdir(), "internal_reports"),
+   public = file.path(tempdir(), "public_reports"),
+   settings = file.path(tempdir(), "report_settings")
+ )
+ fsys <- setup_filesystem(fsys)
 
-data_file <- system.file("sample_data/sample_epitrax_data.csv",
-                         package = "epitraxr")
-config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
-                           package = "epitraxr")
-disease_lists <- list(
-  internal = "use_defaults",
-  public = "use_defaults"
-)
+ data_file <- system.file("sample_data/sample_epitrax_data.csv",
+                          package = "epitraxr")
+ config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+                            package = "epitraxr")
+ disease_lists <- list(
+   internal = "use_defaults",
+   public = "use_defaults"
+ )
 
-params <- list(
-  title = "Monthly Grouped Disease Statistics",
-  author = "Public Health Department"
-)
+ params <- list(
+   title = "Monthly Grouped Disease Statistics",
+   author = "Public Health Department"
+ )
 
-epitrax <- setup_epitrax(
-  epitrax_file = data_file,
-  config_file = config_file,
-  disease_list_files = disease_lists
-) |>
- epitrax_report_grouped_stats() |>
- epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
+ epitrax <- setup_epitrax(
+   epitrax_file = data_file,
+   config_file = config_file,
+   disease_list_files = disease_lists
+ ) |>
+  epitrax_report_grouped_stats() |>
+  epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
+}
 }
