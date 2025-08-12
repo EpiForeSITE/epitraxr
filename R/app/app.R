@@ -3,6 +3,8 @@ library(DT)
 library(devtools)
 library(writexl)
 library(shinyjs)
+library(stringr)
+library(epitraxr)
 
 source("../epitrax.R")
 source("../validation.R")
@@ -438,38 +440,56 @@ server <- function(input, output, session) {
       return(div(h4("No reports generated yet. Please upload files and click 'Generate Reports'.")))
     }
     
-    # Create tabs for available reports
-    tab_panels <- list()
+    # Create top-level tabs for Internal and Public reports
+    top_level_tabs <- list()
     
-    # Internal reports tabs
+    # Internal reports tab
     if (!is.null(epitrax$internal_reports) && length(epitrax$internal_reports) > 0) {
+      internal_sub_tabs <- list()
+      
       for (report_name in names(epitrax$internal_reports)) {
-        tab_panels[[length(tab_panels) + 1]] <- tabPanel(
-          title = paste("Internal:", gsub("_", " ", stringr::str_to_title(report_name))),
-          value = report_name,
+        internal_sub_tabs[[length(internal_sub_tabs) + 1]] <- tabPanel(
+          title = gsub("_", " ", str_to_title(report_name)),
+          value = paste0("internal_", report_name),
           div(style = "margin-top: 10px;",
               DT::dataTableOutput(paste0("table_", report_name)))
         )
       }
+      
+      top_level_tabs[[length(top_level_tabs) + 1]] <- tabPanel(
+        title = "Internal Reports",
+        value = "internal_tab",
+        div(style = "margin-top: 10px;",
+            do.call(tabsetPanel, internal_sub_tabs))
+      )
     }
     
-    # Public reports tabs
+    # Public reports tab
     if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+      public_sub_tabs <- list()
+      
       for (report_name in names(epitrax$public_reports)) {
-        tab_panels[[length(tab_panels) + 1]] <- tabPanel(
-          title = paste("Public:", gsub("_", " ", stringr::str_to_title(report_name))),
-          value = report_name,
+        public_sub_tabs[[length(public_sub_tabs) + 1]] <- tabPanel(
+          title = gsub("_", " ", str_to_title(report_name)),
+          value = paste0("public_", report_name),
           div(style = "margin-top: 10px;",
               DT::dataTableOutput(paste0("table_", report_name)))
         )
       }
+      
+      top_level_tabs[[length(top_level_tabs) + 1]] <- tabPanel(
+        title = "Public Reports",
+        value = "public_tab",
+        div(style = "margin-top: 10px;",
+            do.call(tabsetPanel, public_sub_tabs))
+      )
     }
     
-    if (length(tab_panels) == 0) {
+    if (length(top_level_tabs) == 0) {
       return(div(h4("No report data available.")))
     }
     
-    do.call(tabsetPanel, tab_panels)
+    do.call(tabsetPanel, top_level_tabs)
   })
   
   # Dynamic table outputs for each report
