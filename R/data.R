@@ -228,7 +228,7 @@ reshape_annual_wide <- function(df) {
 prep_report_data <- function(data, report_d_list) {
 
   # - Remove rows from data that aren't going into the public report
-  data <- subset(data, disease %in% report_d_list)
+  data <- data[data$disease %in% report_d_list, ]
 
   # - Get diseases from report list that weren't in the data
   missing_diseases <- report_d_list[!(report_d_list %in% data$disease)]

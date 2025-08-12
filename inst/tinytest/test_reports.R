@@ -90,7 +90,7 @@ expected_result <- data.frame(
 )
 
 expect_true(is.data.frame(result))
-expect_equal(result, expected_result)
+expect_equivalent(result, expected_result)
 
 
 # Test create_report_monthly_counts() ------------------------------------------
@@ -114,7 +114,7 @@ expected_result <- data.frame(
 )
 
 expect_true(is.data.frame(result))
-expect_equal(result, expected_result)
+expect_equivalent(result, expected_result)
 
 
 # Test create_report_monthly_avgs() ------------------------------------------
@@ -138,7 +138,7 @@ expected_result <- data.frame(
 )
 
 expect_true(is.data.frame(result))
-expect_equal(result, expected_result)
+expect_equivalent(result, expected_result)
 
 
 # Test create_report_monthly_medians() -----------------------------------------

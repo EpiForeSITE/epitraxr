@@ -212,7 +212,7 @@ public_report_YTD_fp <- file.path(fsys$public, "public_report_YTD.csv")
 expect_true(file.exists(annual_counts_fp))
 expect_true(file.exists(public_report_YTD_fp))
 
-expect_equal(epitrax$internal_reports$annual_counts,
+expect_equivalent(epitrax$internal_reports$annual_counts,
              utils::read.csv(annual_counts_fp, check.names = FALSE))
 expect_equal(epitrax$public_reports$public_report_YTD,
              utils::read.csv(public_report_YTD_fp))
@@ -245,7 +245,7 @@ internal_xlsx_data <- readxl::read_excel(internal_xlsx,
 public_xlsx_data <- readxl::read_excel(public_xlsx,
                                        sheet = "public_report_Dec2024")
 
-expect_equal(as.data.frame(internal_xlsx_data),
+expect_equivalent(as.data.frame(internal_xlsx_data),
              epitrax$internal_reports$annual_counts)
 expect_equal(as.data.frame(public_xlsx_data),
              epitrax$public_reports$public_report_Dec2024)

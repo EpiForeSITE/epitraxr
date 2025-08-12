@@ -43,7 +43,7 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
   m_counts <- with(cases, cases[year == y & month == m, c("disease", "counts")])
 
   # - Only take the rows with data in the final report
-  m_counts <- subset(m_counts, disease %in% avgs$disease)
+  m_counts <- m_counts[m_counts$disease %in% avgs$disease, ]
 
   # - Convert monthly average counts to rate per 100k
   m_rates <- convert_counts_to_rate(avgs[[month_name]],
