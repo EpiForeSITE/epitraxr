@@ -289,7 +289,7 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
     output_file = filename,
     output_dir = folder,
     quiet = TRUE,
-    envir = new.env()
+    envir = new.env(parent = globalenv())
   )
 }
 
