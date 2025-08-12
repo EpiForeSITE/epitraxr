@@ -6,12 +6,12 @@ library(shinyjs)
 library(stringr)
 library(epitraxr)
 
-source("../epitrax.R")
-source("../validation.R")
-source("../data.R")
-source("../helpers.R")
-source("../filesystem.R")
-source("../reports.R")
+source("../../R/epitrax.R")
+source("../../R/validation.R")
+source("../../R/data.R")
+source("../../R/helpers.R")
+source("../../R/filesystem.R")
+source("../../R/reports.R")
 
 # Dictionary constant for multiselect options matching epitraxr functions
 REPORT_OPTIONS <- list(
