@@ -535,24 +535,26 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
 
     validate_epitrax(epitrax)
 
-    # Create monthly medians
+    # Extract data
     r_data <- epitrax$data
     if (exclude.report.year) {
         r_data <- r_data[r_data$year != epitrax$report_year,]
     }
 
+    # Select disease list
     if (is.public) {
         report_diseases <- epitrax$report_diseases$public$EpiTrax_name
     } else {
         report_diseases <- epitrax$report_diseases$internal$EpiTrax_name
     }
 
+    # Create monthly medians
     monthly_medians <- create_report_monthly_medians(
         data = r_data,
         disease_names = report_diseases
     )
 
-    # Add to internal reports
+    # Add report to EpiTrax object
     r_name <- paste0("monthly_medians_", min(r_data$year), "-", max(r_data$year))
     if (is.public) {
         epitrax$public_reports[[r_name]] <- monthly_medians
@@ -565,29 +567,68 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
 }
 
 
+#' Create year-to-date (YTD) medians internal or public report from an EpiTrax object
+#'
+#' `epitrax_report_ytd_medians` generates a report of median year-to-date counts
+#' for each disease up to the current report month across all years in the EpiTrax
+#' object data, with the option to exclude the current report year. It can be run for
+#' either internal or public reports.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param is.public Logical indicating whether to generate a public report using
+#' the public disease list. If FALSE (default), generates an internal report using
+#' the internal disease list.
+#' @param exclude.report.year Logical indicating whether to exclude the current
+#' report year from the medians calculation. Defaults to FALSE.
+#'
+#' @returns Updated EpiTrax object with YTD medians report added to either
+#' the `internal_reports` or `public_reports` field, depending on the `is.public`
+#' parameter.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_report_ytd_medians()
+#'
+#' names(epitrax$internal_reports)
 epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
 
     validate_epitrax(epitrax)
 
-    # Create YTD medians
+    # Extract data
     r_data <- epitrax$data
     if (exclude.report.year) {
         r_data <- r_data[r_data$year != epitrax$report_year,]
     }
 
+    # Select disease list
     if (is.public) {
         report_diseases <- epitrax$report_diseases$public$EpiTrax_name
     } else {
         report_diseases <- epitrax$report_diseases$internal$EpiTrax_name
     }
 
+    # Create YTD medians
     ytd_medians <- create_report_ytd_medians(
         data = r_data,
         disease_names = report_diseases,
         m = epitrax$report_month
     )
 
-    # Add to internal reports
+    # Add report to EpiTrax object
     r_name <- paste0("ytd_medians_", min(r_data$year), "-", max(r_data$year))
     if (is.public) {
         epitrax$public_reports[[r_name]] <- ytd_medians
@@ -603,6 +644,7 @@ epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
 
     validate_epitrax(epitrax)
 
+    # Select disease list
     if (is.public) {
         report_diseases <- epitrax$report_diseases$public$EpiTrax_name
     } else {
@@ -618,7 +660,7 @@ epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
         config = epitrax$config
     )
 
-    # Add to internal or public reports
+    # Add report to EpiTrax object
     r_name <- paste0("grouped_stats_", min(epitrax$data$year), "-", max(epitrax$data$year))
     if (is.public) {
         epitrax$public_reports[[r_name]] <- grouped_stats
