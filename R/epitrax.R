@@ -942,7 +942,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
 
         report <- epitrax$internal_reports[[name]]
 
-        write_grouped_report_rmarkdown(
+        write_grouped_report_pdf(
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),
@@ -958,7 +958,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
 
         report <- epitrax$public_reports[[name]]
 
-        write_grouped_report_rmarkdown(
+        write_grouped_report_pdf(
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),

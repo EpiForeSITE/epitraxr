@@ -230,10 +230,57 @@ write_report_xlsx <- function(data, filename, folder) {
 }
 
 
-
-write_grouped_report_rmarkdown <- function(data, params, filename, folder) {
+#' Write grouped report in R Markdown format
+#'
+#' `write_grouped_report_pdf` renders a grouped disease statistics report
+#' using R Markdown template. The report includes comprehensive disease statistics
+#' organized by groups with current and historical data.
+#'
+#' @param data Dataframe. Report data containing grouped disease statistics.
+#' @param params List. Report parameters containing:
+#'   - title: Report title (defaults to "Grouped Report")
+#'   - author: Report author (defaults to "epitraxr")
+#' @param filename String. Output filename for the rendered report.
+#' @param folder Filepath. Output directory for the rendered report.
+#'
+#' @returns NULL (called for side effects - creates the report file).
+#' @export
+#'
+#' @examples
+#' # Create sample grouped report data
+#' r_data <- data.frame(
+#'   Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+#'   Disease = c("COVID", "Flu", "Measles"),
+#'   `March 2024` = c(0, 25, 5),
+#'   `March 2024 Rate` = c(0, 25, 5),
+#'   `Historical March Avg` = c(0, 15, 8),
+#'   `Historical March Median` = c(0, 15, 8),
+#'   `2024 YTD` = c(0, 37, 9),
+#'   `Historical 2024 YTD Avg` = c(20, 25, 14),
+#'   `Historical 2024 YTD Median` = c(20, 25, 14),
+#'   `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+#'   check.names = FALSE
+#' )
+#'
+#' # Set report parameters
+#' params <- list(
+#'   title = "Monthly Disease Surveillance Report",
+#'   author = "Public Health Department"
+#' )
+#'
+#' # Write to temporary directory
+#' write_grouped_report_pdf(
+#'   data = r_data,
+#'   params = params,
+#'   filename = "grouped_disease_report",
+#'   folder = tempdir()
+#' )
+write_grouped_report_pdf <- function(data, params, filename, folder) {
   rmarkdown::render(
-    input = "inst/report_formats/grouped_report.Rmd",
+    input = system.file(
+      "report_formats/grouped_report.Rmd",
+      package = "epitraxr"
+    ),
     params = list(
       title = params$title %||% "Grouped Report",
       author = params$author %||% "epitraxr",
@@ -241,7 +288,8 @@ write_grouped_report_rmarkdown <- function(data, params, filename, folder) {
     ),
     output_file = filename,
     output_dir = folder,
-    quiet = TRUE
+    quiet = TRUE,
+    envir = new.env()
   )
 }
 
