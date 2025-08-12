@@ -230,19 +230,85 @@ write_report_xlsx <- function(data, filename, folder) {
 }
 
 
+#' Write grouped report in R Markdown format
+#'
+#' `write_grouped_report_pdf` renders a grouped disease statistics report
+#' using R Markdown template. The report includes comprehensive disease statistics
+#' organized by groups with current and historical data.
+#'
+#' @param data Dataframe. Report data containing grouped disease statistics.
+#' @param params List. Report parameters containing:
+#'   - title: Report title (defaults to "Grouped Report")
+#'   - author: Report author (defaults to "epitraxr")
+#' @param filename String. Output filename for the rendered report.
+#' @param folder Filepath. Output directory for the rendered report.
+#'
+#' @returns NULL (called for side effects - creates the report file).
+#' @export
+#'
+#' @examples
+#' # Create sample grouped report data
+#' r_data <- data.frame(
+#'   Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+#'   Disease = c("COVID", "Flu", "Measles"),
+#'   `March 2024` = c(0, 25, 5),
+#'   `March 2024 Rate` = c(0, 25, 5),
+#'   `Historical March Avg` = c(0, 15, 8),
+#'   `Historical March Median` = c(0, 15, 8),
+#'   `2024 YTD` = c(0, 37, 9),
+#'   `Historical 2024 YTD Avg` = c(20, 25, 14),
+#'   `Historical 2024 YTD Median` = c(20, 25, 14),
+#'   `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+#'   check.names = FALSE
+#' )
+#'
+#' # Set report parameters
+#' params <- list(
+#'   title = "Monthly Disease Surveillance Report",
+#'   author = "Public Health Department"
+#' )
+#'
+#' # Write to temporary directory
+#' write_grouped_report_pdf(
+#'   data = r_data,
+#'   params = params,
+#'   filename = "grouped_disease_report",
+#'   folder = tempdir()
+#' )
+write_grouped_report_pdf <- function(data, params, filename, folder) {
+  rmarkdown::render(
+    input = system.file(
+      "report_formats/grouped_report.Rmd",
+      package = "epitraxr"
+    ),
+    params = list(
+      title = params$title %||% "Grouped Report",
+      author = params$author %||% "epitraxr",
+      report_data = data
+    ),
+    output_file = filename,
+    output_dir = folder,
+    quiet = TRUE,
+    envir = new.env()
+  )
+}
+
+
 #' Get the internal disease list
 #'
 #' 'get_internal_disease_list' reads the internal list from a given CSV file or
 #' uses the default diseases, if the file doesn't exist.
 #'
 #' The provided internal disease list file must contain one column of EpiTrax
-#' disease names (EpiTrax_name) to include in internal reports.
+#' disease names (EpiTrax_name) to include in internal reports. It can optionally
+#' contain a column for disease_groupings (Group_name) for reports that group
+#' diseases together.
 #' @param filepath Filepath. Internal disease list CSV file.
 #' @param default_diseases String vector. List of default diseases to use if the
 #' above file doesn't exist.
 #'
-#' @returns A dataframe containing the diseases to include in the public report
-#' and the name to use for each disease in the public report.
+#' @returns A dataframe containing the diseases to include in the internal report
+#' and possibly the disease groupings.
 #' @export
 #'
 #' @importFrom utils read.csv
@@ -295,13 +361,16 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 #' the default diseases if the file doesn't exist.
 #'
 #' The provided public disease list file must contain two columns that map the
-#' EpiTrax disease name to a public-facing name for the public report.
+#' EpiTrax disease name to a public-facing name for the public report. It can
+#' optionally contain a column for disease_groupings (Group_name) for reports
+#' that group diseases together.
 #' @param filepath Filepath. Public disease list CSV file.
 #' @param default_diseases String vector. List of default diseases to use if the
 #' above file doesn't exist.
 #'
 #' @returns A dataframe containing the diseases to include in the public report
-#' and the name to use for each disease in the public report.
+#' and the name to use for each disease in the public report. It may also contain
+#' the disease groupings.
 #' @export
 #'
 #' @importFrom utils read.csv

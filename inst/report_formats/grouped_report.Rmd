@@ -1,0 +1,37 @@
+---
+title: "`r params$title`"
+author: "`r params$author`"
+output: pdf_document
+classoption: landscape
+params:
+    title: "Grouped Disease Surveillance Report"
+    author: "epitraxr"
+    report_data: NULL
+---
+
+<!-- grouped_report.Rmd is a template R Markdown document used for generating a pretty report with diseases grouped into categories -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r get-data, echo=FALSE, message=FALSE, warning=FALSE}
+r_data <- params$report_data
+r_data <- r_data[order(r_data$Group),]
+
+# knitr::kable(r_data, row.names = FALSE)
+```
+
+```{r print-group-tables, echo = FALSE, results='asis'}
+for (g in unique(r_data$Group)) {
+    gr_data <- r_data[r_data$Group == g, ]
+    gr_data$Group <- NULL  # Remove Group column for display
+    print(knitr::kable(
+        gr_data,
+        align = "lccccccc",
+        row.names = FALSE,
+        caption = paste("Group:", g)))
+    cat("\n\n")
+}
+```
+
