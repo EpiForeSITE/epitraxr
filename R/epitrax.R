@@ -927,3 +927,44 @@ epitrax_write_pdf_month_crosssections <- function(epitrax, fsys) {
   epitrax
 
 }
+
+
+epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
+
+    validate_epitrax(epitrax)
+    validate_filesystem(fsys)
+
+    # Write internal grouped stats reports to PDF
+    for (name in names(epitrax$internal_reports)) {
+        if (!grepl("^grouped_stats_", name)) {
+            next
+        }
+
+        report <- epitrax$internal_reports[[name]]
+
+        write_grouped_report_rmarkdown(
+            data = report,
+            params = params,
+            filename = paste0(name, ".pdf"),
+            folder = fsys$internal
+        )
+    }
+
+    # Write public grouped stats reports to PDF
+    for (name in names(epitrax$public_reports)) {
+        if (!grepl("^grouped_stats_", name)) {
+            next
+        }
+
+        report <- epitrax$public_reports[[name]]
+
+        write_grouped_report_rmarkdown(
+            data = report,
+            params = params,
+            filename = paste0(name, ".pdf"),
+            folder = fsys$public
+        )
+    }
+
+    epitrax
+}

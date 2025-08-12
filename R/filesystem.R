@@ -230,6 +230,22 @@ write_report_xlsx <- function(data, filename, folder) {
 }
 
 
+
+write_grouped_report_rmarkdown <- function(data, params, filename, folder) {
+  rmarkdown::render(
+    input = "inst/report_formats/grouped_report.Rmd",
+    params = list(
+      title = params$title %||% "Grouped Report",
+      author = params$author %||% "epitraxr",
+      report_data = data
+    ),
+    output_file = filename,
+    output_dir = folder,
+    quiet = TRUE
+  )
+}
+
+
 #' Get the internal disease list
 #'
 #' 'get_internal_disease_list' reads the internal list from a given CSV file or
