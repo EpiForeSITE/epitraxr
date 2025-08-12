@@ -929,6 +929,50 @@ epitrax_write_pdf_month_crosssections <- function(epitrax, fsys) {
 }
 
 
+#' Write grouped statistics reports from EpiTrax object to PDF files
+#'
+#' `epitrax_write_pdf_grouped_stats` writes the grouped statistics reports from
+#' an EpiTrax object to PDF files using a formatted template. It processes both
+#' internal and public grouped statistics reports.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param params List. Report parameters containing:
+#'   - title: Report title (defaults to "Grouped Report")
+#'   - author: Report author (defaults to "epitraxr")
+#' @param fsys Filesystem list containing paths for internal and public reports.
+#'
+#' @returns The original EpiTrax object, unchanged.
+#' @export
+#'
+#' @examples
+#' fsys <- list(
+#'   internal = file.path(tempdir(), "internal_reports"),
+#'   public = file.path(tempdir(), "public_reports"),
+#'   settings = file.path(tempdir(), "report_settings")
+#' )
+#' fsys <- setup_filesystem(fsys)
+#'
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' params <- list(
+#'   title = "Monthly Grouped Disease Statistics",
+#'   author = "Public Health Department"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_report_grouped_stats() |>
+#'  epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
 epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
 
     validate_epitrax(epitrax)

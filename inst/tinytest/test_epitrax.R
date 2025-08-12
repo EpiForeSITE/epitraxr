@@ -309,7 +309,7 @@ expect_equal(as.data.frame(public_xlsx_data),
              epitrax$public_reports$public_report_Dec2024)
 
 
-# Test epitrax_write_pdf_month_crosssections() ---------------------------------------------------
+# Test PDF functions -----------------------------------------------------------
 # - Create folders for testing
 fsys <- list(
   internal = file.path(tempdir(), "test_internal"),
@@ -318,11 +318,11 @@ fsys <- list(
 )
 setup_filesystem(fsys, clear.reports = TRUE)
 
-# - Check overall results
+
+# Test epitrax_write_pdf_month_crosssections() ---------------------------------
 expect_message(
   epitrax <- epitrax_write_pdf_month_crosssections(epitrax, fsys = fsys)
 )
-
 expect_true(inherits(epitrax, "epitrax"))
 expect_equal(length(list.files(fsys$internal)), 0)
 expect_equal(length(list.files(fsys$public)), 3)
@@ -334,3 +334,36 @@ expect_true(file.exists(file.path(fsys$public,
                                     paste0("public_report_Dec2024", ".pdf"))))
 expect_true(file.exists(file.path(fsys$public,
                                     paste0("public_report_Nov2024", ".pdf"))))
+
+# Test epitrax_write_pdf_grouped_stats() ---------------------------------------
+
+# Set up parameters for PDF generation
+params <- list(
+  title = "Test Grouped Disease Statistics Report",
+  author = "Test Author"
+)
+
+# - Test with existing grouped stats reports
+expect_silent(epitrax <- epitrax_write_pdf_grouped_stats(epitrax, params, fsys))
+
+expect_true(inherits(epitrax, "epitrax"))
+expect_equal(length(list.files(fsys$internal)), 1)
+expect_equal(length(list.files(fsys$public)), 4)
+
+# Check that PDF files were created for grouped stats reports
+internal_pdf <- file.path(fsys$internal, "grouped_stats_2019-2024.pdf")
+public_pdf <- file.path(fsys$public, "grouped_stats_2019-2024.pdf")
+
+expect_true(file.exists(internal_pdf))
+expect_true(file.exists(public_pdf))
+
+# - Test with no grouped stats reports (should not error)
+epitrax_no_grouped <- epitrax
+epitrax_no_grouped$internal_reports <- epitrax_no_grouped$internal_reports[!grepl("^grouped_stats_", names(epitrax_no_grouped$internal_reports))]
+epitrax_no_grouped$public_reports <- epitrax_no_grouped$public_reports[!grepl("^grouped_stats_", names(epitrax_no_grouped$public_reports))]
+
+expect_silent(epitrax_no_grouped <- epitrax_write_pdf_grouped_stats(epitrax_no_grouped, params, fsys))
+expect_true(inherits(epitrax_no_grouped, "epitrax"))
+# - Check no new files created
+expect_equal(length(list.files(fsys$internal)), 1)
+expect_equal(length(list.files(fsys$public)), 4)
