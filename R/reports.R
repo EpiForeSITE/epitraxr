@@ -43,7 +43,7 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
   m_counts <- with(cases, cases[year == y & month == m, c("disease", "counts")])
 
   # - Only take the rows with data in the final report
-  m_counts <- subset(m_counts, disease %in% avgs$disease)
+  m_counts <- m_counts[m_counts$disease %in% avgs$disease, ]
 
   # - Convert monthly average counts to rate per 100k
   m_rates <- convert_counts_to_rate(avgs[[month_name]],
@@ -280,6 +280,75 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 }
 
 
+#' Create monthly medians report
+#'
+#' 'create_report_monthly_medians' generates a data frame of median monthly case
+#' counts for each disease across all years in the input data. This provides a
+#' more robust central tendency measure compared to averages for skewed data.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#'
+#' @returns Dataframe of monthly medians with one row per disease and one column
+#' per month (Jan through Dec).
+#' @export
+#'
+#' @importFrom stats aggregate median reshape
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "A", "B", "B", "B"),
+#'   year = c(2022, 2023, 2024, 2022, 2023, 2024),
+#'   month = c(1, 1, 1, 2, 2, 2),
+#'   counts = c(10, 20, 30, 5, 15, 25)
+#' )
+#' create_report_monthly_medians(data, c("A", "B", "C"))
+create_report_monthly_medians <- function(data, disease_names) {
+  # - Get the full range of years in the data
+  all_years <- get_yrs(data)
+  all_months <- 1:12
+
+  # - Compute counts for each month, aggregating by disease/month/year
+  monthly_meds <- get_month_counts(data)
+
+  # - Create a complete grid of all disease/year/month combinations
+  # This ensures missing combinations are filled with 0
+  complete_grid <- expand.grid(
+    disease = disease_names,
+    year = all_years,
+    month = all_months,
+    stringsAsFactors = FALSE
+  )
+
+  # - Merge with actual data, filling missing values with 0
+  monthly_meds <- merge(complete_grid, monthly_meds,
+                        by = c("disease", "year", "month"),
+                        all.x = TRUE)
+  monthly_meds$counts[is.na(monthly_meds$counts)] <- 0
+
+  # - Compute median counts for each disease/month across all years
+  monthly_meds <- stats::aggregate(counts ~ disease + month,
+                                   data = monthly_meds,
+                                   FUN = median)
+
+  # - Reshape data to use months as columns and disease as rows
+  monthly_meds <- stats::reshape(
+    monthly_meds,
+    direction = "wide",
+    idvar = "disease",
+    timevar = "month"
+  )
+  # - Update column names to more human-readable format
+  colnames(monthly_meds) <- c("disease", month.abb[1:(ncol(monthly_meds) - 1)])
+
+  # - Clear row names
+  rownames(monthly_meds) <- NULL
+
+  monthly_meds
+}
+
+
 #' Create year-to-date (YTD) counts report
 #'
 #' 'create_report_ytd_counts' generates a data frame of year-to-date counts
@@ -361,4 +430,228 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
   }
 
   ytd_report
+}
+
+
+#' Create year-to-date (YTD) medians report
+#'
+#' 'create_report_ytd_medians' generates a data frame of median year-to-date
+#' counts for each disease up to the given month across all years in the data.
+#' This provides a robust central tendency measure for YTD values.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param disease_names Character vector. List of diseases to include in the
+#' report.
+#' @param m Integer. Current report month (1-12). YTD calculations will include
+#' months 1 through m.
+#'
+#' @returns Dataframe with one row per disease and columns for disease name and
+#' median YTD counts.
+#' @export
+#'
+#' @importFrom stats aggregate median
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "A", "B", "B", "B"),
+#'   year = c(2022, 2023, 2024, 2022, 2023, 2024),
+#'   month = c(1, 1, 2, 2, 2, 3),
+#'   counts = c(10, 15, 20, 5, 8, 12)
+#' )
+#' create_report_ytd_medians(data, c("A", "B", "C"), 2)
+create_report_ytd_medians <- function(data, disease_names, m) {
+
+  # - Get the full range of years in the data
+  all_years <- get_yrs(data)
+  all_months <- 1:m
+
+  # - Get YTD month counts
+  ytd_medians <- get_month_counts(data)
+  ytd_medians <- with(ytd_medians, ytd_medians[month <= m, ])
+
+  # - Create a complete grid of all disease/year/month combinations
+  # This ensures missing combinations are filled with 0
+  complete_grid <- expand.grid(
+    disease = disease_names,
+    year = all_years,
+    month = all_months,
+    stringsAsFactors = FALSE
+  )
+
+  # - Merge with actual data, filling missing values with 0
+  ytd_medians <- merge(complete_grid, ytd_medians,
+                        by = c("disease", "year", "month"),
+                        all.x = TRUE)
+  ytd_medians$counts[is.na(ytd_medians$counts)] <- 0
+
+  # Sum counts by disease and year
+  ytd_medians <- stats::aggregate(counts ~ disease + year,
+                                   data = ytd_medians,
+                                   FUN = sum)
+
+  # Compute median counts for each disease/year
+  ytd_medians <- stats::aggregate(counts ~ disease,
+                                   data = ytd_medians,
+                                   FUN = median)
+
+  colnames(ytd_medians) <- c("disease", "median_counts")
+
+  ytd_medians
+
+}
+
+
+#' Create grouped disease statistics report
+#'
+#' 'create_report_grouped_stats' generates a comprehensive report with current
+#' and historical statistics for diseases organized by group. The report includes
+#' monthly counts/rates, year-to-date counts, and trend analysis.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param diseases Dataframe. Disease configuration with columns: EpiTrax_name,
+#' Group_name. Used to define disease names and their groupings. If Group_name
+#' is missing, diseases will be grouped under "Uncategorized".
+#' @param y Integer. Current report year.
+#' @param m Integer. Current report month (1-12).
+#' @param config List. Configuration with current_population, avg_5yr_population,
+#' and rounding_decimals settings.
+#'
+#' @returns Dataframe with one row per disease containing:
+#'   - Group: Disease group name
+#'   - Disease: Disease name
+#'   - Monthly counts and rates for current year/month
+#'   - Historical monthly averages and medians
+#'   - Year-to-date counts and historical averages and medians
+#'   - YTD trend indicators
+#' @export
+#'
+#' @examples
+#' data <- data.frame(
+#'   disease = c("A", "A", "B", "B"),
+#'   year = c(2023, 2024, 2023, 2024),
+#'   month = c(1, 1, 2, 2),
+#'   counts = c(10, 20, 15, 25)
+#' )
+#' diseases <- data.frame(
+#'   EpiTrax_name = c("A", "B", "C"),
+#'   Group_name = c("Group1", "Group1", "Group2")
+#' )
+#' config <- list(
+#'   current_population = 100000,
+#'   avg_5yr_population = 100000,
+#'   rounding_decimals = 1
+#' )
+#' create_report_grouped_stats(data, diseases, 2024, 2, config)
+create_report_grouped_stats <- function(data, diseases, y, m, config) {
+
+  disease_names <- diseases$EpiTrax_name
+
+  # Check that disease groups were included
+  if (is.null(diseases$Group_name)) {
+    warning(
+      "No disease groups were provided. The parameter 'diseases'
+      should contain a 'Group_name' column. All diseases will be grouped under
+      'Uncategorized'."
+    )
+    diseases$Group_name <- rep("Uncategorized", length(disease_names))
+  }
+
+  # Replace any NA values with "Uncategorized"
+  diseases$Group_name[is.na(diseases$Group_name)] <- "Uncategorized"
+
+  month_abb <- month.abb[m]
+  month_name <- month.name[m]
+
+
+  # Get current monthy/year counts
+  grouped_r <- create_report_monthly_counts(data, y, disease_names)
+  grouped_r <- grouped_r[, c("disease", month_abb)]
+  colnames(grouped_r) <- c("disease", "m_counts")
+
+
+  # Get current monthy/year rate
+  grouped_r$m_rates <- convert_counts_to_rate(
+    counts = grouped_r$m_counts,
+    pop = config$current_population,
+    digits = config$rounding_decimals
+  )
+
+
+  # Get historical counts
+  m_hist_avg_count <- create_report_monthly_avgs(
+    data = data[data$year != y,],
+    disease_names = disease_names,
+    config = config
+  )
+  m_hist_avg_count <- m_hist_avg_count[, c("disease", month_abb)]
+  colnames(m_hist_avg_count) <- c("disease", "m_hist_avg_count")
+  grouped_r <- merge(grouped_r, m_hist_avg_count, by = "disease", all.x = TRUE)
+
+
+  # Get historical median
+  m_hist_median_count <- create_report_monthly_medians(
+    data = data[data$year != y,],
+    disease_names = disease_names
+  )
+  m_hist_median_count <- m_hist_median_count[, c("disease", month_abb)]
+  colnames(m_hist_median_count) <- c("disease", "m_hist_median_count")
+  grouped_r <- merge(grouped_r, m_hist_median_count, by = "disease", all.x = TRUE)
+
+  # Get current and historical YTD counts
+  y_ytd_stats <- create_report_ytd_counts(
+    data = data,
+    disease_names = disease_names,
+    y = y,
+    m = m,
+    config = config,
+    as.rates = FALSE
+  )
+  colnames(y_ytd_stats) <- c("disease", "y_YTD_count", "hist_y_ytd_avg_count")
+  grouped_r <- merge(grouped_r, y_ytd_stats, by = "disease", all.x = TRUE)
+
+  # Get historical YTD median
+  y_ytd_medians <- create_report_ytd_medians(
+    data = data[data$year != y,],
+    disease_names = disease_names,
+    m = m
+  )
+  colnames(y_ytd_medians) <- c("disease", "hist_y_ytd_median_count")
+  grouped_r <- merge(grouped_r, y_ytd_medians, by = "disease", all.x = TRUE)
+
+  # Get trend for YTD counts
+  grouped_r$y_ytd_trend <- get_trend(
+    col1 = grouped_r$y_YTD_count,
+    col2 = grouped_r$hist_y_ytd_avg_count
+  )
+
+  # Add disease groups to the report
+  grouped_r <- merge(
+    grouped_r,
+    diseases[, c("EpiTrax_name", "Group_name")],
+    by.x = "disease",
+    by.y = "EpiTrax_name",
+    all.x = TRUE
+  )
+  # - Rearrange columns to have Group_name first
+  grouped_r <- grouped_r[,c(ncol(grouped_r),1:(ncol(grouped_r)-1))]
+
+  # Update column names
+  new_colnames <- c(
+    "Group",
+    "Disease",
+    paste(month_name, y),
+    paste(month_name, y, "Rate"),
+    paste("Historical", month_name, "Avg"),
+    paste("Historical", month_name, "Median"),
+    paste(y, "YTD"),
+    paste("Historical", y, "YTD Avg"),
+    paste("Historical", y, "YTD Median"),
+    "YTD Trend"
+  )
+  colnames(grouped_r) <- new_colnames
+
+  # Final sort by Group and Disease
+  grouped_r <- grouped_r[order(grouped_r$Group, grouped_r$Disease), ]
+
+  grouped_r
 }
