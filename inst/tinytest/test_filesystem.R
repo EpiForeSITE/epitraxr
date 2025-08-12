@@ -200,6 +200,19 @@ params <- list(
 r_folder <- tempdir()
 r_name <- "grouped_disease_report.pdf"
 
+rmarkdown::render(
+  input = system.file("report_formats/grouped_report.Rmd", package = "epitraxr"),
+  params = list(
+    title = params$title %||% "Grouped Report",
+    author = params$author %||% "epitraxr",
+    report_data = r_data
+  ),
+  output_file = r_name,
+  output_dir = r_folder,
+  quiet = TRUE,
+  envir = new.env(parent = globalenv())
+)
+
 expect_silent(write_grouped_report_pdf(
   data = r_data,
   params = params,
