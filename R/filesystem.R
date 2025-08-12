@@ -276,11 +276,31 @@ write_report_xlsx <- function(data, filename, folder) {
 #'   folder = tempdir()
 #' )
 write_grouped_report_pdf <- function(data, params, filename, folder) {
+  # Check if rmarkdown is available
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package 'rmarkdown' is required to run
+         'write_grouped_report_pdf()', but is not available")
+  }
+
+  # Get template path
+  template_path <- system.file(
+    "report_formats/grouped_report.Rmd",
+    package = "epitraxr"
+  )
+
+  # Check if template exists
+  if (!file.exists(template_path) || template_path == "") {
+    stop("Template file 'grouped_report.Rmd' not found in package")
+  }
+
+  # Check if output directory exists, create if not
+  if (!dir.exists(folder)) {
+    dir.create(folder, recursive = TRUE)
+  }
+
+  # Render the report
   rmarkdown::render(
-    input = system.file(
-      "report_formats/grouped_report.Rmd",
-      package = "epitraxr"
-    ),
+    input = template_path,
     params = list(
       title = params$title %||% "Grouped Report",
       author = params$author %||% "epitraxr",

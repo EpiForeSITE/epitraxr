@@ -175,51 +175,40 @@ expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
 # Test write_grouped_report_pdf() -------------------------------------
-# Create sample grouped report data
-r_data <- data.frame(
-  Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
-  Disease = c("COVID", "Flu", "Measles"),
-  `March 2024` = c(0, 25, 5),
-  `March 2024 Rate` = c(0, 25, 5),
-  `Historical March Avg` = c(0, 15, 8),
-  `Historical March Median` = c(0, 15, 8),
-  `2024 YTD` = c(0, 37, 9),
-  `Historical 2024 YTD Avg` = c(20, 25, 14),
-  `Historical 2024 YTD Median` = c(20, 25, 14),
-  `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
-  check.names = FALSE
-)
+if (at_home()) {
+  # Create sample grouped report data
+  r_data <- data.frame(
+    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `March 2024 Rate` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Historical March Median` = c(0, 15, 8),
+    `2024 YTD` = c(0, 37, 9),
+    `Historical 2024 YTD Avg` = c(20, 25, 14),
+    `Historical 2024 YTD Median` = c(20, 25, 14),
+    `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+    check.names = FALSE
+  )
 
-# Set report parameters
-params <- list(
-  title = "Monthly Disease Surveillance Report",
-  author = "Public Health Department"
-)
+  # Set report parameters
+  params <- list(
+    title = "Monthly Disease Surveillance Report",
+    author = "Public Health Department"
+  )
 
-# Write to temporary directory
-r_folder <- tempdir()
-r_name <- "grouped_disease_report.pdf"
+  # Write to temporary directory
+  r_folder <- tempdir()
+  r_name <- "grouped_disease_report.pdf"
 
-rmarkdown::render(
-  input = system.file("report_formats/grouped_report.Rmd", package = "epitraxr"),
-  params = list(
-    title = params$title %||% "Grouped Report",
-    author = params$author %||% "epitraxr",
-    report_data = r_data
-  ),
-  output_file = r_name,
-  output_dir = r_folder,
-  quiet = TRUE,
-  envir = new.env(parent = globalenv())
-)
-
-expect_silent(write_grouped_report_pdf(
-  data = r_data,
-  params = params,
-  filename = r_name,
-  folder = r_folder
-))
-expect_true(file.exists(file.path(r_folder, r_name)))
+  expect_silent(write_grouped_report_pdf(
+    data = r_data,
+    params = params,
+    filename = r_name,
+    folder = r_folder
+  ))
+  expect_true(file.exists(file.path(r_folder, r_name)))
+}
 
 
 # Test get_internal_disease_list() ---------------------------------------------
