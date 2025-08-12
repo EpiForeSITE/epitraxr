@@ -9,7 +9,7 @@ the default diseases if the file doesn't exist."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,12 +59,15 @@ above file doesn't exist.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A dataframe containing the diseases to include in the public report
-and the name to use for each disease in the public report.</p>
+and the name to use for each disease in the public report. It may also contain
+the disease groupings.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The provided public disease list file must contain two columns that map the
-EpiTrax disease name to a public-facing name for the public report.</p>
+EpiTrax disease name to a public-facing name for the public report. It can
+optionally contain a column for disease_groupings (Group_name) for reports
+that group diseases together.</p>
     </div>
 
     <div class="section level2">
