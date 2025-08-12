@@ -495,6 +495,42 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 }
 
 
+#' Create monthly medians internal or public report from an EpiTrax object
+#'
+#' `epitrax_monthly_medians` generates a report of monthly medians for all years
+#' in the EpiTrax object data, with the option to exclude the current report year.
+#' It can be run for either internal or public reports.
+#'
+#' @param epitrax Object of class `epitrax`.
+#' @param is.public Logical indicating whether to generate a public report using
+#' the public disease list. If FALSE (default), generates an internal report using
+#' the internal disease list.
+#' @param exclude.report.year Logical indicating whether to exclude the current
+#' report year from the medians calculation. Defaults to FALSE.
+#'
+#' @returns Updated EpiTrax object with monthly medians report added to either
+#' the `internal_reports` or `public_reports` field, depending on the `is.public`
+#' parameter.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_monthly_medians()
+#'
+#' names(epitrax$internal_reports)
 epitrax_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
 
     validate_epitrax(epitrax)
@@ -505,13 +541,15 @@ epitrax_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.y
         r_data <- r_data[r_data$year != epitrax$report_year,]
     }
 
+    if (is.public) {
+        report_diseases <- epitrax$report_diseases$public$EpiTrax_name
+    } else {
+        report_diseases <- epitrax$report_diseases$internal$EpiTrax_name
+    }
+
     monthly_medians <- create_report_monthly_medians(
         data = r_data,
-        disease_names = ifelse(
-            is.public,
-            epitrax$report_diseases$public$EpiTrax_name,
-            epitrax$report_diseases$internal$EpiTrax_name
-        )
+        disease_names = report_diseases
     )
 
     # Add to internal reports
@@ -537,13 +575,15 @@ epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.repor
         r_data <- r_data[r_data$year != epitrax$report_year,]
     }
 
+    if (is.public) {
+        report_diseases <- epitrax$report_diseases$public$EpiTrax_name
+    } else {
+        report_diseases <- epitrax$report_diseases$internal$EpiTrax_name
+    }
+
     ytd_medians <- create_report_ytd_medians(
         data = r_data,
-        disease_names = ifelse(
-            is.public,
-            epitrax$report_diseases$public$EpiTrax_name,
-            epitrax$report_diseases$internal$EpiTrax_name
-        ),
+        disease_names = report_diseases,
         m = epitrax$report_month
     )
 
@@ -563,14 +603,16 @@ epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
 
     validate_epitrax(epitrax)
 
+    if (is.public) {
+        report_diseases <- epitrax$report_diseases$public$EpiTrax_name
+    } else {
+        report_diseases <- epitrax$report_diseases$internal$EpiTrax_name
+    }
+
     # Create grouped stats report
     grouped_stats <- create_report_grouped_stats(
         data = epitrax$data,
-        disease_names = ifelse(
-            is.public,
-            epitrax$report_diseases$public$EpiTrax_name,
-            epitrax$report_diseases$internal$EpiTrax_name
-        ),
+        diseases = report_diseases,
         y = epitrax$report_year,
         m = epitrax$report_month,
         config = epitrax$config
@@ -755,6 +797,11 @@ epitrax_write_pdf_month_crosssections <- function(epitrax, fsys) {
   for (name in names(epitrax$public_reports)) {
 
     report <- epitrax$public_reports[[name]]
+
+    # TODO: clean this up better (needs to not iteratte overall public reports)
+    if (ncol(report) > 4) {
+        next
+    }
 
     colnames(report) <- c("Disease", "Rate", "Average Rate", "Trend")
 
