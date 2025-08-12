@@ -545,28 +545,29 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
   disease_names <- diseases$EpiTrax_name
-  disease_groups <- diseases$Group_name
 
   # Check that disease groups were included
-  if (is.null(disease_groups)) {
+  if (is.null(diseases$Group_name)) {
     warning(
       "No disease groups were provided. The parameter 'diseases'
       should contain a 'Group_name' column. All diseases will be grouped under
       'Uncategorized'."
     )
-    disease_groups <- rep("Uncategorized", length(disease_names))
+    diseases$Group_name <- rep("Uncategorized", length(disease_names))
   }
 
   # Replace any NA values with "Uncategorized"
-  disease_groups[is.na(disease_groups)] <- "Uncategorized"
+  diseases$Group_name[is.na(diseases$Group_name)] <- "Uncategorized"
 
   month_abb <- month.abb[m]
   month_name <- month.name[m]
+
 
   # Get current monthy/year counts
   grouped_r <- create_report_monthly_counts(data, y, disease_names)
   grouped_r <- grouped_r[, c("disease", month_abb)]
   colnames(grouped_r) <- c("disease", "m_counts")
+
 
   # Get current monthy/year rate
   grouped_r$m_rates <- convert_counts_to_rate(
@@ -575,6 +576,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     digits = config$rounding_decimals
   )
 
+
   # Get historical counts
   m_hist_avg_count <- create_report_monthly_avgs(
     data = data[data$year != y,],
@@ -582,8 +584,9 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     config = config
   )
   m_hist_avg_count <- m_hist_avg_count[, c("disease", month_abb)]
-  colnames(m_hist_avg_count) <- c("disease", "counts")
-  grouped_r$m_hist_avg_count <- m_hist_avg_count$counts
+  colnames(m_hist_avg_count) <- c("disease", "m_hist_avg_count")
+  grouped_r <- merge(grouped_r, m_hist_avg_count, by = "disease", all.x = TRUE)
+
 
   # Get historical median
   m_hist_median_count <- create_report_monthly_medians(
@@ -591,8 +594,8 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     disease_names = disease_names
   )
   m_hist_median_count <- m_hist_median_count[, c("disease", month_abb)]
-  colnames(m_hist_median_count) <- c("disease", "counts")
-  grouped_r$m_hist_median_count <- m_hist_median_count$counts
+  colnames(m_hist_median_count) <- c("disease", "m_hist_median_count")
+  grouped_r <- merge(grouped_r, m_hist_median_count, by = "disease", all.x = TRUE)
 
   # Get current and historical YTD counts
   y_ytd_stats <- create_report_ytd_counts(
@@ -604,8 +607,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     as.rates = FALSE
   )
   colnames(y_ytd_stats) <- c("disease", "y_YTD_count", "hist_y_ytd_avg_count")
-  grouped_r$y_YTD_count <- y_ytd_stats$y_YTD_count
-  grouped_r$hist_y_ytd_avg_count <- y_ytd_stats$hist_y_ytd_avg_count
+  grouped_r <- merge(grouped_r, y_ytd_stats, by = "disease", all.x = TRUE)
 
   # Get historical YTD median
   y_ytd_medians <- create_report_ytd_medians(
@@ -613,7 +615,8 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
     disease_names = disease_names,
     m = m
   )
-  grouped_r$hist_y_ytd_median_count <- y_ytd_medians$median_counts
+  colnames(y_ytd_medians) <- c("disease", "hist_y_ytd_median_count")
+  grouped_r <- merge(grouped_r, y_ytd_medians, by = "disease", all.x = TRUE)
 
   # Get trend for YTD counts
   grouped_r$y_ytd_trend <- get_trend(
@@ -622,7 +625,15 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   )
 
   # Add disease groups to the report
-  grouped_r <- cbind(disease_groups, grouped_r)
+  grouped_r <- merge(
+    grouped_r,
+    diseases[, c("EpiTrax_name", "Group_name")],
+    by.x = "disease",
+    by.y = "EpiTrax_name",
+    all.x = TRUE
+  )
+  # - Rearrange columns to have Group_name first
+  grouped_r <- grouped_r[,c(ncol(grouped_r),1:(ncol(grouped_r)-1))]
 
   # Update column names
   new_colnames <- c(

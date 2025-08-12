@@ -302,7 +302,7 @@ config <- list(
 result <- create_report_grouped_stats(data, diseases, 2024, 3, config)
 
 expected_result <- data.frame(
-  Group = c("Respiratory", "Vaccine-Preventable", "Respiratory"),
+  Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
   Disease = c("COVID", "Flu", "Measles"),
   `March 2024` = c(0, 25, 5),
   `March 2024 Rate` = c(0, 25, 5),
@@ -342,7 +342,7 @@ diseases_with_na <- data.frame(
 
 result_with_na <- create_report_grouped_stats(data, diseases_with_na, 2024, 3, config)
 
-expected_result$Group <- c("Respiratory", "Uncategorized", "Respiratory")
+expected_result$Group <- c("Respiratory", "Respiratory", "Uncategorized")
 
 expect_true(is.data.frame(result_with_na))
 expect_equal(result_with_na, expected_result)
