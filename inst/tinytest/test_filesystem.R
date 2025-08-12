@@ -175,6 +175,7 @@ expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
 # Test write_grouped_report_pdf() -------------------------------------
+# - Don't run PDF tests if not at home (might be missing LaTeX)
 if (at_home()) {
   # Create sample grouped report data
   r_data <- data.frame(
