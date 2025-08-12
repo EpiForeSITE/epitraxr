@@ -47,27 +47,9 @@ epitrax <- setup_epitrax(
   )) |>
   epitrax_ireport_monthly_counts_all_yrs() |>
   epitrax_ireport_annual_counts() |>
-  epitrax_write_xlsxs(fsys = fsys)
-
-gr <- create_report_grouped_stats(
-  epitrax$data,
-  epitrax$report_diseases$internal,
-  epitrax$report_year,
-  epitrax$report_month,
-  epitrax$config
-)
-
-rmarkdown::render(
-  input = "inst/report_formats/grouped_report.Rmd",
-  params = list(
-    title = "Grouped Report",
-    author = "TriCounty Health Department",
-    report_data = gr
-  ),
-  output_dir = fsys$internal,
-  quiet = TRUE
-)
+  epitrax_report_grouped_stats() |>
+  epitrax_write_xlsxs(fsys = fsys) |>
+  epitrax_write_pdf_grouped_stats(params = list(author = "LHD", title = "GR"),
+                                  fsys = fsys)
 
 message(".......Done.")
-
-# print(head(gr))
