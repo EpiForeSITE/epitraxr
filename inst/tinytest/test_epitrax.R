@@ -180,16 +180,16 @@ expect_true("public_report_YTD" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$public_report_YTD))
 expect_equal(nrow(epitrax$public_reports$public_report_YTD), 5)
 
-# Test epitrax_monthly_medians() -----------------------------------------------
+# Test epitrax_report_monthly_medians() ----------------------------------------
 # - Test internal report generation
-epitrax <- epitrax_monthly_medians(epitrax)
+epitrax <- epitrax_report_monthly_medians(epitrax)
 expect_true(inherits(epitrax, "epitrax"))
 expect_true("monthly_medians_2019-2024" %in% names(epitrax$internal_reports))
 expect_true(is.data.frame(epitrax$internal_reports$`monthly_medians_2019-2024`))
 expect_equal(nrow(epitrax$internal_reports$`monthly_medians_2019-2024`), 5)
 
 # - Test public report generation
-epitrax <- epitrax_monthly_medians(epitrax, is.public = TRUE, exclude.report.year = TRUE)
+epitrax <- epitrax_report_monthly_medians(epitrax, is.public = TRUE, exclude.report.year = TRUE)
 expect_true(inherits(epitrax, "epitrax"))
 expect_true("monthly_medians_2019-2023" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$`monthly_medians_2019-2023`))

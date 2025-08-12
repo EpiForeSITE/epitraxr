@@ -497,7 +497,7 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 
 #' Create monthly medians internal or public report from an EpiTrax object
 #'
-#' `epitrax_monthly_medians` generates a report of monthly medians for all years
+#' `epitrax_report_monthly_medians` generates a report of monthly medians for all years
 #' in the EpiTrax object data, with the option to exclude the current report year.
 #' It can be run for either internal or public reports.
 #'
@@ -528,10 +528,10 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
-#'  epitrax_monthly_medians()
+#'  epitrax_report_monthly_medians()
 #'
 #' names(epitrax$internal_reports)
-epitrax_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
+epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
 
     validate_epitrax(epitrax)
 
