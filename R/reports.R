@@ -650,5 +650,8 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   )
   colnames(grouped_r) <- new_colnames
 
+  # Final sort by Group and Disease
+  grouped_r <- grouped_r[order(grouped_r$Group, grouped_r$Disease), ]
+
   grouped_r
 }
