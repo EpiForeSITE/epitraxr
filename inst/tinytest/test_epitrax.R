@@ -321,9 +321,16 @@ if (at_home()) {
   setup_filesystem(fsys, clear.reports = TRUE)
 
 
-  # Test epitrax_write_pdf_month_crosssections() ---------------------------------
+  # Test epitrax_write_pdf_public_reports() ------------------------------------
+  params <- list(
+    author = "Public Health Department"
+  )
   expect_message(
-    epitrax <- epitrax_write_pdf_month_crosssections(epitrax, fsys = fsys)
+    epitrax <- epitrax_write_pdf_public_reports(
+      epitrax,
+      params = params,
+      fsys = fsys
+    )
   )
   expect_true(inherits(epitrax, "epitrax"))
   expect_equal(length(list.files(fsys$internal)), 0)
@@ -337,7 +344,7 @@ if (at_home()) {
   expect_true(file.exists(file.path(fsys$public,
                                       paste0("public_report_Nov2024", ".pdf"))))
 
-  # Test epitrax_write_pdf_grouped_stats() ---------------------------------------
+  # Test epitrax_write_pdf_grouped_stats() -------------------------------------
 
   # Set up parameters for PDF generation
   params <- list(
@@ -368,7 +375,9 @@ if (at_home()) {
     !grepl("^grouped_stats_", names(epitrax_no_grouped$public_reports))
   ]
 
-  expect_silent(epitrax_no_grouped <- epitrax_write_pdf_grouped_stats(epitrax_no_grouped, params, fsys))
+  expect_silent(epitrax_no_grouped <- epitrax_write_pdf_grouped_stats(
+    epitrax_no_grouped, params, fsys
+  ))
   expect_true(inherits(epitrax_no_grouped, "epitrax"))
   # - Check no new files created
   expect_equal(length(list.files(fsys$internal)), 1)

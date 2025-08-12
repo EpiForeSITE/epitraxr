@@ -17,7 +17,6 @@ Imports:
 Suggests:
     readxl,
     tinytest,
-    gt,
     rmarkdown
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -28,16 +28,6 @@ fsys <- setup_filesystem(folders = fsys, clear.reports = TRUE)
 # Generate reports -------------------------------------------------------------
 message("Generating reports...")
 
-# epitrax <- setup_epitrax(
-#   epitrax_file = "scripts/test_format_files/tricounty-data.csv",
-#   config_file = file.path(fsys$settings, "report_config.yaml"),
-#   disease_list_files = list(
-#     internal = file.path(fsys$settings, "internal_report_diseases.csv"),
-#     public = file.path(fsys$settings, "public_report_diseases.csv")
-#   )) |>
-#   epitrax_preport_month_crosssections(month_offsets = 0:1) |>
-#   epitrax_write_pdf_month_crosssections(fsys = fsys)
-
 epitrax <- setup_epitrax(
   epitrax_file = "scripts/test_format_files/tricounty-data.csv",
   config_file = file.path(fsys$settings, "report_config.yaml"),
@@ -48,6 +38,8 @@ epitrax <- setup_epitrax(
   epitrax_ireport_monthly_counts_all_yrs() |>
   epitrax_ireport_annual_counts() |>
   epitrax_report_grouped_stats() |>
+  epitrax_preport_month_crosssections(month_offsets = 0:1) |>
+  epitrax_write_pdf_public_reports(params = list(author = "LHD"), fsys = fsys) |>
   epitrax_write_xlsxs(fsys = fsys) |>
   epitrax_write_pdf_grouped_stats(params = list(author = "LHD", title = "GR"),
                                   fsys = fsys)

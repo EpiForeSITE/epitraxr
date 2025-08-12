@@ -833,99 +833,74 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 
 #' Create formatted PDF report of monthly cross-section reports
 #'
-#' `epitrax_write_pdf_month_crosssections` writes a PDF report for the monthly
-#' cross-section reports. The PDF uses pretty formatting and adds a header and
-#' footer.
+#' `epitrax_write_pdf_public_reports` writes a PDF report for each public
+#' report, excluding grouped stats reports (which are handled by
+#' `epitrax_write_pdf_grouped_stats`). The PDF uses pretty formatting and adds
+#' a header and footer.
 #'
 #' @param epitrax Object of class `epitrax`.
-#' @param fsys Filesystem list containing paths for internal and public reports.
+#' @param params List. Report parameters containing:
+#'   - author: Report author (defaults to "epitraxr")
+#' @param fsys Filesystem list containing path for public reports.
 #'
 #' @returns The original EpiTrax object, unchanged.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' fsys <- list(
-#'   internal = file.path(tempdir(), "internal_reports"),
-#'   public = file.path(tempdir(), "public_reports"),
-#'   settings = file.path(tempdir(), "report_settings")
-#' )
-#' fsys <- setup_filesystem(fsys)
+#'  fsys <- list(
+#'    internal = file.path(tempdir(), "internal_reports"),
+#'    public = file.path(tempdir(), "public_reports"),
+#'    settings = file.path(tempdir(), "report_settings")
+#'  )
+#'  fsys <- setup_filesystem(fsys)
 #'
-#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
-#'                          package = "epitraxr")
-#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
-#'                            package = "epitraxr")
-#' disease_lists <- list(
-#'   internal = "use_defaults",
-#'   public = "use_defaults"
-#' )
+#'  data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                           package = "epitraxr")
+#'  config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                             package = "epitraxr")
+#'  disease_lists <- list(
+#'    internal = "use_defaults",
+#'    public = "use_defaults"
+#'  )
 #'
-#' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
-#'   config_file = config_file,
-#'   disease_list_files = disease_lists
-#' ) |>
-#'  epitrax_preport_month_crosssections(month_offsets = 0) |>
-#'  epitrax_write_pdf_month_crosssections(fsys = fsys)
+#'  params <- list(
+#'    author = "Public Health Department"
+#'  )
+#'
+#'  epitrax <- setup_epitrax(
+#'    epitrax_file = data_file,
+#'    config_file = config_file,
+#'    disease_list_files = disease_lists
+#'  ) |>
+#'   epitrax_preport_month_crosssections(month_offsets = 0) |>
+#'   epitrax_write_pdf_public_reports(params = params, fsys = fsys)
 #' }
-epitrax_write_pdf_month_crosssections <- function(epitrax, fsys) {
+epitrax_write_pdf_public_reports <- function(epitrax, params, fsys) {
 
-  for (name in names(epitrax$public_reports)) {
+    validate_epitrax(epitrax)
+    validate_filesystem(fsys)
 
-    report <- epitrax$public_reports[[name]]
+    for (name in names(epitrax$public_reports)) {
+        # Skip grouped stats reports
+        if (grepl("^grouped_stats_", name)) {
+            next
+        }
 
-    # TODO: clean this up better (needs to not iteratte overall public reports)
-    if (ncol(report) > 4) {
-        next
+        report <- epitrax$public_reports[[name]]
+
+        params$title <- paste("Report", name)
+
+        write_report_pdf(
+            data = report,
+            params = params,
+            filename = paste0(name, ".pdf"),
+            folder = fsys$public
+        )
+
     }
 
-    colnames(report) <- c("Disease", "Rate", "Average Rate", "Trend")
-
-    report |>
-      gt::gt(
-        rowname_col = "Disease",
-        auto_align = FALSE
-      ) |>
-      gt::tab_header(
-        title = "Infectious Diseases Surveillance Report",
-        subtitle = paste(month.name[epitrax$report_month], epitrax$report_year)
-      ) |>
-      gt::tab_footnote(
-        footnote = "Rate of cases per 100,000 people for the current year",
-        locations = gt::cells_column_labels(columns = Rate)
-      ) |>
-      gt::tab_footnote(
-        footnote = "5-yr average rate of cases per 100,000 people",
-        locations = gt::cells_column_labels(columns = `Average Rate`)
-      ) |>
-      gt::tab_footnote(
-        footnote = "How the current rate compares to the 5-yr average",
-        locations = gt::cells_column_labels(columns = Trend)
-      ) |>
-      gt::opt_footnote_marks(
-        marks = "standard"
-      ) |>
-      gt::data_color(
-        method = "factor",
-        columns = "Trend",
-        rows = `Trend` == "Less Than Expected" | `Trend` == "Elevated",
-        palette = c("green", "red")
-      ) |>
-      gt::opt_stylize(
-        style = 1,
-        add_row_striping = TRUE,
-        color = "blue"
-      ) |>
-      gt::gtsave(
-        filename = paste0(name, ".pdf"),
-        path = fsys$public
-      )
-
-  }
-
-  epitrax
-
+    epitrax
 }
 
 
