@@ -321,41 +321,6 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 }
 
 
-
-epitrax_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
-
-    validate_epitrax(epitrax)
-
-    # Create monthly medians
-    r_data <- epitrax$data
-    if (exclude.report.year) {
-        r_data <- r_data[r_data$year != epitrax$report_year,]
-    }
-
-    report_diseases <- ifelse(
-        is.public,
-        epitrax$report_diseases$public$EpiTrax_name,
-        epitrax$report_diseases$internal$EpiTrax_name
-    )
-
-    monthly_medians <- create_report_monthly_medians(
-        data = r_data,
-        disease_names = report_diseases
-    )
-
-    # Add to internal reports
-    r_name <- paste0("monthly_medians_", min(r_data$year), "-", max(r_data$year))
-    if (is.public) {
-        epitrax$public_reports[[r_name]] <- monthly_medians
-    } else {
-        epitrax$internal_reports[[r_name]] <- monthly_medians
-    }
-
-
-    epitrax
-}
-
-
 #' Create year-to-date (YTD) counts internal report for a given month
 #' from an EpiTrax object
 #'
@@ -403,40 +368,6 @@ epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
     # Add to internal reports
     r_name <- ifelse(as.rates, "ytd_rates", "ytd_counts")
     epitrax$internal_reports[[r_name]] <- ytd_counts
-
-    epitrax
-}
-
-
-epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
-
-    validate_epitrax(epitrax)
-
-    # Create YTD medians
-    r_data <- epitrax$data
-    if (exclude.report.year) {
-        r_data <- r_data[r_data$year != epitrax$report_year,]
-    }
-
-    report_diseases <- ifelse(
-        is.public,
-        epitrax$report_diseases$public$EpiTrax_name,
-        epitrax$report_diseases$internal$EpiTrax_name
-    )
-
-    ytd_medians <- create_report_ytd_medians(
-        data = r_data,
-        disease_names = report_diseases,
-        m = epitrax$report_month
-    )
-
-    # Add to internal reports
-    r_name <- paste0("ytd_medians_", min(r_data$year), "-", max(r_data$year))
-    if (is.public) {
-        epitrax$public_reports[[r_name]] <- ytd_medians
-    } else {
-        epitrax$internal_reports[[r_name]] <- ytd_medians
-    }
 
     epitrax
 }
@@ -559,6 +490,99 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 
     # Add to public reports
     epitrax$public_reports[[r$name]] <- r$report
+
+    epitrax
+}
+
+
+epitrax_monthly_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
+
+    validate_epitrax(epitrax)
+
+    # Create monthly medians
+    r_data <- epitrax$data
+    if (exclude.report.year) {
+        r_data <- r_data[r_data$year != epitrax$report_year,]
+    }
+
+    monthly_medians <- create_report_monthly_medians(
+        data = r_data,
+        disease_names = ifelse(
+            is.public,
+            epitrax$report_diseases$public$EpiTrax_name,
+            epitrax$report_diseases$internal$EpiTrax_name
+        )
+    )
+
+    # Add to internal reports
+    r_name <- paste0("monthly_medians_", min(r_data$year), "-", max(r_data$year))
+    if (is.public) {
+        epitrax$public_reports[[r_name]] <- monthly_medians
+    } else {
+        epitrax$internal_reports[[r_name]] <- monthly_medians
+    }
+
+
+    epitrax
+}
+
+
+epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.report.year = FALSE) {
+
+    validate_epitrax(epitrax)
+
+    # Create YTD medians
+    r_data <- epitrax$data
+    if (exclude.report.year) {
+        r_data <- r_data[r_data$year != epitrax$report_year,]
+    }
+
+    ytd_medians <- create_report_ytd_medians(
+        data = r_data,
+        disease_names = ifelse(
+            is.public,
+            epitrax$report_diseases$public$EpiTrax_name,
+            epitrax$report_diseases$internal$EpiTrax_name
+        ),
+        m = epitrax$report_month
+    )
+
+    # Add to internal reports
+    r_name <- paste0("ytd_medians_", min(r_data$year), "-", max(r_data$year))
+    if (is.public) {
+        epitrax$public_reports[[r_name]] <- ytd_medians
+    } else {
+        epitrax$internal_reports[[r_name]] <- ytd_medians
+    }
+
+    epitrax
+}
+
+
+epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
+
+    validate_epitrax(epitrax)
+
+    # Create grouped stats report
+    grouped_stats <- create_report_grouped_stats(
+        data = epitrax$data,
+        disease_names = ifelse(
+            is.public,
+            epitrax$report_diseases$public$EpiTrax_name,
+            epitrax$report_diseases$internal$EpiTrax_name
+        ),
+        y = epitrax$report_year,
+        m = epitrax$report_month,
+        config = epitrax$config
+    )
+
+    # Add to internal or public reports
+    r_name <- paste0("grouped_stats_", min(epitrax$data$year), "-", max(epitrax$data$year))
+    if (is.public) {
+        epitrax$public_reports[[r_name]] <- grouped_stats
+    } else {
+        epitrax$internal_reports[[r_name]] <- grouped_stats
+    }
 
     epitrax
 }
