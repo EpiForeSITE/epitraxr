@@ -174,7 +174,7 @@ xlsx_data <- readxl::read_excel(xlsx_fp)
 expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
-# Test write_grouped_report_pdf() -------------------------------------
+# Test write_grouped_report_pdf() ----------------------------------------------
 # - Don't run PDF tests if not at home (might be missing LaTeX)
 if (at_home()) {
   # Create sample grouped report data
@@ -203,6 +203,38 @@ if (at_home()) {
   r_name <- "grouped_disease_report.pdf"
 
   expect_silent(write_grouped_report_pdf(
+    data = r_data,
+    params = params,
+    filename = r_name,
+    folder = r_folder
+  ))
+  expect_true(file.exists(file.path(r_folder, r_name)))
+}
+
+
+# Test write_report_pdf() ------------------------------------------------------
+# - Don't run PDF tests if not at home (might be missing LaTeX)
+if (at_home()) {
+  # Create sample grouped report data
+  r_data <- data.frame(
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+    check.names = FALSE
+  )
+
+  # Set report parameters
+  params <- list(
+    title = "Monthly Disease Surveillance Report",
+    author = "Public Health Department"
+  )
+
+  # Write to temporary directory
+  r_folder <- tempdir()
+  r_name <- "monthly_disease_report.pdf"
+
+  expect_silent(write_report_pdf(
     data = r_data,
     params = params,
     filename = r_name,

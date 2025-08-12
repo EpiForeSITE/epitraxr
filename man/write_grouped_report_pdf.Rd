@@ -2,7 +2,7 @@
 % Please edit documentation in R/filesystem.R
 \name{write_grouped_report_pdf}
 \alias{write_grouped_report_pdf}
-\title{Write grouped report in R Markdown format}
+\title{Write PDF grouped report from R Markdown template}
 \usage{
 write_grouped_report_pdf(data, params, filename, folder)
 }
@@ -24,8 +24,8 @@ NULL (called for side effects - creates the report file).
 }
 \description{
 \code{write_grouped_report_pdf} renders a grouped disease statistics report
-using R Markdown template. The report includes comprehensive disease statistics
-organized by groups with current and historical data.
+as a PDF using a R Markdown template. The report includes comprehensive
+disease statistics organized by groups with current and historical data.
 }
 \examples{
 # Don't run PDF examples in case missing LaTeX
@@ -55,7 +55,7 @@ organized by groups with current and historical data.
  write_grouped_report_pdf(
    data = r_data,
    params = params,
-   filename = "grouped_disease_report",
+   filename = "grouped_disease_report.pdf",
    folder = tempdir()
  )
 }

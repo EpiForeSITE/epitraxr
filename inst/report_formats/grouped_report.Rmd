@@ -2,14 +2,13 @@
 title: "`r params$title`"
 author: "`r params$author`"
 output: pdf_document
-classoption: landscape
 params:
     title: "Grouped Disease Surveillance Report"
     author: "epitraxr"
     report_data: NULL
 ---
 
-<!-- grouped_report.Rmd is a template R Markdown document used for generating a pretty report with diseases grouped into categories -->
+<!-- grouped_report.Rmd is a template R Markdown document used for generating a PDF report with diseases grouped into categories -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r get-data, echo=FALSE, message=FALSE, warning=FALSE}
 r_data <- params$report_data
-r_data <- r_data[order(r_data$Group),]
+r_data <- r_data[order(r_data$Group, r_data$Disease), ]
 
 # knitr::kable(r_data, row.names = FALSE)
 ```

@@ -1,0 +1,21 @@
+---
+title: "`r params$title`"
+author: "`r params$author`"
+output: pdf_document
+params:
+    title: "Disease Surveillance Report"
+    author: "epitraxr"
+    report_data: NULL
+---
+
+<!-- general_report.Rmd is a template R Markdown document used for generating PDF reports of disease statistics -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r get-data, message=FALSE, warning=FALSE}
+r_data <- params$report_data
+
+knitr::kable(r_data, row.names = FALSE)
+```

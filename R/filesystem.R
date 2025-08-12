@@ -230,11 +230,11 @@ write_report_xlsx <- function(data, filename, folder) {
 }
 
 
-#' Write grouped report in R Markdown format
+#' Write PDF grouped report from R Markdown template
 #'
 #' `write_grouped_report_pdf` renders a grouped disease statistics report
-#' using R Markdown template. The report includes comprehensive disease statistics
-#' organized by groups with current and historical data.
+#' as a PDF using a R Markdown template. The report includes comprehensive
+#' disease statistics organized by groups with current and historical data.
 #'
 #' @param data Dataframe. Report data containing grouped disease statistics.
 #' @param params List. Report parameters containing:
@@ -274,7 +274,7 @@ write_report_xlsx <- function(data, filename, folder) {
 #'  write_grouped_report_pdf(
 #'    data = r_data,
 #'    params = params,
-#'    filename = "grouped_disease_report",
+#'    filename = "grouped_disease_report.pdf",
 #'    folder = tempdir()
 #'  )
 #' }
@@ -306,6 +306,87 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
     input = template_path,
     params = list(
       title = params$title %||% "Grouped Report",
+      author = params$author %||% "epitraxr",
+      report_data = data
+    ),
+    output_file = filename,
+    output_dir = folder,
+    quiet = TRUE,
+    envir = new.env(parent = globalenv())
+  )
+}
+
+
+#' Write general PDF report of disease stats from R Markdown template
+#'
+#' `write_report_pdf` renders a report as a PDF using a R Markdown
+#' template. It is relatively flexible and can be used for various
+#' types of report.
+#'
+#' @param data Dataframe. Report data containing disease statistics.
+#' @param params List. Report parameters containing:
+#'   - title: Report title (defaults to "Disease Report")
+#'   - author: Report author (defaults to "epitraxr")
+#' @param filename String. Output filename for the rendered report.
+#' @param folder Filepath. Output directory for the rendered report.
+#'
+#' @returns NULL (called for side effects - creates the report file).
+#' @export
+#'
+#' @examples
+#' # Don't run PDF examples in case missing LaTeX
+#' \dontrun{
+#'  # Create sample report data
+#'  r_data <- data.frame(
+#'    Disease = c("COVID", "Flu", "Measles"),
+#'    `March 2024` = c(0, 25, 5),
+#'    `Historical March Avg` = c(0, 15, 8),
+#'    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+#'    check.names = FALSE
+#'  )
+#'
+#'  # Set report parameters
+#'  params <- list(
+#'    title = "Monthly Disease Surveillance Report",
+#'    author = "Public Health Department"
+#'  )
+#'
+#'  # Write to temporary directory
+#'  write_report_pdf(
+#'    data = r_data,
+#'    params = params,
+#'    filename = "monthly_disease_report.pdf",
+#'    folder = tempdir()
+#'  )
+#' }
+write_report_pdf <- function(data, params, filename, folder) {
+  # Check if rmarkdown is available
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package 'rmarkdown' is required to run
+         'write_grouped_report_pdf()', but is not available")
+  }
+
+  # Get template path
+  template_path <- system.file(
+    "report_formats/general_report.Rmd",
+    package = "epitraxr"
+  )
+
+  # Check if template exists
+  if (!file.exists(template_path) || template_path == "") {
+    stop("Template file 'general_report.Rmd' not found in package")
+  }
+
+  # Check if output directory exists, create if not
+  if (!dir.exists(folder)) {
+    dir.create(folder, recursive = TRUE)
+  }
+
+  # Render the report
+  rmarkdown::render(
+    input = template_path,
+    params = list(
+      title = params$title %||% "Disease Report",
       author = params$author %||% "epitraxr",
       report_data = data
     ),
