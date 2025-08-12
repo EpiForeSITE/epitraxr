@@ -237,7 +237,9 @@ server <- function(input, output, session) {
       
       # Create temporary directory
       temp_dir <- tempdir()
-      csv_dir <- file.path(temp_dir, "csv_reports")
+      # Create a directory with the same name as the ZIP file (without extension)
+      zip_name <- tools::file_path_sans_ext(basename(paste0("epitrax_csv_reports_", Sys.Date(), ".zip")))
+      csv_dir <- file.path(temp_dir, zip_name)
       dir.create(csv_dir, showWarnings = FALSE, recursive = TRUE)
       
       tryCatch({
@@ -267,10 +269,12 @@ server <- function(input, output, session) {
           }
         }
         
-        # Create ZIP file
-        zip_files <- list.files(csv_dir, recursive = TRUE, full.names = TRUE)
-        
-        zip(file, zip_files, flags = "-j")
+        # Create ZIP file with proper structure
+        # Change to temp_dir and zip the named directory
+        old_wd <- getwd()
+        setwd(temp_dir)
+        zip(file, zip_name, flags = "-r")
+        setwd(old_wd)
         
       }, error = function(e) {
         showNotification(paste("Error creating CSV download:", e$message), type = "error")
@@ -289,7 +293,9 @@ server <- function(input, output, session) {
       
       # Create temporary directory
       temp_dir <- tempdir()
-      excel_dir <- file.path(temp_dir, "excel_reports")
+      # Create a directory with the same name as the ZIP file (without extension)
+      zip_name <- tools::file_path_sans_ext(basename(paste0("epitrax_excel_reports_", Sys.Date(), ".zip")))
+      excel_dir <- file.path(temp_dir, zip_name)
       dir.create(excel_dir, showWarnings = FALSE, recursive = TRUE)
       
       tryCatch({
@@ -329,9 +335,12 @@ server <- function(input, output, session) {
           }
         }
         
-        # Create ZIP file
-        zip_files <- list.files(excel_dir, recursive = TRUE, full.names = TRUE)
-        zip(file, zip_files, flags = "-j")
+        # Create ZIP file with proper structure
+        # Change to temp_dir and zip the named directory
+        old_wd <- getwd()
+        setwd(temp_dir)
+        zip(file, zip_name, flags = "-r")
+        setwd(old_wd)
         
       }, error = function(e) {
         showNotification(paste("Error creating Excel download:", e$message), type = "error")
@@ -350,7 +359,9 @@ server <- function(input, output, session) {
       
       # Create temporary directory
       temp_dir <- tempdir()
-      all_dir <- file.path(temp_dir, "all_reports")
+      # Create a directory with the same name as the ZIP file (without extension)
+      zip_name <- tools::file_path_sans_ext(basename(paste0("epitrax_all_reports_", Sys.Date(), ".zip")))
+      all_dir <- file.path(temp_dir, zip_name)
       dir.create(all_dir, showWarnings = FALSE, recursive = TRUE)
       
       tryCatch({
@@ -422,9 +433,12 @@ server <- function(input, output, session) {
           }
         }
         
-        # Create ZIP file
-        zip_files <- list.files(all_dir, recursive = TRUE, full.names = TRUE)
-        zip(file, zip_files, flags = "-j")
+        # Create ZIP file with proper structure
+        # Change to temp_dir and zip the named directory
+        old_wd <- getwd()
+        setwd(temp_dir)
+        zip(file, zip_name, flags = "-r")
+        setwd(old_wd)
         
       }, error = function(e) {
         showNotification(paste("Error creating combined download:", e$message), type = "error")
