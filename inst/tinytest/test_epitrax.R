@@ -14,14 +14,16 @@ config <- list(
  current_population = 56000,
  avg_5yr_population = 57000,
  rounding_decimals = 3,
- generate_csvs = FALSE
+ generate_csvs = FALSE,
+trend_threshold = 0.0
 )
 
 default_config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
   rounding_decimals = 2,
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 
 epitrax <- structure(
@@ -85,7 +87,8 @@ config_list <- list(
  current_population = 50000,
  avg_5yr_population = 70000,
  rounding_decimals = 4,
- generate_csvs = FALSE
+ generate_csvs = FALSE,
+ trend_threshold = 0.0
 )
 expect_silent(epitrax_2 <- setup_epitrax(
   epitrax_file = data_file,
@@ -102,7 +105,8 @@ default_config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
   rounding_decimals = 2,
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 expect_silent(epitrax_3 <- setup_epitrax(
   epitrax_file = data_file,

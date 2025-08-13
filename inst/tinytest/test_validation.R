@@ -31,21 +31,24 @@ valid_config <- list(
   current_population = 56000,
   avg_5yr_population = 57000,
   rounding_decimals = 3,
-  generate_csvs = FALSE
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
 )
 
 bad_config <- list(
   current_population = "not numeric",
   avg_5yr_population = "not numeric",
   rounding_decimals = "not numeric",
-  generate_csvs = "not logical"
+  generate_csvs = "not logical",
+  trend_threshold = "not numeric"
 )
 
 default_config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
   rounding_decimals = 2,
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 
 expect_silent(result_config <- validate_config(valid_config))

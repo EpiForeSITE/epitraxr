@@ -2,3 +2,4 @@ current_population: 56000
 avg_5yr_population: 57000
 rounding_decimals: 3
 generate_csvs: false
+trend_threshold: 0.2

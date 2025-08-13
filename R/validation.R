@@ -95,6 +95,12 @@ validate_config <- function(config) {
       config$generate_csvs <- TRUE
     }
 
+    if (is.null(config$trend_threshold) ||
+        !inherits(config$trend_threshold, "numeric")) {
+      warnings <- c(warnings, "\n - 'trend_threshold' set to 0.15")
+      config$trend_threshold <- 0.15
+    }
+
     if (length(warnings) > 0) {
         warning("These config fields are missing/invalid and will be set to
                 defaults:\n", warnings)

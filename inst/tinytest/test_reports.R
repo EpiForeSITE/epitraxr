@@ -14,7 +14,8 @@ d_list <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1
+  rounding_decimals = 1,
+  trend_threshold = 0.15
 )
 
 # Test with valid input
@@ -33,7 +34,8 @@ expect_true(all(c("Rate_per_100k", "Avg_5yr_Rate", "Trend") %in% colnames(report
 # Check correct rates and trends
 expect_equal(report[report$Disease == "Alpha", "Rate_per_100k"], 10)
 expect_equal(report[report$Disease == "Alpha", "Avg_5yr_Rate"], 5)
-expect_equal(report[report$Disease == "Alpha", "Trend"], get_trend(10, 5))
+expect_equal(report[report$Disease == "Alpha", "Trend"],
+             get_trend(10, 5, threshold = 0.15))
 
 
 # Test create_public_report_ytd() ----------------------------------------------
@@ -48,7 +50,8 @@ d_list <- data.frame(
   Public_name = c("Alpha", "Beta")
 )
 config <- list(
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 
 # Test with valid input
@@ -67,7 +70,8 @@ expect_true(all(c("YTD_Rate_per_100k", "Avg_5yr_Rate", "Trend") %in% colnames(yt
 # Check correct rates and trends
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "YTD_Rate_per_100k"], 12)
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Avg_5yr_Rate"], 10)
-expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Trend"], get_trend(12, 10))
+expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Trend"],
+             get_trend(12, 10, threshold = 0.15))
 
 
 # Test create_report_annual_counts() -------------------------------------------
@@ -295,7 +299,8 @@ diseases <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1
+  rounding_decimals = 1,
+  trend_threshold = 0.15
 )
 
 # Test with March (month 3) 2024
@@ -311,7 +316,7 @@ expected_result <- data.frame(
   `2024 YTD` = c(0, 37, 9),
   `Historical 2024 YTD Avg` = c(20, 25, 14),
   `Historical 2024 YTD Median` = c(20, 25, 14),
-  `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+  `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14), threshold = 0.15),
   check.names = FALSE
 )
 

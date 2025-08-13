@@ -36,7 +36,6 @@ convert_counts_to_rate <- function(counts, pop, digits, rate_adj_pop = 100000) {
 #' @export
 #'
 #' @examples
-#' @examples
 #' # Without threshold - any difference triggers trend
 #' get_trend(c(5, 10, 10), c(3, 10, 11))
 #'
