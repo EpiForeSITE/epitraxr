@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,8 @@ columns: EpiTrax_name, Public_name.</p></dd>
 <span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  current_population <span class="op">=</span> <span class="fl">100000</span>,</span></span>
 <span class="r-in"><span>  avg_5yr_population <span class="op">=</span> <span class="fl">100000</span>,</span></span>
-<span class="r-in"><span>  rounding_decimals <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>  rounding_decimals <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  trend_threshold <span class="op">=</span> <span class="fl">0.15</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">create_public_report_month</span><span class="op">(</span><span class="va">cases</span>, <span class="va">avgs</span>, <span class="va">d_list</span>, <span class="fl">1</span>, <span class="fl">2024</span>, <span class="va">config</span><span class="op">)</span></span></span>

@@ -11,7 +11,7 @@ monthly counts/rates, year-to-date counts, and trend analysis."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,7 @@ is missing, diseases will be grouped under "Uncategorized".</p></dd>
 
 
 <dt id="arg-config">config<a class="anchor" aria-label="anchor" href="#arg-config"></a></dt>
-<dd><p>List. Configuration with current_population, avg_5yr_population,
-and rounding_decimals settings.</p></dd>
+<dd><p>List. Settings to use for report.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -98,7 +97,8 @@ and rounding_decimals settings.</p></dd>
 <span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  current_population <span class="op">=</span> <span class="fl">100000</span>,</span></span>
 <span class="r-in"><span>  avg_5yr_population <span class="op">=</span> <span class="fl">100000</span>,</span></span>
-<span class="r-in"><span>  rounding_decimals <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>  rounding_decimals <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  trend_threshold <span class="op">=</span> <span class="fl">0.15</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">create_report_grouped_stats</span><span class="op">(</span><span class="va">data</span>, <span class="va">diseases</span>, <span class="fl">2024</span>, <span class="fl">2</span>, <span class="va">config</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Group Disease February 2024 February 2024 Rate Historical February Avg</span>

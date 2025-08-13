@@ -9,7 +9,7 @@ reports."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,8 @@ reports.</p>
 <span>  current_population <span class="op">=</span> <span class="fl">1e+05</span>,</span>
 <span>  avg_5yr_population <span class="op">=</span> <span class="fl">1e+05</span>,</span>
 <span>  rounding_decimals <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  generate_csvs <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  generate_csvs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  trend_threshold <span class="op">=</span> <span class="fl">0.15</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -67,6 +68,10 @@ reports.</p>
 <dt id="arg-generate-csvs">generate_csvs<a class="anchor" aria-label="anchor" href="#arg-generate-csvs"></a></dt>
 <dd><p>Logical. Defaults to TRUE.</p></dd>
 
+
+<dt id="arg-trend-threshold">trend_threshold<a class="anchor" aria-label="anchor" href="#arg-trend-threshold"></a></dt>
+<dd><p>Numeric. Defaults to 0.15.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -79,7 +84,8 @@ reports.</p>
 <span class="r-in"><span>  current_population <span class="op">=</span> <span class="fl">56000</span>,</span></span>
 <span class="r-in"><span>  avg_5yr_population <span class="op">=</span> <span class="fl">57000</span>,</span></span>
 <span class="r-in"><span>  rounding_decimals <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>  generate_csvs <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  generate_csvs <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  trend_threshold <span class="op">=</span> <span class="fl">0.2</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $current_population</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 56000</span>
@@ -92,6 +98,9 @@ reports.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $generate_csvs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trend_threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
