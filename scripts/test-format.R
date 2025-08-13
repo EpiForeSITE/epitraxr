@@ -35,13 +35,19 @@ epitrax <- setup_epitrax(
     internal = file.path(fsys$settings, "grouped_internal_report_diseases.csv"),
     public = file.path(fsys$settings, "public_report_diseases.csv")
   )) |>
-  epitrax_ireport_monthly_counts_all_yrs() |>
-  epitrax_ireport_annual_counts() |>
-  epitrax_report_grouped_stats() |>
-  epitrax_preport_month_crosssections(month_offsets = 0:1) |>
-  epitrax_write_pdf_public_reports(params = list(author = "LHD"), fsys = fsys) |>
-  epitrax_write_xlsxs(fsys = fsys) |>
-  epitrax_write_pdf_grouped_stats(params = list(author = "LHD", title = "GR"),
-                                  fsys = fsys)
+  epitrax_preport_month_crosssections(month_offsets = 0) |>
+  epitrax_ireport_ytd_counts_for_month() |>
+  epitrax_ireport_ytd_counts_for_month(as.rates = TRUE) |>
+  epitrax_write_xlsxs(fsys = fsys)
+
+combined_r <- create_public_report_combined_month_ytd(
+  data = epitrax$data,
+  disease = epitrax$report_diseases$public,
+  y = epitrax$report_year,
+  m = epitrax$report_month,
+  config = epitrax$config
+)
 
 message(".......Done.")
+
+print(head(combined_r))

@@ -659,3 +659,79 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
   grouped_r
 }
+
+
+#' @export
+create_public_report_combined_month_ytd <- function(data, diseases, y, m, config) {
+
+  # Create monthly report component
+  month_counts <- get_month_counts(data)
+  prev_yrs_data <- data[data$year != y,]
+  monthly_avgs <- create_report_monthly_avgs(
+    data = prev_yrs_data,
+    disease_names = diseases$EpiTrax_name,
+    config = config
+  )
+
+  # Modify the config for this function only because it returns rates, but we need counts
+  m_report <- create_public_report_month(
+    cases = month_counts,
+    avgs = monthly_avgs,
+    d_list = diseases,
+    m = m,
+    y = y,
+    config = list(
+      current_population = 100000,
+      avg_5yr_population = 100000,
+      rounding_decimals = config$rounding_decimals,
+      trend_threshold = config$trend_threshold
+    )
+  )
+
+  combined_r <- m_report$report
+
+  # Create YTD report component
+  ytd_report_cases <- create_report_ytd_counts(
+    data = data,
+    disease_names = diseases$EpiTrax_name,
+    y = y,
+    m = m,
+    config = config,
+    as.rates = FALSE
+  )
+  ytd_report_rates <- create_report_ytd_counts(
+    data = data,
+    disease_names = diseases$EpiTrax_name,
+    y = y,
+    m = m,
+    config = config,
+    as.rates = TRUE
+  )
+  ytd_report <- merge(ytd_report_cases, ytd_report_rates, by = "disease")
+
+  # Convert disease names to public-facing versions
+  ytd_report <- merge(ytd_report, diseases, by.x = "disease", by.y = "EpiTrax_name")
+  ytd_report$disease <- ytd_report$Public_name
+  ytd_report$Public_name <- NULL
+
+  # Merge monthly and YTD reports
+  combined_r <- merge(combined_r, ytd_report, by.x = "Disease", by.y = "disease")
+
+  # Update column names
+  new_colnames <- c(
+    "Disease",
+    paste(month.abb[m], "Cases"),
+    paste(month.abb[m], "Average Cases"),
+    "Trend",
+    "YTD Cases",
+    "YTD Average Cases",
+    "YTD Rate per 100k",
+    "YTD Average Rate per 100k"
+  )
+
+  colnames(combined_r) <- new_colnames
+
+  # - Name and return report
+  r_name <- paste0("public_report_", month.name[m], y)
+  list(name = r_name, report = combined_r)
+}
