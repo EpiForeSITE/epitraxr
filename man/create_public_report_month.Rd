@@ -43,7 +43,8 @@ d_list <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1
+  rounding_decimals = 1,
+  trend_threshold = 0.15
 )
 
 create_public_report_month(cases, avgs, d_list, 1, 2024, config)

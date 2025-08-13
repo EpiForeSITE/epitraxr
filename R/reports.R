@@ -32,7 +32,8 @@
 #' config <- list(
 #'   current_population = 100000,
 #'   avg_5yr_population = 100000,
-#'   rounding_decimals = 1
+#'   rounding_decimals = 1,
+#'   trend_threshold = 0.15
 #' )
 #'
 #' create_public_report_month(cases, avgs, d_list, 1, 2024, config)
@@ -80,7 +81,8 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
                                "sum")
 
   # - Add Trends column last
-  m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate)
+  m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate,
+                              threshold = config$trend_threshold)
 
   # - Name and return report
   r_name <- paste0("public_report_", month_name, y)
@@ -113,7 +115,7 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
 #'   EpiTrax_name = c("A","B"),
 #'   Public_name = c("Alpha","Beta")
 #' )
-#' config <- list(generate_csvs = TRUE)
+#' config <- list(generate_csvs = TRUE, trend_threshold = 0.15)
 #' create_public_report_ytd(ytd_rates, d_list, config)
 create_public_report_ytd <- function(ytd_rates, d_list, config) {
 
@@ -136,7 +138,8 @@ create_public_report_ytd <- function(ytd_rates, d_list, config) {
                                "sum")
 
   # - Add Trends column last
-  m_report$Trend <- get_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate)
+  m_report$Trend <- get_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate,
+                              threshold = config$trend_threshold)
 
   # - Name and return report
   r_name <- "public_report_YTD"
@@ -513,8 +516,7 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #' is missing, diseases will be grouped under "Uncategorized".
 #' @param y Integer. Current report year.
 #' @param m Integer. Current report month (1-12).
-#' @param config List. Configuration with current_population, avg_5yr_population,
-#' and rounding_decimals settings.
+#' @param config List. Settings to use for report.
 #'
 #' @returns Dataframe with one row per disease containing:
 #'   - Group: Disease group name
@@ -539,7 +541,8 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #' config <- list(
 #'   current_population = 100000,
 #'   avg_5yr_population = 100000,
-#'   rounding_decimals = 1
+#'   rounding_decimals = 1,
+#'   trend_threshold = 0.15
 #' )
 #' create_report_grouped_stats(data, diseases, 2024, 2, config)
 create_report_grouped_stats <- function(data, diseases, y, m, config) {
@@ -621,7 +624,8 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Get trend for YTD counts
   grouped_r$y_ytd_trend <- get_trend(
     col1 = grouped_r$y_YTD_count,
-    col2 = grouped_r$hist_y_ytd_avg_count
+    col2 = grouped_r$hist_y_ytd_avg_count,
+    threshold = config$trend_threshold
   )
 
   # Add disease groups to the report

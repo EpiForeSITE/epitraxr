@@ -135,6 +135,7 @@ read_report_config <- function(config_filepath) {
 #' @param avg_5yr_population Integer. Defaults to 100,000.
 #' @param rounding_decimals Integer. Defaults to 2.
 #' @param generate_csvs Logical. Defaults to TRUE.
+#' @param trend_threshold Numeric. Defaults to 0.15.
 #'
 #' @returns A named list with 'keys' corresponding to config options.
 #' @export
@@ -144,19 +145,22 @@ read_report_config <- function(config_filepath) {
 #'   current_population = 56000,
 #'   avg_5yr_population = 57000,
 #'   rounding_decimals = 3,
-#'   generate_csvs = FALSE
+#'   generate_csvs = FALSE,
+#'   trend_threshold = 0.2
 #' )
 epitraxr_config <- function(
     current_population = 100000,
     avg_5yr_population = 100000,
     rounding_decimals = 2,
-    generate_csvs = TRUE) {
+    generate_csvs = TRUE,
+    trend_threshold = 0.15) {
 
   config <- list(
     current_population = current_population,
     avg_5yr_population = avg_5yr_population,
     rounding_decimals = rounding_decimals,
-    generate_csvs = generate_csvs
+    generate_csvs = generate_csvs,
+    trend_threshold = trend_threshold
   )
 
   config <- validate_config(config)

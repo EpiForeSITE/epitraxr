@@ -18,6 +18,13 @@ expect_equal(get_trend(c(5, 10, 10), c(3, 10, 12)),
 # Vector recycling
 expect_equal(get_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))
 
+# Test threshold
+expect_equal(get_trend(c(5, 10, 11, 10), c(3, 10, 10, 12), threshold = 0.15),
+             c("Elevated", "Expected", "Expected", "Less Than Expected"))
+# Test threshold boundaries
+expect_equal(get_trend(11.5, 10, threshold = 0.15), "Expected") # Just within threshold
+expect_equal(get_trend(11.6, 10, threshold = 0.15), "Elevated") # Just over threshold
+
 
 # Test get_yrs() --------------------------------------------------------------
 

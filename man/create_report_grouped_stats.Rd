@@ -17,8 +17,7 @@ is missing, diseases will be grouped under "Uncategorized".}
 
 \item{m}{Integer. Current report month (1-12).}
 
-\item{config}{List. Configuration with current_population, avg_5yr_population,
-and rounding_decimals settings.}
+\item{config}{List. Settings to use for report.}
 }
 \value{
 Dataframe with one row per disease containing:
@@ -50,7 +49,8 @@ diseases <- data.frame(
 config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
-  rounding_decimals = 1
+  rounding_decimals = 1,
+  trend_threshold = 0.15
 )
 create_report_grouped_stats(data, diseases, 2024, 2, config)
 }

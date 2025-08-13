@@ -28,15 +28,24 @@ convert_counts_to_rate <- function(counts, pop, digits, rate_adj_pop = 100000) {
 #'
 #' @param col1 List. Current data.
 #' @param col2 List. Historical comparison data.
+#' @param threshold Numeric. Percentage threshold (as decimal) for determining
+#' trend significance. Values within this percentage of the historical value
+#' are considered "Expected". Defaults to 0.0 (any difference triggers trend).
 #'
 #' @returns Character vector containing the trend labels.
 #' @export
 #'
 #' @examples
-#' get_trend(c(5, 10, 10), c(3, 10, 12))
-get_trend <- function(col1, col2) {
+#' # Without threshold - any difference triggers trend
+#' get_trend(c(5, 10, 10), c(3, 10, 11))
+#'
+#' # With 15% threshold - small changes are "Expected"
+#' get_trend(c(5, 10, 10), c(3, 10, 11), threshold = 0.15)
+get_trend <- function(col1, col2, threshold = 0.0) {
   mapply(function(x, y) {
-    ifelse(x > y, "Elevated", ifelse(x < y, "Less Than Expected", "Expected"))
+    ifelse(x > y * (1 + threshold), "Elevated",
+    ifelse(x < y * (1 - threshold), "Less Than Expected",
+    "Expected"))
   }, col1, col2)
 }
 
