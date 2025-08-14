@@ -351,3 +351,63 @@ expected_result$Group <- c("Respiratory", "Respiratory", "Uncategorized")
 
 expect_true(is.data.frame(result_with_na))
 expect_equal(result_with_na, expected_result)
+
+
+# Test create_public_report_combined_month_ytd() -------------------------------
+
+# Set up test data
+data_file <- system.file("sample_data/sample_epitrax_data.csv",
+                         package = "epitraxr")
+data <- read_epitrax_data(data_file)
+
+diseases <- data.frame(
+  EpiTrax_name = c("Influenza", "COVID-19", "Measles", "Syphilis"),
+  Public_name = c("Alpha", "Bravo", "Charlie", "Delta")
+)
+
+config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+                          package = "epitraxr")
+config <- read_report_config(config_file)
+
+# Test with valid input for February 2024
+result <- create_public_report_combined_month_ytd(data, diseases, 2024, 2, config)
+
+# Check output structure
+expect_true(is.list(result))
+expect_true(all(c("name", "report") %in% names(result)))
+expect_true(is.data.frame(result$report))
+
+# Check report name
+expect_equal(result$name, "public_report_February2024")
+
+# Check report content
+report <- result$report
+expect_true(all(c("Alpha", "Bravo", "Charlie", "Delta") %in% report$Disease))
+
+# Check expected columns are present
+expected_columns <- c(
+  "Disease", "Feb Cases", "Feb Average Cases", "Trend",
+  "YTD Cases", "YTD Average Cases", "YTD Rate per 100k", "YTD Average Rate per 100k"
+)
+expect_true(all(expected_columns %in% colnames(report)))
+
+# Check data types
+expect_true(is.character(report$Disease))
+expect_true(is.numeric(report$`Feb Cases`))
+expect_true(is.numeric(report$`YTD Cases`))
+expect_true(is.character(report$Trend))
+
+# Test with March 2024 (different month)
+result_march <- create_public_report_combined_month_ytd(data, diseases, 2024, 3, config)
+
+expect_equal(result_march$name, "public_report_March2024")
+march_report <- result_march$report
+expect_true("Mar Cases" %in% colnames(march_report))
+expect_true("Mar Average Cases" %in% colnames(march_report))
+
+# Test data integrity - YTD should be cumulative
+alpha_march <- march_report[march_report$Disease == "Alpha", ]
+expect_equal(alpha_march$`YTD Cases`, 1466)
+
+beta_march <- march_report[march_report$Disease == "Bravo", ]
+expect_equal(beta_march$`YTD Cases`, 1191)

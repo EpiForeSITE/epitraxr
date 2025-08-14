@@ -661,7 +661,37 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 }
 
 
+#' Create combined monthly and year-to-date public report
+#'
+#' 'create_public_report_combined_month_ytd' creates a comprehensive public report
+#' that combines monthly case data with year-to-date statistics for the given month
+#' and year. This provides both current month context and cumulative year progress.
+#'
+#' @param data Dataframe. Input data with columns: disease, year, month, counts.
+#' @param diseases Dataframe. Disease configuration with columns: EpiTrax_name,
+#' Public_name. Used to define disease names and their public-facing versions.
+#' @param y Integer. Current report year.
+#' @param m Integer. Current report month (1-12).
+#' @param config List. Settings to use for report.
+#'
+#' @returns List containing the report name and combined monthly/YTD report data
+#' with columns for monthly cases/averages/trends and YTD statistics.
 #' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' # Read in EpiTrax data
+#' data <- read_epitrax_data(data_file)
+#'
+#' diseases <- data.frame(
+#'   EpiTrax_name = c("Influenza", "COVID-19", "Measles", "Syphilis"),
+#'   Public_name = c("Influenza", "COVID-19", "Measles", "Syphilis")
+#' )
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                           package = "epitraxr")
+#' config <- read_report_config(config_file)
+#' create_public_report_combined_month_ytd(data, diseases, 2024, 2, config)
 create_public_report_combined_month_ytd <- function(data, diseases, y, m, config) {
 
   # Create monthly report component
