@@ -184,6 +184,13 @@ expect_true("public_report_YTD" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$public_report_YTD))
 expect_equal(nrow(epitrax$public_reports$public_report_YTD), 5)
 
+# Test epitrax_preport_combined_month_ytd() ------------------------------------
+epitrax <- epitrax_preport_combined_month_ytd(epitrax)
+expect_true(inherits(epitrax, "epitrax"))
+expect_true("public_report_combined_Dec2024" %in% names(epitrax$public_reports))
+expect_true(is.data.frame(epitrax$public_reports$public_report_combined_Dec2024))
+expect_equal(nrow(epitrax$public_reports$public_report_combined_Dec2024), 5)
+
 # Test epitrax_report_monthly_medians() ----------------------------------------
 # - Test internal report generation
 epitrax <- epitrax_report_monthly_medians(epitrax)
@@ -265,7 +272,7 @@ epitrax <- epitrax_write_csvs(epitrax, fsys = fsys)
 
 expect_true(inherits(epitrax, "epitrax"))
 expect_equal(length(list.files(fsys$internal)), 12)
-expect_equal(length(list.files(fsys$public)), 6)
+expect_equal(length(list.files(fsys$public)), 7)
 
 # - Check contents
 annual_counts_fp <- file.path(fsys$internal, "annual_counts.csv")
@@ -329,7 +336,7 @@ if (at_home()) {
   params <- list(
     author = "Public Health Department"
   )
-  expect_message(
+  expect_silent(
     epitrax <- epitrax_write_pdf_public_reports(
       epitrax,
       params = params,
@@ -338,7 +345,7 @@ if (at_home()) {
   )
   expect_true(inherits(epitrax, "epitrax"))
   expect_equal(length(list.files(fsys$internal)), 0)
-  expect_equal(length(list.files(fsys$public)), 3)
+  expect_equal(length(list.files(fsys$public)), 6)
 
   # - Check PDF files were created
   expect_true(file.exists(file.path(fsys$public,
@@ -347,6 +354,8 @@ if (at_home()) {
                                       paste0("public_report_Dec2024", ".pdf"))))
   expect_true(file.exists(file.path(fsys$public,
                                       paste0("public_report_Nov2024", ".pdf"))))
+  expect_true(file.exists(file.path(fsys$public,
+                                      paste0("public_report_combined_Dec2024", ".pdf"))))
 
   # Test epitrax_write_pdf_grouped_stats() -------------------------------------
 
@@ -361,7 +370,7 @@ if (at_home()) {
 
   expect_true(inherits(epitrax, "epitrax"))
   expect_equal(length(list.files(fsys$internal)), 1)
-  expect_equal(length(list.files(fsys$public)), 4)
+  expect_equal(length(list.files(fsys$public)), 7)
 
   # Check that PDF files were created for grouped stats reports
   internal_pdf <- file.path(fsys$internal, "grouped_stats_2019-2024.pdf")
@@ -385,6 +394,6 @@ if (at_home()) {
   expect_true(inherits(epitrax_no_grouped, "epitrax"))
   # - Check no new files created
   expect_equal(length(list.files(fsys$internal)), 1)
-  expect_equal(length(list.files(fsys$public)), 4)
+  expect_equal(length(list.files(fsys$public)), 7)
 
 }

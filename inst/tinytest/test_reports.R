@@ -378,7 +378,7 @@ expect_true(all(c("name", "report") %in% names(result)))
 expect_true(is.data.frame(result$report))
 
 # Check report name
-expect_equal(result$name, "public_report_February2024")
+expect_equal(result$name, "public_report_combined_Feb2024")
 
 # Check report content
 report <- result$report
@@ -400,7 +400,7 @@ expect_true(is.character(report$Trend))
 # Test with March 2024 (different month)
 result_march <- create_public_report_combined_month_ytd(data, diseases, 2024, 3, config)
 
-expect_equal(result_march$name, "public_report_March2024")
+expect_equal(result_march$name, "public_report_combined_Mar2024")
 march_report <- result_march$report
 expect_true("Mar Cases" %in% colnames(march_report))
 expect_true("Mar Average Cases" %in% colnames(march_report))

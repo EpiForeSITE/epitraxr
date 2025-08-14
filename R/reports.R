@@ -762,6 +762,6 @@ create_public_report_combined_month_ytd <- function(data, diseases, y, m, config
   colnames(combined_r) <- new_colnames
 
   # - Name and return report
-  r_name <- paste0("public_report_", month.name[m], y)
+  r_name <- paste0("public_report_combined_", month.abb[m], y)
   list(name = r_name, report = combined_r)
 }

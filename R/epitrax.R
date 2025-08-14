@@ -495,6 +495,56 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 }
 
 
+#' Create combined monthly/YTD stats public report from an EpiTrax object
+#'
+#' `epitrax_preport_combined_month_ytd` generates a public report of
+#' monthly and year-to-date (YTD) disease statistics for the report month
+#' in the EpiTrax object data.
+#'
+#' @param epitrax Object of class `epitrax`.
+#'
+#' @returns Updated EpiTrax object with YTD rates report added to the
+#' `public_reports` field.
+#' @export
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                            package = "epitraxr")
+#' disease_lists <- list(
+#'   internal = "use_defaults",
+#'   public = "use_defaults"
+#' )
+#'
+#' epitrax <- setup_epitrax(
+#'   epitrax_file = data_file,
+#'   config_file = config_file,
+#'   disease_list_files = disease_lists
+#' ) |>
+#'  epitrax_preport_combined_month_ytd()
+#'
+#' names(epitrax$public_reports)
+epitrax_preport_combined_month_ytd <- function(epitrax) {
+
+    validate_epitrax(epitrax)
+
+    # Create combined month and YTD report
+    r <- create_public_report_combined_month_ytd(
+        data = epitrax$data,
+        diseases = epitrax$report_diseases$public,
+        y = epitrax$report_year,
+        m = epitrax$report_month,
+        config = epitrax$config
+    )
+
+    # Add to public reports
+    epitrax$public_reports[[r$name]] <- r$report
+
+    epitrax
+}
+
+
 #' Create monthly medians report from an EpiTrax object
 #'
 #' `epitrax_report_monthly_medians` generates a report of monthly medians for all years
