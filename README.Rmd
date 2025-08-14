@@ -24,9 +24,13 @@ knitr::opts_chunk$set(
 [![codecov](https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://codecov.io/gh/EpiForeSITE/epitraxr)
 <!-- badges: end -->
 
-The goal of `epitraxr` is to simplify the process of manipulating Epitrax data and generating reports. The package is targeted toward public health officials.
+## Overview
 
-Work to create this software tool was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC's Center for Forecasting and Outbreak Analytics.
+EpiTrax is a central repository for epidemiological data developed by Utah State's Department of Health and Human Services (DHHS). It is now used by several other states. Through EpiTrax, public health officials have access to many different types of disease surveillance data, which they use to produce regular (e.g., weekly, monthly, annual) reports on their respective jurisdictions. This can be a tedious, time-intensive process, often involving multiple spreadsheets.
+
+The `epitraxr` package makes it fast and easy to process EpiTrax data and generate reports. With `epitraxr` it is simple to setup a report pipeline, then you simply hit "run" and select your latest EpiTrax export---`epitraxr` will do the rest!
+
+The package is targeted toward public health officials. Work to create this software tool was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC's Center for Forecasting and Outbreak Analytics.
 
 ## Installation
 
@@ -37,43 +41,69 @@ You can install the development version of epitraxr from [GitHub](https://github
 devtools::install_github("EpiForeSITE/epitraxr")
 ```
 
-## Examples
+## Usage
 
-```{r include = FALSE}
+`epitraxr` can be used in either "standard" mode or "piped" mode (recommended).
+
+### Standard Mode
+
+```{r usage-standard}
 library(epitraxr)
-```
 
-```{r example}
-# Read the sample EpiTrax dataset included with the package
-sample_file <- system.file("sample_data", "sample_epitrax_data.csv", package = "epitraxr")
-epitrax_data <- read_epitrax_data(sample_file)
-
-# Get the list of diseases in the dataset
-diseases <- unique(epitrax_data$disease)
-
-# Set up configuration
-config <- list(
-  current_population = 102000,
-  avg_5yr_population = 97000,
-  rounding_decimals = 1
+data_file <- system.file(
+  "sample_data/sample_epitrax_data.csv",
+  package = "epitraxr"
 )
+epitrax_data <- read_epitrax_data(data_file)
 
-# Generate monthly counts report for 2024
-monthly_counts <- create_report_monthly_counts(
+diseases <- c("Chickenpox", "Measles", "Lyme disease")
+
+report <- create_report_annual_counts(
   data = epitrax_data,
-  y = 2024,
   disease_names = diseases
 )
-monthly_counts
 
-# Generate YTD counts with rates per 100k (through May)
-ytd_report <- create_report_ytd_counts(
-  data = epitrax_data,
-  disease_names = diseases,
-  y = 2024,
-  m = 5,
-  config = config,
-  as.rates = TRUE
+report
+```
+
+### Piped Mode (recommended)
+
+```{r usage-piped}
+library(epitraxr)
+
+config_file <- system.file(
+  "sample_data/sample_config.yml",
+  package = "epitraxr"
 )
-ytd_report
+
+disease_list_file <- system.file(
+  "sample_data/sample_disease_list.csv",
+  package = "epitraxr"
+)
+
+epitrax <- get_epitrax(data_file) |>
+  epitrax_set_config_from_file(config_file) |>
+  epitrax_add_report_diseases(list(
+    internal = disease_list_file,
+    public = disease_list_file
+  )) |>
+  epitrax_ireport_annual_counts()
+
+epitrax$internal_reports$annual_counts
+```
+
+Piped mode makes it super simple to add additional reports.
+
+```{r usage-piped-expanded}
+epitrax <- get_epitrax(data_file) |>
+  epitrax_set_config_from_file(config_file) |>
+  epitrax_add_report_diseases(list(
+    internal = disease_list_file,
+    public = disease_list_file
+  )) |>
+  epitrax_ireport_annual_counts() |>
+  epitrax_ireport_monthly_avgs() |>
+  epitrax_ireport_ytd_counts_for_month()
+
+list(epitrax$internal_reports)
 ```
