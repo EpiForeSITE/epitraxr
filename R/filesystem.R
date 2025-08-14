@@ -120,8 +120,10 @@ read_report_config <- function(config_filepath) {
 
     config
   } else {
-    stop("No report configuration file provided. Please provide a valid file or
-         use `epitraxr_config()` to create a config programmatically.")
+    stop(
+      "No report configuration file provided. Please provide a valid file or",
+      "use `epitraxr_config()` to create a config programmatically."
+    )
   }
 }
 
@@ -285,8 +287,10 @@ write_report_xlsx <- function(data, filename, folder) {
 write_grouped_report_pdf <- function(data, params, filename, folder) {
   # Check if rmarkdown is available
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
-    stop("Package 'rmarkdown' is required to run
-         'write_grouped_report_pdf()', but is not available")
+    stop(
+      "Package 'rmarkdown' is required to run 'write_grouped_report_pdf()',",
+      "but is not available"
+    )
   }
 
   # Get template path
@@ -361,8 +365,10 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
 write_report_pdf <- function(data, params, filename, folder) {
   # Check if rmarkdown is available
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
-    stop("Package 'rmarkdown' is required to run
-         'write_grouped_report_pdf()', but is not available")
+    stop(
+      "Package 'rmarkdown' is required to run 'write_report_pdf()',",
+      "but is not available"
+    )
   }
 
   # Get template path
@@ -435,12 +441,14 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 
   } else {
     # If the file doesn't exist, use the default list of diseases provided
-    warning("You have not provided a disease list for internal reports.",
-            "\n - The program will default to using only the diseases ",
-            "found in the input dataset.",
-            "\n - If you would like to use a different list, ",
-            "please include a file with a column named",
-            "\n\n\t'EpiTrax_name'\n")
+    warning(
+      "You have not provided a disease list for internal reports.",
+      "\n - The program will default to using only the diseases ",
+      "found in the input dataset.",
+      "\n - If you would like to use a different list, ",
+      "please include a file with a column named",
+      "\n\n\t'EpiTrax_name'\n"
+    )
 
     default_diseases <- sort(default_diseases)
 
@@ -498,12 +506,14 @@ get_public_disease_list <- function(filepath, default_diseases) {
 
   } else {
     # If the file doesn't exist, use the default list of diseases provided
-    warning("You have not provided a disease list for public reports.",
-            "\n - The program will default to using only the diseases ",
-            "found in the input dataset.",
-            "\n - If you would like to use a different list, ",
-            "please include a file with columns named",
-            "\n\n\t'EpiTrax_name' and 'Public_name'\n")
+    warning(
+      "You have not provided a disease list for public reports.",
+      "\n - The program will default to using only the diseases ",
+      "found in the input dataset.",
+      "\n - If you would like to use a different list, ",
+      "please include a file with columns named",
+      "\n\n\t'EpiTrax_name' and 'Public_name'\n"
+    )
 
     default_diseases <- sort(default_diseases)
 

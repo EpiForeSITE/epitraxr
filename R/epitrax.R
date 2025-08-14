@@ -154,7 +154,10 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
 setup_epitrax <- function(epitrax_file = NULL, disease_list_files = NULL, config_list = NULL, config_file = NULL) {
 
     if (!is.null(config_list) && !is.null(config_file)) {
-        stop("'config_list' and 'config_file' may not both be specified. Please specify one or the other.")
+        stop(
+            "'config_list' and 'config_file' may not both be specified.",
+            "Please specify one or the other."
+        )
     }
 
     epitrax <- get_epitrax(epitrax_file) |>
