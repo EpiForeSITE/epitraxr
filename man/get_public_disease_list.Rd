@@ -23,9 +23,10 @@ the default diseases if the file doesn't exist.
 }
 \details{
 The provided public disease list file must contain two columns that map the
-EpiTrax disease name to a public-facing name for the public report. It can
-optionally contain a column for disease_groupings (Group_name) for reports
-that group diseases together.
+EpiTrax disease name (EpiTrax_name) to a public-facing name (Public_name)
+for the public report. It can optionally contain a column for disease_groupings
+(Group_name) for reports that group diseases together. See the example file here:
+\code{system.file("sample_data/sample_disease_list.csv", package = "epitraxr")}
 }
 \examples{
 # Using default list (when file doesn't exist)
@@ -33,7 +34,7 @@ default_list <- c("Measles", "Chickenpox")
 disease_list <- get_public_disease_list("", default_list)
 
 # Using a disease list file
-list_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+list_file <- system.file("sample_data/sample_disease_list.csv",
                         package = "epitraxr")
 disease_list <- get_public_disease_list(list_file, default_list)
 }
