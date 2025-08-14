@@ -295,11 +295,6 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
     package = "epitraxr"
   )
 
-  # Check if template exists
-  if (!file.exists(template_path) || template_path == "") {
-    stop("Template file 'grouped_report.Rmd' not found in package")
-  }
-
   # Check if output directory exists, create if not
   if (!dir.exists(folder)) {
     dir.create(folder, recursive = TRUE)
@@ -375,11 +370,6 @@ write_report_pdf <- function(data, params, filename, folder) {
     "report_formats/general_report.Rmd",
     package = "epitraxr"
   )
-
-  # Check if template exists
-  if (!file.exists(template_path) || template_path == "") {
-    stop("Template file 'general_report.Rmd' not found in package")
-  }
 
   # Check if output directory exists, create if not
   if (!dir.exists(folder)) {
