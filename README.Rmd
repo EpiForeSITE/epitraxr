@@ -19,7 +19,9 @@ knitr::opts_chunk$set(
 [![ForeSITE Group](https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
 <!-- badges: end -->
 
-The goal of epitraxr is to simplify the process of manipulating Epitrax data and generating reports. The package is targeted toward public health officials.
+The goal of `epitraxr` is to simplify the process of manipulating Epitrax data and generating reports. The package is targeted toward public health officials.
+
+Work to create this software tool was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC's Center for Forecasting and Outbreak Analytics.
 
 ## Installation
 

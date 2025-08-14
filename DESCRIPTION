@@ -1,9 +1,12 @@
 Package: epitraxr
 Title: Manipulate Epitrax Data And Generate Reports
-Version: 0.3.1
-Authors@R:
+Version: 0.3.2
+Authors@R: c(
     person(given = "Andrew", family = "Pulsipher", email = "pulsipher.a@gmail.com",
-           role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0773-3210"))
+        role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0773-3210")),
+    person("Centers for Disease Control and Prevention's Center for Forecasting and Outbreak Analytics",
+        role="fnd", comment = "Cooperative agreement CDC-RFA-FT-23-0069")
+    )
 Description: Functions to manipulate datasets exported from Epitrax and
     generate reports.
 License: MIT + file LICENSE
