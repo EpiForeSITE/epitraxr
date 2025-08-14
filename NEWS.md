@@ -1,4 +1,4 @@
-# epitraxr (development version)
+# epitraxr 0.3.2 (development version)
 
 ## New Features
 * Initial release of the epitraxr package
