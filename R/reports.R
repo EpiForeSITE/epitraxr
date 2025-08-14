@@ -552,9 +552,8 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Check that disease groups were included
   if (is.null(diseases$Group_name)) {
     warning(
-      "No disease groups were provided. The parameter 'diseases'
-      should contain a 'Group_name' column. All diseases will be grouped under
-      'Uncategorized'."
+      "The parameter 'diseases' should contain a 'Group_name' column. ",
+      "Since, no groups were provided, all diseases will be 'Uncategorized'."
     )
     diseases$Group_name <- rep("Uncategorized", length(disease_names))
   }

@@ -34,7 +34,12 @@ format_week_num <- function(data) {
 #' Read in input EpiTrax data
 #'
 #' 'read_epitrax_data' reads EpiTrax data from a CSV, validates and formats it,
-#' then returns the data.
+#' then returns the data. The file must contain the columns:
+#' - patient_mmwr_year: The year of the MMWR week
+#' - patient_mmwr_week: The MMWR week number
+#' - patient_disease: The disease name
+#' See the example file here:
+#' `system.file("sample_data/sample_epitrax_data.csv", package = "epitraxr")`
 #'
 #' @param data_file Optional filepath. Data file should be a CSV. If this parameter
 #' is NULL, the user will be prompted to choose a file interactively.

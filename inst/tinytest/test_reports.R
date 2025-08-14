@@ -331,7 +331,7 @@ diseases_no_group <- data.frame(
 # Should issue a warning and set all groups to "Uncategorized"
 expect_warning(
   result_no_group <- create_report_grouped_stats(data, diseases_no_group, 2024, 3, config),
-  "No disease groups were provided"
+  "no groups were provided"
 )
 
 expected_result$Group <- c("Uncategorized", "Uncategorized", "Uncategorized")

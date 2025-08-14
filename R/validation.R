@@ -102,8 +102,10 @@ validate_config <- function(config) {
     }
 
     if (length(warnings) > 0) {
-        warning("These config fields are missing/invalid and will be set to
-                defaults:\n", warnings)
+      warning(
+        "These config fields are missing/invalid and will be set to defaults:\n",
+        warnings
+      )
     }
 
     config

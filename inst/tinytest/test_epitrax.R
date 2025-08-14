@@ -232,7 +232,7 @@ expect_equal(nrow(epitrax$public_reports$`ytd_medians_2019-2023`), 5)
 # Test epitrax_report_grouped_stats() ------------------------------------------
 # - Test internal report generation
 expect_warning(epitrax <- epitrax_report_grouped_stats(epitrax),
-               "No disease groups were provided.")
+               "no groups were provided")
 
 expect_true(inherits(epitrax, "epitrax"))
 expect_true("grouped_stats_2019-2024" %in% names(epitrax$internal_reports))
@@ -243,7 +243,7 @@ expect_equal(nrow(epitrax$internal_reports$`grouped_stats_2019-2024`), 5)
 expect_warning(epitrax <- epitrax_report_grouped_stats(
   epitrax,
   is.public = TRUE
-), "No disease groups were provided.")
+), "no groups were provided")
 expect_true(inherits(epitrax, "epitrax"))
 expect_true("grouped_stats_2019-2024" %in% names(epitrax$public_reports))
 expect_true(is.data.frame(epitrax$public_reports$`grouped_stats_2019-2024`))
