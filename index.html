@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/epitraxr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -49,7 +51,13 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of epitraxr is to simplify the process of manipulating Epitrax data and generating reports. The package is targeted toward public health officials.</p>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>EpiTrax is a central repository for epidemiological data developed by Utah State’s Department of Health and Human Services (DHHS). It is now used by several other states. Through EpiTrax, public health officials have access to many different types of disease surveillance data, which they use to produce regular (e.g., weekly, monthly, annual) reports on their respective jurisdictions. This can be a tedious, time-intensive process, often involving multiple spreadsheets.</p>
+<p>The <code>epitraxr</code> package makes it fast and easy to process EpiTrax data and generate reports. With <code>epitraxr</code> it is simple to setup a report pipeline, then you simply hit “run” and select your latest EpiTrax export—<code>epitraxr</code> will do the rest!</p>
+<p>The package is targeted toward public health officials. Work to create this software tool was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak Analytics.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -59,53 +67,99 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
+<p><code>epitraxr</code> can be used in either “standard” mode or “piped” mode (recommended).</p>
+<div class="section level3">
+<h3 id="standard-mode">Standard Mode<a class="anchor" aria-label="anchor" href="#standard-mode"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Read the sample EpiTrax dataset included with the package</span></span>
-<span><span class="va">sample_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"sample_data"</span>, <span class="st">"sample_epitrax_data.csv"</span>, package <span class="op">=</span> <span class="st">"epitraxr"</span><span class="op">)</span></span>
-<span><span class="va">epitrax_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_epitrax_data.html">read_epitrax_data</a></span><span class="op">(</span><span class="va">sample_file</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Get the list of diseases in the dataset</span></span>
-<span><span class="va">diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">epitrax_data</span><span class="op">$</span><span class="va">disease</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Set up configuration</span></span>
-<span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  current_population <span class="op">=</span> <span class="fl">102000</span>,</span>
-<span>  avg_5yr_population <span class="op">=</span> <span class="fl">97000</span>,</span>
-<span>  rounding_decimals <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="va">data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>  <span class="st">"sample_data/sample_epitrax_data.csv"</span>,</span>
+<span>  package <span class="op">=</span> <span class="st">"epitraxr"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="va">epitrax_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_epitrax_data.html">read_epitrax_data</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Generate monthly counts report for 2024</span></span>
-<span><span class="va">monthly_counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_report_monthly_counts.html">create_report_monthly_counts</a></span><span class="op">(</span></span>
+<span><span class="va">diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chickenpox"</span>, <span class="st">"Measles"</span>, <span class="st">"Lyme disease"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_report_annual_counts.html">create_report_annual_counts</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
-<span>  y <span class="op">=</span> <span class="fl">2024</span>,</span>
 <span>  disease_names <span class="op">=</span> <span class="va">diseases</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">monthly_counts</span></span>
-<span><span class="co">#&gt;      disease Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec</span></span>
-<span><span class="co">#&gt; 1 Chickenpox  26  19  22  40  16  23  37  16  21  27  14  31</span></span>
-<span><span class="co">#&gt; 2   COVID-19  81  99  84 120  89 101 125  93  80 117  99 103</span></span>
-<span><span class="co">#&gt; 3  Influenza 116  96 130 151 115 100 139 135 113 138  96 137</span></span>
-<span><span class="co">#&gt; 4    Measles  22  21  26  27  16  19  35  25  18  32  25  38</span></span>
-<span><span class="co">#&gt; 5   Syphilis  22  22  23  24  18  29  15  20  13  23  21  39</span></span>
 <span></span>
-<span><span class="co"># Generate YTD counts with rates per 100k (through May)</span></span>
-<span><span class="va">ytd_report</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_report_ytd_counts.html">create_report_ytd_counts</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
-<span>  disease_names <span class="op">=</span> <span class="va">diseases</span>,</span>
-<span>  y <span class="op">=</span> <span class="fl">2024</span>,</span>
-<span>  m <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  config <span class="op">=</span> <span class="va">config</span>,</span>
-<span>  as.rates <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="va">report</span></span>
+<span><span class="co">#&gt;        disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="piped-mode-recommended">Piped Mode (recommended)<a class="anchor" aria-label="anchor" href="#piped-mode-recommended"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">config_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>  <span class="st">"sample_data/sample_config.yml"</span>,</span>
+<span>  package <span class="op">=</span> <span class="st">"epitraxr"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">ytd_report</span></span>
-<span><span class="co">#&gt;      disease Current_YTD_Rate_per_100k Avg_5yr_YTD_Rate_per_100k</span></span>
-<span><span class="co">#&gt; 1 Chickenpox                     286.3                     107.6</span></span>
-<span><span class="co">#&gt; 2   COVID-19                    1167.6                     630.9</span></span>
-<span><span class="co">#&gt; 3  Influenza                    1437.3                     693.8</span></span>
-<span><span class="co">#&gt; 4    Measles                     298.0                     151.8</span></span>
-<span><span class="co">#&gt; 5   Syphilis                     263.7                     166.8</span></span></code></pre></div>
+<span></span>
+<span><span class="va">disease_list_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>  <span class="st">"sample_data/sample_disease_list.csv"</span>,</span>
+<span>  package <span class="op">=</span> <span class="st">"epitraxr"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    internal <span class="op">=</span> <span class="va">disease_list_file</span>,</span>
+<span>    public <span class="op">=</span> <span class="va">disease_list_file</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">epitrax</span><span class="op">$</span><span class="va">internal_reports</span><span class="op">$</span><span class="va">annual_counts</span></span>
+<span><span class="co">#&gt;        disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span></code></pre></div>
+<p>Piped mode makes it super simple to add additional reports.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    internal <span class="op">=</span> <span class="va">disease_list_file</span>,</span>
+<span>    public <span class="op">=</span> <span class="va">disease_list_file</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_ireport_monthly_avgs.html">epitrax_ireport_monthly_avgs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/epitrax_ireport_ytd_counts_for_month.html">epitrax_ireport_ytd_counts_for_month</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">epitrax</span><span class="op">$</span><span class="va">internal_reports</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [[1]]$annual_counts</span></span>
+<span><span class="co">#&gt;        disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span>
+<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; [[1]]$`monthly_avgs_2019-2024`</span></span>
+<span><span class="co">#&gt;        disease  Jan    Feb    Mar    Apr    May    Jun    Jul  Aug    Sep</span></span>
+<span><span class="co">#&gt; 1   Chickenpox 23.5 22.333 21.000 26.667 19.833 19.167 24.167 20.0 18.833</span></span>
+<span><span class="co">#&gt; 2 Lyme disease  0.0  0.000  0.000  0.000  0.000  0.000  0.000  0.0  0.000</span></span>
+<span><span class="co">#&gt; 3      Measles 27.0 31.500 24.667 34.833 25.667 24.667 37.333 27.5 28.167</span></span>
+<span><span class="co">#&gt;      Oct    Nov    Dec</span></span>
+<span><span class="co">#&gt; 1 25.333 19.000 22.500</span></span>
+<span><span class="co">#&gt; 2  0.000  0.000  0.000</span></span>
+<span><span class="co">#&gt; 3 36.333 29.167 28.667</span></span>
+<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; [[1]]$ytd_counts</span></span>
+<span><span class="co">#&gt;        disease Current_YTD_Counts Avg_5yr_YTD_Counts</span></span>
+<span><span class="co">#&gt; 1   Chickenpox                292              256.4</span></span>
+<span><span class="co">#&gt; 2 Lyme disease                  0                0.0</span></span>
+<span><span class="co">#&gt; 3      Measles                304              365.8</span></span></code></pre></div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
@@ -128,6 +182,8 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Andrew Pulsipher <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0773-3210" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Centers for Disease Control and Prevention's Center for Forecasting and Outbreak Analytics <br><small class="roles"> Funder </small>   </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -135,6 +191,11 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/EpiForeSITE" class="external-link"><img src="https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg" alt="ForeSITE Group"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://github.com/EpiForeSITE/epitraxr/blob/master/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
+<li><a href="https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml" class="external-link"><img src="https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+<li><a href="https://codecov.io/gh/EpiForeSITE/epitraxr" class="external-link"><img src="https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39" alt="codecov"></a></li>
 </ul>
 </div>
 
@@ -143,7 +204,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Andrew Pulsipher.</p>
+  <p>Developed by Andrew Pulsipher, Centers for Disease Control and Prevention’s Center for Forecasting and Outbreak Analytics.</p>
 </div>
 
 <div class="pkgdown-footer-right">
