@@ -79,14 +79,16 @@ expected_config <- list(
   current_population = 56000,
   avg_5yr_population = 57000,
   rounding_decimals = 3,
-  generate_csvs = FALSE
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
 )
 
 default_config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
   rounding_decimals = 2,
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 
 expect_silent(report_config <- read_report_config(good_config_file))
@@ -114,28 +116,33 @@ expected_config <- list(
   current_population = 56000,
   avg_5yr_population = 57000,
   rounding_decimals = 3,
-  generate_csvs = FALSE
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
 )
 
 default_config <- list(
   current_population = 100000,
   avg_5yr_population = 100000,
   rounding_decimals = 2,
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 
 expect_equal(epitraxr_config(
   current_population = 56000,
   avg_5yr_population = 57000,
   rounding_decimals = 3,
-  generate_csvs = FALSE
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
 ), expected_config)
+expect_equal(epitraxr_config(), default_config)
 expect_equal(do.call(epitraxr_config, list()), default_config)
 expect_warning(result_config <- epitraxr_config(
   current_population = "not numeric",
   avg_5yr_population = "not numeric",
   rounding_decimals = "not numeric",
-  generate_csvs = "not logical"
+  generate_csvs = "not logical",
+  trend_threshold = "not numeric"
 ), "config fields are missing/invalid")
 expect_equal(result_config, default_config)
 
@@ -174,6 +181,76 @@ xlsx_data <- readxl::read_excel(xlsx_fp)
 expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
+# Test write_grouped_report_pdf() ----------------------------------------------
+# - Don't run PDF tests if not at home (might be missing LaTeX)
+if (at_home()) {
+  # Create sample grouped report data
+  r_data <- data.frame(
+    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `March 2024 Rate` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Historical March Median` = c(0, 15, 8),
+    `2024 YTD` = c(0, 37, 9),
+    `Historical 2024 YTD Avg` = c(20, 25, 14),
+    `Historical 2024 YTD Median` = c(20, 25, 14),
+    `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+    check.names = FALSE
+  )
+
+  # Set report parameters
+  params <- list(
+    title = "Monthly Disease Surveillance Report",
+    author = "Public Health Department"
+  )
+
+  # Write to temporary directory
+  r_folder <- tempdir()
+  r_name <- "grouped_disease_report.pdf"
+
+  expect_silent(write_grouped_report_pdf(
+    data = r_data,
+    params = params,
+    filename = r_name,
+    folder = r_folder
+  ))
+  expect_true(file.exists(file.path(r_folder, r_name)))
+}
+
+
+# Test write_report_pdf() ------------------------------------------------------
+# - Don't run PDF tests if not at home (might be missing LaTeX)
+if (at_home()) {
+  # Create sample grouped report data
+  r_data <- data.frame(
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+    check.names = FALSE
+  )
+
+  # Set report parameters
+  params <- list(
+    title = "Monthly Disease Surveillance Report",
+    author = "Public Health Department"
+  )
+
+  # Write to temporary directory
+  r_folder <- tempdir()
+  r_name <- "monthly_disease_report.pdf"
+
+  expect_silent(write_report_pdf(
+    data = r_data,
+    params = params,
+    filename = r_name,
+    folder = r_folder
+  ))
+  expect_true(file.exists(file.path(r_folder, r_name)))
+}
+
+
 # Test get_internal_disease_list() ---------------------------------------------
 list_file <- "test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
@@ -187,6 +264,8 @@ expect_equal(file_data, d_list)
 expect_warning(d_list <- get_internal_disease_list("", default_list),
                "You have not provided a disease list for internal reports.")
 expect_equal(sort(default_list), d_list$EpiTrax_name)
+# - Group_name is not provided by default
+expect_true(is.null(d_list$Group_name))
 
 # Test with invalid list file
 list_file <-"test_files/disease_lists/invalid_list.csv"
@@ -208,6 +287,8 @@ expect_warning(d_list <- get_public_disease_list("", default_list),
                "You have not provided a disease list for public reports.")
 expect_equal(sort(default_list), d_list$EpiTrax_name)
 expect_equal(sort(default_list), d_list$Public_name)
+# - Group_name is not provided by default
+expect_true(is.null(d_list$Group_name))
 
 # Test with invalid list file
 list_file <-"test_files/disease_lists/invalid_list.csv"

@@ -4,12 +4,16 @@
 \alias{get_trend}
 \title{Get Trend column of report}
 \usage{
-get_trend(col1, col2)
+get_trend(col1, col2, threshold = 0)
 }
 \arguments{
 \item{col1}{List. Current data.}
 
 \item{col2}{List. Historical comparison data.}
+
+\item{threshold}{Numeric. Percentage threshold (as decimal) for determining
+trend significance. Values within this percentage of the historical value
+are considered "Expected". Defaults to 0.0 (any difference triggers trend).}
 }
 \value{
 Character vector containing the trend labels.
@@ -21,5 +25,9 @@ containing the trend result. The trend is represented by the strings:
 "Expected" (no change).
 }
 \examples{
-get_trend(c(5, 10, 10), c(3, 10, 12))
+# Without threshold - any difference triggers trend
+get_trend(c(5, 10, 10), c(3, 10, 11))
+
+# With 15\% threshold - small changes are "Expected"
+get_trend(c(5, 10, 10), c(3, 10, 11), threshold = 0.15)
 }

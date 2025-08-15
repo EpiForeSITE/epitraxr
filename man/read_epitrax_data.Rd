@@ -15,7 +15,14 @@ The validated and formatted EpiTrax data from the input file.
 }
 \description{
 'read_epitrax_data' reads EpiTrax data from a CSV, validates and formats it,
-then returns the data.
+then returns the data. The file must contain the columns:
+\itemize{
+\item patient_mmwr_year: The year of the MMWR week
+\item patient_mmwr_week: The MMWR week number
+\item patient_disease: The disease name
+See the example file here:
+\code{system.file("sample_data/sample_epitrax_data.csv", package = "epitraxr")}
+}
 }
 \examples{
 \dontrun{

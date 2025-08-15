@@ -34,7 +34,12 @@ format_week_num <- function(data) {
 #' Read in input EpiTrax data
 #'
 #' 'read_epitrax_data' reads EpiTrax data from a CSV, validates and formats it,
-#' then returns the data.
+#' then returns the data. The file must contain the columns:
+#' - patient_mmwr_year: The year of the MMWR week
+#' - patient_mmwr_week: The MMWR week number
+#' - patient_disease: The disease name
+#' See the example file here:
+#' `system.file("sample_data/sample_epitrax_data.csv", package = "epitraxr")`
 #'
 #' @param data_file Optional filepath. Data file should be a CSV. If this parameter
 #' is NULL, the user will be prompted to choose a file interactively.
@@ -148,7 +153,7 @@ get_epitrax <- function(data_file = NULL) {
 #' df <- data.frame(disease=c("A","B"), month=c(1,2), counts=c(5,6))
 #' reshape_monthly_wide(df)
 reshape_monthly_wide <- function(df) {
-  m_df <- with(df, reshape(
+  m_df <- with(df, stats::reshape(
     merge(
       df,
       expand.grid(
@@ -189,7 +194,7 @@ reshape_monthly_wide <- function(df) {
 #' )
 #' reshape_annual_wide(df)
 reshape_annual_wide <- function(df) {
-  a_df <- with(df, reshape(
+  a_df <- with(df, stats::reshape(
     merge(
       df,
       expand.grid(
@@ -228,7 +233,7 @@ reshape_annual_wide <- function(df) {
 prep_report_data <- function(data, report_d_list) {
 
   # - Remove rows from data that aren't going into the public report
-  data <- subset(data, disease %in% report_d_list)
+  data <- data[data$disease %in% report_d_list, ]
 
   # - Get diseases from report list that weren't in the data
   missing_diseases <- report_d_list[!(report_d_list %in% data$disease)]

@@ -1,3 +1,22 @@
+# ------------------------------------------------------------------------------
+# title: EpiTraxr Report Generator (Piped Package Version)
+# author: Andrew Pulsipher
+# date: 2025-07-10
+#
+# This script generates monthly and YTD reports from EpiTrax data using the
+# epitraxr package functions and the piping method. It reads in EpiTrax data,
+# processes it, and generates reports in both internal and public formats.
+#
+# The script is maintained by the Insight Net center ForeSITE. All the code is
+# available on GitHub at
+# https://github.com/EpiForeSITE/epitraxr.
+# It is based on the epitrax-report-automation ForeSITE project, which is
+# available on GitHub at
+# https://github.com/EpiForeSITE/epitrax-report-automation.
+#
+# For questions, updates, or bug reports, please visit the GitHub repository.
+# ------------------------------------------------------------------------------
+
 # Load required libraries
 library(epitraxr)
 

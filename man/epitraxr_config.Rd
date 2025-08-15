@@ -8,7 +8,8 @@ epitraxr_config(
   current_population = 1e+05,
   avg_5yr_population = 1e+05,
   rounding_decimals = 2,
-  generate_csvs = TRUE
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ epitraxr_config(
 \item{rounding_decimals}{Integer. Defaults to 2.}
 
 \item{generate_csvs}{Logical. Defaults to TRUE.}
+
+\item{trend_threshold}{Numeric. Defaults to 0.15.}
 }
 \value{
 A named list with 'keys' corresponding to config options.
@@ -32,6 +35,7 @@ epitraxr_config(
   current_population = 56000,
   avg_5yr_population = 57000,
   rounding_decimals = 3,
-  generate_csvs = FALSE
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
 )
 }

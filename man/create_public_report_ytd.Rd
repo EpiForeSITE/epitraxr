@@ -31,6 +31,6 @@ d_list <- data.frame(
   EpiTrax_name = c("A","B"),
   Public_name = c("Alpha","Beta")
 )
-config <- list(generate_csvs = TRUE)
+config <- list(generate_csvs = TRUE, trend_threshold = 0.15)
 create_public_report_ytd(ytd_rates, d_list, config)
 }
