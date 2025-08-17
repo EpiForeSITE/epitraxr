@@ -397,3 +397,6 @@ if (at_home()) {
   expect_equal(length(list.files(fsys$public)), 7)
 
 }
+
+# Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
+unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
