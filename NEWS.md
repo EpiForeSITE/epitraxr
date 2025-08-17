@@ -1,14 +1,14 @@
 # epitraxr 0.3.2
 
 * Create grouped reports
-* Create SLCounty-style report  
+* Enable PDF output for some reports 
 * Add threshold parameter to `get_trend()`
 * Add new report combining monthly and YTD stats
 * Complete R package checklist
 
 # epitraxr 0.2.2
 
-* Verify piped script matches original script behavior
+* Minor fixes to verify piped script matches original script behavior
 
 # epitraxr 0.2.1
 
@@ -16,7 +16,7 @@
 
 # epitraxr 0.2.0
 
-* Support pipe operator and add report generation functions for EpiTrax object
+* Fully support pipe operator add report generation functions for EpiTrax object
 
 # epitraxr 0.1.3
 
