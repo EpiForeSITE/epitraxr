@@ -20,25 +20,9 @@ Always reference these instructions first and fallback to search or bash command
 
 **Run tests:**
 - Test using tinytest framework: `R -e "library(epitraxr); tinytest::test_package('epitraxr')" --no-restore` -- takes 0.5 seconds. Set timeout to 10 seconds.
-- Note: Some existing tests may fail (this is a known issue in the codebase), but data and report generation tests should pass.
+- All tests must pass before a PR is approved. If any tests fail, they must be fixed first.
 - Tests are located in `inst/tinytest/` and cover data validation, report generation, and filesystem operations.
-
-**Manual validation - ALWAYS run this after making changes:**
-- Validate core functionality with sample data:
-  ```bash
-  R -e "
-  library(epitraxr)
-  sample_file <- system.file('sample_data', 'sample_epitrax_data.csv', package = 'epitraxr')
-  epitrax_data <- read_epitrax_data(sample_file)
-  diseases <- unique(epitrax_data\$disease)
-  config <- epitraxr_config(current_population = 102000, avg_5yr_population = 97000)
-  monthly_counts <- create_report_monthly_counts(data = epitrax_data, y = 2024, disease_names = diseases[1:2])
-  ytd_report <- create_report_ytd_counts(data = epitrax_data, disease_names = diseases[1:2], y = 2024, m = 5, config = config)
-  cat('Validation successful! Monthly report has', nrow(monthly_counts), 'rows and YTD report has', nrow(ytd_report), 'rows\n')
-  " --no-restore
-  ```
-- This validation takes 0.4 seconds. Set timeout to 5 seconds.
-- Expected output should show "Validation successful!" with row counts.
+- To test specific functionality, you can run individual test files: `R -e "library(epitraxr); tinytest::run_test_file('inst/tinytest/test_filename.R')" --no-restore`
 
 ## Key Development Operations
 
@@ -67,41 +51,31 @@ Always reference these instructions first and fallback to search or bash command
 - `README.Rmd` - Source for README.md (edit this, not README.md directly)
 - `.pre-commit-config.yaml` - Pre-commit hook configuration
 
-## Validation Scenarios
+## Testing Strategy
 
-**Always test these scenarios after making changes:**
-
-1. **Data loading and validation:**
-   - Load sample data: `epitrax_data <- read_epitrax_data(sample_file)`
-   - Validate data structure and content
-   - Check that diseases list is extracted correctly
-
-2. **Report generation workflows:**
-   - Monthly counts report: `create_report_monthly_counts()`
-   - Year-to-date reports: `create_report_ytd_counts()`
-   - Configuration management: `epitraxr_config()`
-
-3. **File system operations:**
-   - Report directory setup: `setup_filesystem()`
-   - CSV and Excel output generation
-   - Configuration file reading: `read_report_config()`
+**Primary testing approach:**
+- Use the comprehensive tinytest test suite: `R -e "library(epitraxr); tinytest::test_package('epitraxr')" --no-restore`
+- For targeted testing after changes to specific files, run individual test files: `R -e "tinytest::run_test_file('inst/tinytest/test_[component].R')" --no-restore`
+- All tests must pass before submitting a PR
 
 ## Common Development Tasks
 
+**When adding new functions:**
+- Every new function must have an accompanying roxygen block with proper documentation
+- Every new function must have corresponding unit tests in the appropriate test file in `inst/tinytest/`
+- Follow existing patterns for documentation and testing
+
 **When modifying data processing functions:**
-- Always test with the included sample data
-- Validate that reports generate expected row and column counts
-- Check that disease filtering works correctly
+- Run tests for the specific component: `R -e "library(epitraxr); tinytest::run_test_file('inst/tinytest/test_data.R')" --no-restore`
+- Ensure all existing tests continue to pass
 
 **When modifying report generation:**
-- Test both monthly and YTD report generation
-- Verify CSV output functionality
-- Test with different configuration parameters
+- Run tests for report functionality: `R -e "library(epitraxr); tinytest::run_test_file('inst/tinytest/test_reports.R')" --no-restore`
+- Verify that report generation tests pass
 
 **When modifying file system functions:**
-- Test directory creation and cleanup
-- Validate configuration file parsing
-- Test report writing functions
+- Run tests for filesystem functionality: `R -e "library(epitraxr); tinytest::run_test_file('inst/tinytest/test_filesystem.R')" --no-restore`
+- Test directory creation and cleanup functionality
 
 ## GitHub Workflows
 
@@ -113,8 +87,8 @@ The project includes:
 **Important timing notes:**
 - All local development operations complete in under 10 seconds
 - Package installation: 2 seconds
-- Tests: 0.5 seconds  
-- Manual validation: 0.4 seconds
+- Full test suite: 0.5 seconds  
+- Individual test files: < 0.2 seconds
 - NEVER CANCEL these operations - they are fast and reliable
 
 ## Dependencies
