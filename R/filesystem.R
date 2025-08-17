@@ -98,7 +98,15 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 
 #' Read in the report config YAML file
 #'
-#' 'read_report_config' reads in the config YAML file
+#' 'read_report_config' reads in the config YAML file. The file can have the
+#' following fields:
+#' - `current_population`: Integer. Current population size.
+#' - `avg_5yr_population`: Integer. Average population over the last 5 years.
+#' - `rounding_decimals`: Integer. Number of decimals to round report values to.
+#' - `generate_csvs`: Logical. Whether to generate CSV files.
+#' - `trend_threshold`: Numeric. Threshold for trend calculations.
+#' Missing fields will be set to default values. See the example config file
+#' here: `system.file("sample_data/sample_config.yml", package = "epitraxr")`.
 #'
 #' @param config_filepath Filepath. Path to report config file.
 #'
@@ -108,7 +116,7 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#' config_file <- system.file("sample_data/sample_config.yml",
 #'                           package = "epitraxr")
 #' report_config <- read_report_config(config_file)
 read_report_config <- function(config_filepath) {
@@ -120,8 +128,10 @@ read_report_config <- function(config_filepath) {
 
     config
   } else {
-    stop("No report configuration file provided. Please provide a valid file or
-         use `epitraxr_config()` to create a config programmatically.")
+    stop(
+      "No report configuration file provided. Please provide a valid file or",
+      "use `epitraxr_config()` to create a config programmatically."
+    )
   }
 }
 
@@ -285,8 +295,10 @@ write_report_xlsx <- function(data, filename, folder) {
 write_grouped_report_pdf <- function(data, params, filename, folder) {
   # Check if rmarkdown is available
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
-    stop("Package 'rmarkdown' is required to run
-         'write_grouped_report_pdf()', but is not available")
+    stop(
+      "Package 'rmarkdown' is required to run 'write_grouped_report_pdf()',",
+      "but is not available"
+    )
   }
 
   # Get template path
@@ -294,11 +306,6 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
     "report_formats/grouped_report.Rmd",
     package = "epitraxr"
   )
-
-  # Check if template exists
-  if (!file.exists(template_path) || template_path == "") {
-    stop("Template file 'grouped_report.Rmd' not found in package")
-  }
 
   # Check if output directory exists, create if not
   if (!dir.exists(folder)) {
@@ -366,8 +373,10 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
 write_report_pdf <- function(data, params, filename, folder) {
   # Check if rmarkdown is available
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
-    stop("Package 'rmarkdown' is required to run
-         'write_grouped_report_pdf()', but is not available")
+    stop(
+      "Package 'rmarkdown' is required to run 'write_report_pdf()',",
+      "but is not available"
+    )
   }
 
   # Get template path
@@ -375,11 +384,6 @@ write_report_pdf <- function(data, params, filename, folder) {
     "report_formats/general_report.Rmd",
     package = "epitraxr"
   )
-
-  # Check if template exists
-  if (!file.exists(template_path) || template_path == "") {
-    stop("Template file 'general_report.Rmd' not found in package")
-  }
 
   # Check if output directory exists, create if not
   if (!dir.exists(folder)) {
@@ -407,10 +411,11 @@ write_report_pdf <- function(data, params, filename, folder) {
 #' 'get_internal_disease_list' reads the internal list from a given CSV file or
 #' uses the default diseases, if the file doesn't exist.
 #'
-#' The provided internal disease list file must contain one column of EpiTrax
+#' The provided internal disease list file must contain a column of EpiTrax
 #' disease names (EpiTrax_name) to include in internal reports. It can optionally
 #' contain a column for disease_groupings (Group_name) for reports that group
-#' diseases together.
+#' diseases together. See the example file here:
+#' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
 #' @param filepath Filepath. Internal disease list CSV file.
 #' @param default_diseases String vector. List of default diseases to use if the
 #' above file doesn't exist.
@@ -427,7 +432,7 @@ write_report_pdf <- function(data, params, filename, folder) {
 #' disease_list <- get_internal_disease_list("", default_list)
 #'
 #' # Using a disease list file
-#' list_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#' list_file <- system.file("sample_data/sample_disease_list.csv",
 #'                         package = "epitraxr")
 #' disease_list <- get_internal_disease_list(list_file, default_list)
 get_internal_disease_list <- function(filepath, default_diseases) {
@@ -445,12 +450,14 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 
   } else {
     # If the file doesn't exist, use the default list of diseases provided
-    warning("You have not provided a disease list for internal reports.",
-            "\n - The program will default to using only the diseases ",
-            "found in the input dataset.",
-            "\n - If you would like to use a different list, ",
-            "please include a file with a column named",
-            "\n\n\t'EpiTrax_name'\n")
+    warning(
+      "You have not provided a disease list for internal reports.",
+      "\n - The program will default to using only the diseases ",
+      "found in the input dataset.",
+      "\n - If you would like to use a different list, ",
+      "please include a file with a column named",
+      "\n\n\t'EpiTrax_name'\n"
+    )
 
     default_diseases <- sort(default_diseases)
 
@@ -469,9 +476,10 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 #' the default diseases if the file doesn't exist.
 #'
 #' The provided public disease list file must contain two columns that map the
-#' EpiTrax disease name to a public-facing name for the public report. It can
-#' optionally contain a column for disease_groupings (Group_name) for reports
-#' that group diseases together.
+#' EpiTrax disease name (EpiTrax_name) to a public-facing name (Public_name)
+#' for the public report. It can optionally contain a column for disease_groupings
+#' (Group_name) for reports that group diseases together. See the example file here:
+#' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
 #' @param filepath Filepath. Public disease list CSV file.
 #' @param default_diseases String vector. List of default diseases to use if the
 #' above file doesn't exist.
@@ -489,7 +497,7 @@ get_internal_disease_list <- function(filepath, default_diseases) {
 #' disease_list <- get_public_disease_list("", default_list)
 #'
 #' # Using a disease list file
-#' list_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#' list_file <- system.file("sample_data/sample_disease_list.csv",
 #'                         package = "epitraxr")
 #' disease_list <- get_public_disease_list(list_file, default_list)
 get_public_disease_list <- function(filepath, default_diseases) {
@@ -508,12 +516,14 @@ get_public_disease_list <- function(filepath, default_diseases) {
 
   } else {
     # If the file doesn't exist, use the default list of diseases provided
-    warning("You have not provided a disease list for public reports.",
-            "\n - The program will default to using only the diseases ",
-            "found in the input dataset.",
-            "\n - If you would like to use a different list, ",
-            "please include a file with columns named",
-            "\n\n\t'EpiTrax_name' and 'Public_name'\n")
+    warning(
+      "You have not provided a disease list for public reports.",
+      "\n - The program will default to using only the diseases ",
+      "found in the input dataset.",
+      "\n - If you would like to use a different list, ",
+      "please include a file with columns named",
+      "\n\n\t'EpiTrax_name' and 'Public_name'\n"
+    )
 
     default_diseases <- sort(default_diseases)
 
