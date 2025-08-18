@@ -1,11 +1,12 @@
 #' Format input EpiTrax data
 #'
 #' 'format_week_num' formats the input EpiTrax dataset with month numbers
-#' using the field 'patient_mmwr_week' and filters rows older than five years.
+#' using the field 'patient_mmwr_week'.
 #'
 #' @param data Dataframe. Data to format.
 #'
-#' @returns The formatted data.
+#' @returns The formatted data with columns "disease", "month", "year",
+#' and "counts".
 #' @export
 #'
 #' @importFrom lubridate month ymd
@@ -25,16 +26,14 @@ format_week_num <- function(data) {
   # - Rearrange columns for easier debugging
   data <- data[c("disease", "month", "year", "counts")]
 
-  # - Extract last years of data
-  data <- with(data, data[year >= (max(year) - 5), ])
-
   data
 }
 
 #' Read in input EpiTrax data
 #'
-#' 'read_epitrax_data' reads EpiTrax data from a CSV, validates and formats it,
-#' then returns the data. The file must contain the columns:
+#' 'read_epitrax_data' reads EpiTrax data from a CSV, validates, and formats it.
+#' It also filters rows older than given number of years. The input file must
+#' contain the columns:
 #' - patient_mmwr_year: The year of the MMWR week
 #' - patient_mmwr_week: The MMWR week number
 #' - patient_disease: The disease name
@@ -43,6 +42,7 @@ format_week_num <- function(data) {
 #'
 #' @param data_file Optional filepath. Data file should be a CSV. If this parameter
 #' is NULL, the user will be prompted to choose a file interactively.
+#' @param num_yrs Integer. Number of years of data to keep. Defaults to 5.
 #'
 #' @returns The validated and formatted EpiTrax data from the input file.
 #' @export
@@ -56,9 +56,16 @@ format_week_num <- function(data) {
 #' }
 #'
 #' # Using a file path:
-#' read_epitrax_data(system.file("sample_data/sample_epitrax_data.csv",
-#'                               package = "epitraxr"))
-read_epitrax_data <- function(data_file = NULL) {
+#' read_epitrax_data(
+#'  data_file = system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr"),
+#'  num_yrs = 3
+#' )
+read_epitrax_data <- function(data_file = NULL, num_yrs = 5) {
+
+  if (is.null(num_yrs) || !is.numeric(num_yrs) || num_yrs < 0) {
+    stop("In 'read_epitrax_data', 'num_yrs' must be an integer >= 0.")
+  }
 
   # If data_file is provided, use it; otherwise, prompt user to choose a file
   fpath <- data_file %||% file.choose()
@@ -74,6 +81,9 @@ read_epitrax_data <- function(data_file = NULL) {
   data <- validate_data(data)
   data <- format_week_num(data)
 
+  # Extract last x years of data
+  data <- with(data, data[year >= (max(year) - num_yrs), ])
+
   # Return data from file
   data
 }
@@ -86,6 +96,7 @@ read_epitrax_data <- function(data_file = NULL) {
 #'
 #' @param data_file Optional filepath. Data file should be a CSV. If this parameter
 #'   is NULL, the user will be prompted to choose a file interactively.
+#' @param num_yrs Integer. Number of years of data to keep. Defaults to 5.
 #'
 #' @returns An object of class "epitrax" containing:
 #'   - data: The validated and formatted EpiTrax data
@@ -112,9 +123,9 @@ read_epitrax_data <- function(data_file = NULL) {
 #' head(epitrax$data)
 #' epitrax$diseases
 #' epitrax$report_year
-get_epitrax <- function(data_file = NULL) {
+get_epitrax <- function(data_file = NULL, num_yrs = 5) {
   # Read in EpiTrax data
-  epitrax_data <- read_epitrax_data(data_file)
+  epitrax_data <- read_epitrax_data(data_file, num_yrs = num_yrs)
 
   # Compute common summary statistics and metadata
   data_diseases <- unique(epitrax_data$disease)

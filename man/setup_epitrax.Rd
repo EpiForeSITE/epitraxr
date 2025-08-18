@@ -6,6 +6,7 @@
 \usage{
 setup_epitrax(
   epitrax_file = NULL,
+  num_yrs = 5,
   disease_list_files = NULL,
   config_list = NULL,
   config_file = NULL
@@ -14,6 +15,8 @@ setup_epitrax(
 \arguments{
 \item{epitrax_file}{Optional path to the EpiTrax data file. Data file should
 be a CSV. If omitted, the user will be prompted to choose a file interactively.}
+
+\item{num_yrs}{Integer. Number of years of data to keep. Defaults to 5.}
 
 \item{disease_list_files}{Optional list containing filepaths to internal and
 public report disease lists. If omitted, the default lists will be used and
