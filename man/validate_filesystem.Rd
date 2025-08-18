@@ -11,7 +11,6 @@ validate_filesystem(fsys)
 \itemize{
 \item internal: Folder for internal reports
 \item public: Folder for public reports
-\item settings: Folder for settings files
 }}
 }
 \value{
@@ -23,8 +22,7 @@ NULL if valid, otherwise throws an error.
 \examples{
 fsys <- list(
   internal = "internal_reports",
-  public = "public_reports",
-  settings = "report_settings"
+  public = "public_reports"
 )
 validate_filesystem(fsys)
 }

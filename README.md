@@ -7,11 +7,34 @@
 
 [![ForeSITE
 Group](https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/EpiForeSITE/epitraxr/blob/master/LICENSE.md)
+[![R-CMD-check](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml)
+[![pkgdown](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml)
+[![codecov](https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://codecov.io/gh/EpiForeSITE/epitraxr)
 <!-- badges: end -->
 
-The goal of epitraxr is to simplify the process of manipulating Epitrax
-data and generating reports. The package is targeted toward public
-health officials.
+## Overview
+
+EpiTrax is a central repository for epidemiological data developed by
+Utah State’s Department of Health and Human Services (DHHS). It is now
+used by several other states. Through EpiTrax, public health officials
+have access to many different types of disease surveillance data, which
+they use to produce regular (e.g., weekly, monthly, annual) reports on
+their respective jurisdictions. This can be a tedious, time-intensive
+process, often involving multiple spreadsheets.
+
+The `epitraxr` package makes it fast and easy to process EpiTrax data
+and generate reports. With `epitraxr` it is simple to setup a report
+pipeline, then you simply hit “run” and select your latest EpiTrax
+export—`epitraxr` will do the rest!
+
+The package is targeted toward public health officials. Work to create
+this software tool was made possible by cooperative agreement
+CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak
+Analytics.
 
 ## Installation
 
@@ -23,51 +46,100 @@ You can install the development version of epitraxr from
 devtools::install_github("EpiForeSITE/epitraxr")
 ```
 
-## Examples
+## Usage
+
+`epitraxr` can be used in either “standard” mode or “piped” mode
+(recommended).
+
+### Standard Mode
 
 ``` r
-# Read the sample EpiTrax dataset included with the package
-sample_file <- system.file("sample_data", "sample_epitrax_data.csv", package = "epitraxr")
-epitrax_data <- read_epitrax_data(sample_file)
+library(epitraxr)
 
-# Get the list of diseases in the dataset
-diseases <- unique(epitrax_data$disease)
-
-# Set up configuration
-config <- list(
-  current_population = 102000,
-  avg_5yr_population = 97000,
-  rounding_decimals = 1
+data_file <- system.file(
+  "sample_data/sample_epitrax_data.csv",
+  package = "epitraxr"
 )
+epitrax_data <- read_epitrax_data(data_file)
 
-# Generate monthly counts report for 2024
-monthly_counts <- create_report_monthly_counts(
+diseases <- c("Chickenpox", "Measles", "Lyme disease")
+
+report <- create_report_annual_counts(
   data = epitrax_data,
-  y = 2024,
   disease_names = diseases
 )
-monthly_counts
-#>      disease Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
-#> 1 Chickenpox  26  19  22  40  16  23  37  16  21  27  14  31
-#> 2   COVID-19  81  99  84 120  89 101 125  93  80 117  99 103
-#> 3  Influenza 116  96 130 151 115 100 139 135 113 138  96 137
-#> 4    Measles  22  21  26  27  16  19  35  25  18  32  25  38
-#> 5   Syphilis  22  22  23  24  18  29  15  20  13  23  21  39
 
-# Generate YTD counts with rates per 100k (through May)
-ytd_report <- create_report_ytd_counts(
-  data = epitrax_data,
-  disease_names = diseases,
-  y = 2024,
-  m = 5,
-  config = config,
-  as.rates = TRUE
+report
+#>        disease 2019 2020 2021 2022 2023 2024
+#> 1   Chickenpox  218  318  263  234  249  292
+#> 2 Lyme disease    0    0    0    0    0    0
+#> 3      Measles  211  326  292  414  586  304
+```
+
+### Piped Mode (recommended)
+
+``` r
+library(epitraxr)
+
+config_file <- system.file(
+  "sample_data/sample_config.yml",
+  package = "epitraxr"
 )
-ytd_report
-#>      disease Current_YTD_Rate_per_100k Avg_5yr_YTD_Rate_per_100k
-#> 1 Chickenpox                     286.3                     107.6
-#> 2   COVID-19                    1167.6                     630.9
-#> 3  Influenza                    1437.3                     693.8
-#> 4    Measles                     298.0                     151.8
-#> 5   Syphilis                     263.7                     166.8
+
+disease_list_file <- system.file(
+  "sample_data/sample_disease_list.csv",
+  package = "epitraxr"
+)
+
+epitrax <- get_epitrax(data_file) |>
+  epitrax_set_config_from_file(config_file) |>
+  epitrax_add_report_diseases(list(
+    internal = disease_list_file,
+    public = disease_list_file
+  )) |>
+  epitrax_ireport_annual_counts()
+
+epitrax$internal_reports$annual_counts
+#>        disease 2019 2020 2021 2022 2023 2024
+#> 1   Chickenpox  218  318  263  234  249  292
+#> 2 Lyme disease    0    0    0    0    0    0
+#> 3      Measles  211  326  292  414  586  304
+```
+
+Piped mode makes it super simple to add additional reports.
+
+``` r
+epitrax <- get_epitrax(data_file) |>
+  epitrax_set_config_from_file(config_file) |>
+  epitrax_add_report_diseases(list(
+    internal = disease_list_file,
+    public = disease_list_file
+  )) |>
+  epitrax_ireport_annual_counts() |>
+  epitrax_ireport_monthly_avgs() |>
+  epitrax_ireport_ytd_counts_for_month()
+
+list(epitrax$internal_reports)
+#> [[1]]
+#> [[1]]$annual_counts
+#>        disease 2019 2020 2021 2022 2023 2024
+#> 1   Chickenpox  218  318  263  234  249  292
+#> 2 Lyme disease    0    0    0    0    0    0
+#> 3      Measles  211  326  292  414  586  304
+#>
+#> [[1]]$`monthly_avgs_2019-2024`
+#>        disease  Jan    Feb    Mar    Apr    May    Jun    Jul  Aug    Sep
+#> 1   Chickenpox 23.5 22.333 21.000 26.667 19.833 19.167 24.167 20.0 18.833
+#> 2 Lyme disease  0.0  0.000  0.000  0.000  0.000  0.000  0.000  0.0  0.000
+#> 3      Measles 27.0 31.500 24.667 34.833 25.667 24.667 37.333 27.5 28.167
+#>      Oct    Nov    Dec
+#> 1 25.333 19.000 22.500
+#> 2  0.000  0.000  0.000
+#> 3 36.333 29.167 28.667
+#>
+#> [[1]]$ytd_counts
+#>        disease Current_YTD_Counts Avg_5yr_YTD_Counts
+#> 1   Chickenpox                292              256.4
+#> 2 Lyme disease                  0                0.0
+#> 3      Measles                304              365.8
 ```
