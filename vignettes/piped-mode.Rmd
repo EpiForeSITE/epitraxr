@@ -1,8 +1,8 @@
 ---
-title: "Piping Mode"
+title: "Piped Mode"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Piping Mode}
+  %\VignetteIndexEntry{Piped Mode}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,7 +20,7 @@ library(epitraxr)
 
 # Overview
 
-While the package functions can all be called individually (standard mode), we **recommend using the piping mode** of the epitraxr package because it results in much cleaner, more maintainable code. Instead of calling and saving the results of each generated report, you use the pipe operator `|>` to chain together multiple reports and all the reports are saved to a single `epitrax` object. You can then either manipulate all the reports from the `epitrax` object, or add to your pipe one of epitraxr's export functions to write reports to one of the supported formats (e.g., CSV).
+While the package functions can all be called individually (standard mode, described briefly in `vignette("epitraxr")`), we **recommend using the piped mode** of the epitraxr package because it results in much cleaner, more maintainable code. Instead of calling and saving the results of each generated report, you use the pipe operator `|>` to chain together multiple reports and all the reports are saved to a single `epitrax` object. You can then either manipulate all the reports from the `epitrax` object, or add to your pipe one of epitraxr's export functions to write reports to one of the supported formats (e.g., CSV).
 
 In the epitraxr package, functions that expect a "piped" input are identified by the prefix `epitrax_`. Within this family, report generators are typically prefixed with either `epitrax_preport_` or `epitrax_ireport_` (corresponding to public and internal reports respectively), but can also have the prefix `epitrax_report` (can do both public and internal reports). Export functions are prefixed with `epitrax_write_` (e.g., `epitrax_write_csvs()`).
 
@@ -30,7 +30,7 @@ This vignette will walk you through each step of an epitraxr pipe then show the 
 
 ### Create an `epitrax` object
 
-The first step in piping mode is always to create an `epitrax` object with the `get_epitrax()` function. This object will contain the data, configuration options, and report settings needed for all reports in the pipe. The `epitrax` object is passed through each function in the pipe. When a report is generated, it is appended to the appropriate list (public or internal) in the `epitrax` object before the object is passed to the next function in the pipe.
+The first step in piped mode is always to create an `epitrax` object with the `get_epitrax()` function. This object will contain the data, configuration options, and report settings needed for all reports in the pipe. The `epitrax` object is passed through each function in the pipe. When a report is generated, it is appended to the appropriate list (public or internal) in the `epitrax` object before the object is passed to the next function in the pipe.
 
 ```{r get-epitrax}
 data_fp <- "vignette-data/epitrax_data.csv"
