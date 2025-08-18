@@ -295,6 +295,15 @@ fsys <- list(
 )
 setup_filesystem(fsys, clear.reports = TRUE)
 
+# Test when internal and public reports are empty
+epitrax_empty <- epitrax
+epitrax_empty$internal_reports <- list()
+epitrax_empty$public_reports <- list()
+expect_silent(epitrax_write_xlsxs(epitrax_empty, fsys = fsys))
+expect_equal(length(list.files(fsys$internal)), 0)
+expect_equal(length(list.files(fsys$public)), 0)
+
+# Test with actual internal and public reports
 # - Check overall results
 epitrax <- epitrax_write_xlsxs(epitrax, fsys = fsys)
 

@@ -865,18 +865,22 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
     validate_filesystem(fsys)
 
     # Write internal reports to Excel
-    write_report_xlsx(
-        data = epitrax$internal_reports,
-        filename = "internal_reports_combined.xlsx",
-        folder = fsys$internal
-    )
+    if (length(epitrax$internal_reports) > 0) {
+        write_report_xlsx(
+            data = epitrax$internal_reports,
+            filename = "internal_reports_combined.xlsx",
+            folder = fsys$internal
+        )
+    }
 
     # Write public reports to Excel
-    write_report_xlsx(
-        data = epitrax$public_reports,
-        filename = "public_reports_combined.xlsx",
-        folder = fsys$public
-    )
+    if (length(epitrax$public_reports) > 0) {
+        write_report_xlsx(
+            data = epitrax$public_reports,
+            filename = "public_reports_combined.xlsx",
+            folder = fsys$public
+        )
+    }
 
     epitrax
 }
