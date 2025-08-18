@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,12 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/epitraxr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/piped-mode.html">Piped Mode</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -74,29 +80,21 @@ and produce multiple reports.</p>
 <div class="section level3">
 <h3 id="epitrax-data">EpiTrax Data<a class="anchor" aria-label="anchor" href="#epitrax-data"></a>
 </h3>
-<p>To explore basic report functions in epitraxr, we’ll use the sample
-dataset included in the package. This can be read in using the
-<code><a href="../reference/read_epitrax_data.html">read_epitrax_data()</a></code> function:</p>
+<p>To explore basic report functions in epitraxr, we’ll use this sample
+dataset:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span>  <span class="st">"sample_data/sample_epitrax_data.csv"</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"epitraxr"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="va">data_file</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/epitrax_data.csv"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   patient_mmwr_week patient_mmwr_year patient_disease</span></span>
-<span><span class="co">#&gt; 1                31              2020       Influenza</span></span>
-<span><span class="co">#&gt; 2                51              2019       Influenza</span></span>
-<span><span class="co">#&gt; 3                27              2021       Influenza</span></span>
-<span><span class="co">#&gt; 4                30              2024        COVID-19</span></span>
-<span><span class="co">#&gt; 5                24              2020       Influenza</span></span>
-<span><span class="co">#&gt; 6                13              2022       Influenza</span></span></code></pre></div>
+<span><span class="co">#&gt;   patient_mmwr_week patient_mmwr_year                      patient_disease</span></span>
+<span><span class="co">#&gt; 1                31              2020 Influenza-associated hospitalization</span></span>
+<span><span class="co">#&gt; 2                51              2019 Influenza-associated hospitalization</span></span>
+<span><span class="co">#&gt; 3                27              2021 Influenza-associated hospitalization</span></span>
+<span><span class="co">#&gt; 4                30              2024       Coronavirus, Novel (2019-nCoV)</span></span>
+<span><span class="co">#&gt; 5                24              2020 Influenza-associated hospitalization</span></span>
+<span><span class="co">#&gt; 6                13              2022 Influenza-associated hospitalization</span></span></code></pre></div>
 <p>When you export data from EpiTrax, each row corresponds to a single
-disease case. In general, this will also correspond to a single patient,
-but if a patient is diagnosed with multiple diseases they will have a
-separate row in the data for each disease.</p>
-<p>EpiTrax can provide many different data points, but epitraxr only
-cares about three:</p>
+disease case. EpiTrax can provide many different data points, but
+epitraxr only cares about three:</p>
 <ul>
 <li>
 <code>patient_disease</code>: The disease</li>
@@ -107,19 +105,18 @@ onset</li>
 <code>patient_mmwr_year</code>: The year of disease onset</li>
 </ul>
 <p>The package ignores all other columns.</p>
-<p>We read the data in using the <code><a href="../reference/read_epitrax_data.html">read_epitrax_data()</a></code>
+<p>Read in the data with the <code><a href="../reference/read_epitrax_data.html">read_epitrax_data()</a></code>
 function:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epitrax_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_epitrax_data.html">read_epitrax_data</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epitrax_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     disease month year counts</span></span>
-<span><span class="co">#&gt; 1 Influenza     8 2020      1</span></span>
-<span><span class="co">#&gt; 2 Influenza    12 2019      1</span></span>
-<span><span class="co">#&gt; 3 Influenza     7 2021      1</span></span>
-<span><span class="co">#&gt; 4  COVID-19     7 2024      1</span></span>
-<span><span class="co">#&gt; 5 Influenza     6 2020      1</span></span>
-<span><span class="co">#&gt; 6 Influenza     4 2022      1</span></span></code></pre></div>
+<span><span class="co">#&gt;                                disease month year counts</span></span>
+<span><span class="co">#&gt; 1 Influenza-associated hospitalization     8 2020      1</span></span>
+<span><span class="co">#&gt; 2 Influenza-associated hospitalization    12 2019      1</span></span>
+<span><span class="co">#&gt; 3 Influenza-associated hospitalization     7 2021      1</span></span>
+<span><span class="co">#&gt; 4       Coronavirus, Novel (2019-nCoV)     7 2024      1</span></span>
+<span><span class="co">#&gt; 5 Influenza-associated hospitalization     6 2020      1</span></span>
+<span><span class="co">#&gt; 6 Influenza-associated hospitalization     4 2022      1</span></span></code></pre></div>
 <p>This validates the input data and converts the week number to a month
 number (1-12), because reports generally use months instead of weeks.
 The function also adds the <code>counts</code> column (initially all
@@ -127,105 +124,133 @@ rows have a count of 1), which is used internally in manipulating the
 data while generating reports.</p>
 </div>
 <div class="section level3">
+<h3 id="disease-lists">Disease Lists<a class="anchor" aria-label="anchor" href="#disease-lists"></a>
+</h3>
+<p>Before you can generate reports from the data, epitraxr needs a list
+of diseases to include in the report. Often, you’ll have two lists, one
+for internal reports and one for public reports. Read these files in
+using the functions <code><a href="../reference/get_internal_disease_list.html">get_internal_disease_list()</a></code> and
+<code><a href="../reference/get_public_disease_list.html">get_public_disease_list()</a></code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">internal_disease_list</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/ireport_diseases.csv"</span></span>
+<span><span class="va">internal_diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_internal_disease_list.html">get_internal_disease_list</a></span><span class="op">(</span><span class="va">internal_disease_list</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">internal_diseases</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                      EpiTrax_name                      Group_name</span></span>
+<span><span class="co">#&gt; 1                         Anthrax                Zoonotic Disease</span></span>
+<span><span class="co">#&gt; 2             Botulism, foodborne                  Enteric Toxins</span></span>
+<span><span class="co">#&gt; 3              Campylobacteriosis       Bacterial Enteric Disease</span></span>
+<span><span class="co">#&gt; 4          Chickenpox (Varicella)    Vaccine-Preventable Diseases</span></span>
+<span><span class="co">#&gt; 5 Chlamydia trachomatis infection Sexually Transmitted Infections</span></span>
+<span><span class="co">#&gt; 6                         Cholera                  Enteric Toxins</span></span></code></pre></div>
+<p><code>internal_diseases</code> has two columns.
+<code>EpiTrax_name</code> is the disease name <em>as reported by
+EpiTrax</em>. All internal reports need the values in this column.
+<code>Group_name</code> is for grouping diseases, which is only used by
+<code><a href="../reference/create_report_grouped_stats.html">create_report_grouped_stats()</a></code>. If you aren’t creating
+grouped reports, you don’t need <code>Group_name</code> in your internal
+disease list.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">public_disease_list</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/preport_diseases.csv"</span></span>
+<span><span class="va">public_diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_public_disease_list.html">get_public_disease_list</a></span><span class="op">(</span><span class="va">public_disease_list</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">public_diseases</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                           EpiTrax_name                       Public_name</span></span>
+<span><span class="co">#&gt; 1               Chickenpox (Varicella)                        Chickenpox</span></span>
+<span><span class="co">#&gt; 2      Chlamydia trachomatis infection                         Chlamydia</span></span>
+<span><span class="co">#&gt; 3                  Colorado Tick Fever               Colorado Tick Fever</span></span>
+<span><span class="co">#&gt; 4       Coronavirus, Novel (2019-nCoV)                          COVID-19</span></span>
+<span><span class="co">#&gt; 5                 HIV Infection, adult Human Immondeficiency Virus (HIV)</span></span>
+<span><span class="co">#&gt; 6 Influenza-associated hospitalization       Influenza (hospitalization)</span></span></code></pre></div>
+<p><code>public_diseases</code> also has two columns. Like
+<code>internal_diseases</code>, <code>EpiTrax_name</code> is the disease
+name <em>as reported by EpiTrax</em>. All public reports need the values
+in this column to properly compute statistics from the data.
+<code>Public_name</code> is used by certain functions (prefixed with
+<code>create_public_report_</code>) to translate the EpiTrax disease
+name to something more accessible to the public.
+<code>Public_name</code> is also used to combine related diseases in the
+final report (e.g., “Syphilis, primary” and “Syphilis, secondary”
+publicly reported by the collected statistic of “Syphilis”).</p>
+</div>
+<div class="section level3">
 <h3 id="generating-reports-standard-mode">Generating Reports: Standard Mode<a class="anchor" aria-label="anchor" href="#generating-reports-standard-mode"></a>
 </h3>
-<p>We have the data, but before we can begin generating reports from it,
-we need a list of diseases to include in the report. Often, you’ll have
-two lists, one for internal reports and one for public reports. These
-lists might include diseases that aren’t included in the dataset, but
-which you are tracking and reporting. If you had a specific list you
-wanted to use, you could read those in using the functions
-<code><a href="../reference/get_internal_disease_list.html">get_internal_disease_list()</a></code> and
-<code><a href="../reference/get_public_disease_list.html">get_public_disease_list()</a></code>. For this example, we’ll simply
-use the diseases in the dataset:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">epitrax_data</span><span class="op">$</span><span class="va">disease</span><span class="op">)</span></span></code></pre></div>
-<p>We can now call one of the report creation functions:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_report_annual_counts.html">create_report_annual_counts</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
-<span>  disease_names <span class="op">=</span> <span class="va">diseases</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">report</span></span>
-<span><span class="co">#&gt;      disease 2019 2020 2021 2022 2023 2024</span></span>
-<span><span class="co">#&gt; 1 Chickenpox  218  318  263  234  249  292</span></span>
-<span><span class="co">#&gt; 2   COVID-19 1014 1627 2398 1855  908 1191</span></span>
-<span><span class="co">#&gt; 3  Influenza  625 1733 1889 2289 1664 1466</span></span>
-<span><span class="co">#&gt; 4    Measles  211  326  292  414  586  304</span></span>
-<span><span class="co">#&gt; 5   Syphilis  278  356  439  398  577  269</span></span></code></pre></div>
-<p>This gives us a data frame containing a row for each disease in our
-disease list and a column showing the case counts for each year in the
-dataset.</p>
-<p>Let’s call the report function again, but this time give it a
-different disease list.</p>
+<p>We can now call the report generation functions, such as
+<code><a href="../reference/create_report_annual_counts.html">create_report_annual_counts()</a></code>, providing the list of
+diseases we want to include in our report.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_report_annual_counts.html">create_report_annual_counts</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
-<span>  disease_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chickenpox"</span>, <span class="st">"Measles"</span>, <span class="st">"Lyme disease"</span><span class="op">)</span></span>
+<span>  disease_names <span class="op">=</span> <span class="va">internal_diseases</span><span class="op">$</span><span class="va">EpiTrax_name</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">report</span></span>
-<span><span class="co">#&gt;        disease 2019 2020 2021 2022 2023 2024</span></span>
-<span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
-<span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
-<span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span></code></pre></div>
-<p>This new report only includes three diseases and shows there are no
-cases of “Lyme disease” in the dataset.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">report</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                           disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1                         Anthrax    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 2             Botulism, foodborne    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3              Campylobacteriosis    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 4          Chickenpox (Varicella)  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 5 Chlamydia trachomatis infection    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 6                         Cholera    0    0    0    0    0    0</span></span></code></pre></div>
+<p>This gives us a data frame containing a row for each disease in our
+disease list and a column showing the case counts for each year in the
+dataset.</p>
+<p>Let’s call the report function again, but this time give it the
+public disease list.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_report_annual_counts.html">create_report_annual_counts</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
+<span>  disease_names <span class="op">=</span> <span class="va">public_diseases</span><span class="op">$</span><span class="va">EpiTrax_name</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">report</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1               Chickenpox (Varicella)  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 2      Chlamydia trachomatis infection    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3                  Colorado Tick Fever    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 4       Coronavirus, Novel (2019-nCoV) 1014 1627 2398 1855  908 1191</span></span>
+<span><span class="co">#&gt; 5                 HIV Infection, adult    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 6 Influenza-associated hospitalization  625 1733 1889 2289 1664 1466</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="generating-reports-piped-mode-recommended">Generating Reports: Piped Mode (recommended)<a class="anchor" aria-label="anchor" href="#generating-reports-piped-mode-recommended"></a>
 </h3>
-<p>The epitraxr package includes a separate piping mode to make it easy
+<p>The epitraxr package includes a separate piped mode to make it easy
 to chain together multiple reports without needing to specify the
-disease list and input data each time. This family of functions has the
-prefix <code>epitrax_</code>. Report functions within this family have
-one of two prefixes: <code>epitrax_preports_</code> or
-<code>epitrax_ireports_</code>, which correspond to public and internal
-reports respectively.</p>
-<p>In piping mode you first setup an <code>epitrax</code> object which
-will contain the data and configuration options needed for all reports.
-As each report function is called, the report is appended to the
-appropriate list in the epitrax object and the epitrax object is passed
-to the next function.</p>
-<p>Let’s look at the same annual counts report generation using the
-piping method. For this method, we need the disease list to be in a CSV
-file and we also need to provide a list of configuration options. These
-are discussed in more detail in other vignettes.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">config_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span>  <span class="st">"sample_data/sample_config.yml"</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"epitraxr"</span></span>
+disease list and input data each time. <strong>This is our recommended
+mode for epitraxr.</strong> See <code><a href="../articles/piped-mode.html">vignette("piped-mode")</a></code> for
+more information.</p>
+<p>Here is a brief example of how the same annual counts report
+generation would work in piped mode.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Data and configuration files</span></span>
+<span><span class="va">data_file</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/epitrax_data.csv"</span></span>
+<span><span class="va">config_file</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/config.yaml"</span></span>
+<span><span class="va">disease_lists</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  internal <span class="op">=</span> <span class="st">"vignette-data/ireport_diseases.csv"</span>,</span>
+<span>  public <span class="op">=</span> <span class="st">"vignette-data/preport_diseases.csv"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">disease_list_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span>  <span class="st">"sample_data/sample_disease_list.csv"</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"epitraxr"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
+<span><span class="co"># Run pipe</span></span>
 <span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    internal <span class="op">=</span> <span class="va">disease_list_file</span>,</span>
-<span>    public <span class="op">=</span> <span class="va">disease_list_file</span></span>
-<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="va">disease_lists</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">epitrax</span><span class="op">$</span><span class="va">internal_reports</span><span class="op">$</span><span class="va">annual_counts</span></span>
-<span><span class="co">#&gt;        disease 2019 2020 2021 2022 2023 2024</span></span>
-<span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
-<span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
-<span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span></code></pre></div>
-<p>The piping method can feel like overkill for generating a single
-report, but it really shines when we’re creating multiple reports all at
+<span><span class="co"># View report</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epitrax</span><span class="op">$</span><span class="va">internal_reports</span><span class="op">$</span><span class="va">annual_counts</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                           disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1                         Anthrax    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 2             Botulism, foodborne    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3              Campylobacteriosis    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 4          Chickenpox (Varicella)  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 5 Chlamydia trachomatis infection    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 6                         Cholera    0    0    0    0    0    0</span></span></code></pre></div>
+<p>Piped mode really shines when we’re creating multiple reports all at
 once.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    internal <span class="op">=</span> <span class="va">disease_list_file</span>,</span>
-<span>    public <span class="op">=</span> <span class="va">disease_list_file</span></span>
-<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="va">disease_lists</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_monthly_avgs.html">epitrax_ireport_monthly_avgs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_ytd_counts_for_month.html">epitrax_ireport_ytd_counts_for_month</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -233,26 +258,98 @@ once.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">epitrax</span><span class="op">$</span><span class="va">internal_reports</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; [[1]]$annual_counts</span></span>
-<span><span class="co">#&gt;        disease 2019 2020 2021 2022 2023 2024</span></span>
-<span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
-<span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
-<span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span>
+<span><span class="co">#&gt;                                 disease 2019 2020 2021 2022 2023 2024</span></span>
+<span><span class="co">#&gt; 1                               Anthrax    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 2                   Botulism, foodborne    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 3                    Campylobacteriosis    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 4                Chickenpox (Varicella)  218  318  263  234  249  292</span></span>
+<span><span class="co">#&gt; 5       Chlamydia trachomatis infection    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 6                               Cholera    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 7                   Colorado Tick Fever    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 8        Coronavirus, Novel (2019-nCoV) 1014 1627 2398 1855  908 1191</span></span>
+<span><span class="co">#&gt; 9        E. coli - Carbapenem resistant    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 10                 HIV Infection, adult    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 11 Influenza-associated hospitalization  625 1733 1889 2289 1664 1466</span></span>
+<span><span class="co">#&gt; 12                         Lyme disease    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 13                    Measles (rubeola)  211  326  292  414  586  304</span></span>
+<span><span class="co">#&gt; 14                            Monkeypox    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 15                            Pertussis    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 16                        Salmonellosis    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 17                    Syphilis, primary  278  356  439  398  577  269</span></span>
+<span><span class="co">#&gt; 18                  Syphilis, secondary    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 19                 Tuberculosis, Active    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 20              West Nile virus disease    0    0    0    0    0    0</span></span>
+<span><span class="co">#&gt; 21                         Yellow Fever    0    0    0    0    0    0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]]$`monthly_avgs_2019-2024`</span></span>
-<span><span class="co">#&gt;        disease  Jan    Feb    Mar    Apr    May    Jun    Jul  Aug    Sep</span></span>
-<span><span class="co">#&gt; 1   Chickenpox 23.5 22.333 21.000 26.667 19.833 19.167 24.167 20.0 18.833</span></span>
-<span><span class="co">#&gt; 2 Lyme disease  0.0  0.000  0.000  0.000  0.000  0.000  0.000  0.0  0.000</span></span>
-<span><span class="co">#&gt; 3      Measles 27.0 31.500 24.667 34.833 25.667 24.667 37.333 27.5 28.167</span></span>
-<span><span class="co">#&gt;      Oct    Nov    Dec</span></span>
-<span><span class="co">#&gt; 1 25.333 19.000 22.500</span></span>
-<span><span class="co">#&gt; 2  0.000  0.000  0.000</span></span>
-<span><span class="co">#&gt; 3 36.333 29.167 28.667</span></span>
+<span><span class="co">#&gt;                                 disease    Jan    Feb    Mar    Apr    May</span></span>
+<span><span class="co">#&gt; 1                               Anthrax   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 2                   Botulism, foodborne   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 3                    Campylobacteriosis   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 4                Chickenpox (Varicella)  23.50  22.33  21.00  26.67  19.83</span></span>
+<span><span class="co">#&gt; 5       Chlamydia trachomatis infection   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 6                               Cholera   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 7                   Colorado Tick Fever   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 8        Coronavirus, Novel (2019-nCoV) 114.17 137.67 115.67 140.33 113.50</span></span>
+<span><span class="co">#&gt; 9        E. coli - Carbapenem resistant   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 10                 HIV Infection, adult   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 11 Influenza-associated hospitalization 121.83 140.17 129.33 162.67 133.67</span></span>
+<span><span class="co">#&gt; 12                         Lyme disease   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 13                    Measles (rubeola)  27.00  31.50  24.67  34.83  25.67</span></span>
+<span><span class="co">#&gt; 14                            Monkeypox   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 15                            Pertussis   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 16                        Salmonellosis   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 17                    Syphilis, primary  32.67  35.33  31.67  38.67  27.50</span></span>
+<span><span class="co">#&gt; 18                  Syphilis, secondary   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 19                 Tuberculosis, Active   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 20              West Nile virus disease   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 21                         Yellow Fever   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt;       Jun    Jul    Aug    Sep    Oct    Nov    Dec</span></span>
+<span><span class="co">#&gt; 1    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 2    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 3    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 4   19.17  24.17  20.00  18.83  25.33  19.00  22.50</span></span>
+<span><span class="co">#&gt; 5    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 6    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 7    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 8  114.50 139.17 110.17 122.17 146.67 123.17 121.67</span></span>
+<span><span class="co">#&gt; 9    0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 10   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 11 119.17 158.33 128.67 117.33 146.67 119.83 133.33</span></span>
+<span><span class="co">#&gt; 12   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 13  24.67  37.33  27.50  28.17  36.33  29.17  28.67</span></span>
+<span><span class="co">#&gt; 14   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 15   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 16   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 17  33.50  28.50  30.00  26.67  38.00  26.17  37.50</span></span>
+<span><span class="co">#&gt; 18   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 19   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 20   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
+<span><span class="co">#&gt; 21   0.00   0.00   0.00   0.00   0.00   0.00   0.00</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]]$ytd_counts</span></span>
-<span><span class="co">#&gt;        disease Current_YTD_Counts Avg_5yr_YTD_Counts</span></span>
-<span><span class="co">#&gt; 1   Chickenpox                292              256.4</span></span>
-<span><span class="co">#&gt; 2 Lyme disease                  0                0.0</span></span>
-<span><span class="co">#&gt; 3      Measles                304              365.8</span></span></code></pre></div>
+<span><span class="co">#&gt;                                 disease Current_YTD_Counts Avg_5yr_YTD_Counts</span></span>
+<span><span class="co">#&gt; 1                               Anthrax                  0                0.0</span></span>
+<span><span class="co">#&gt; 2                   Botulism, foodborne                  0                0.0</span></span>
+<span><span class="co">#&gt; 3                    Campylobacteriosis                  0                0.0</span></span>
+<span><span class="co">#&gt; 4                Chickenpox (Varicella)                292              256.4</span></span>
+<span><span class="co">#&gt; 5       Chlamydia trachomatis infection                  0                0.0</span></span>
+<span><span class="co">#&gt; 6                               Cholera                  0                0.0</span></span>
+<span><span class="co">#&gt; 7                   Colorado Tick Fever                  0                0.0</span></span>
+<span><span class="co">#&gt; 8        Coronavirus, Novel (2019-nCoV)               1191             1560.4</span></span>
+<span><span class="co">#&gt; 9        E. coli - Carbapenem resistant                  0                0.0</span></span>
+<span><span class="co">#&gt; 10                 HIV Infection, adult                  0                0.0</span></span>
+<span><span class="co">#&gt; 11 Influenza-associated hospitalization               1466             1640.0</span></span>
+<span><span class="co">#&gt; 12                         Lyme disease                  0                0.0</span></span>
+<span><span class="co">#&gt; 13                    Measles (rubeola)                304              365.8</span></span>
+<span><span class="co">#&gt; 14                            Monkeypox                  0                0.0</span></span>
+<span><span class="co">#&gt; 15                            Pertussis                  0                0.0</span></span>
+<span><span class="co">#&gt; 16                        Salmonellosis                  0                0.0</span></span>
+<span><span class="co">#&gt; 17                    Syphilis, primary                269              409.6</span></span>
+<span><span class="co">#&gt; 18                  Syphilis, secondary                  0                0.0</span></span>
+<span><span class="co">#&gt; 19                 Tuberculosis, Active                  0                0.0</span></span>
+<span><span class="co">#&gt; 20              West Nile virus disease                  0                0.0</span></span>
+<span><span class="co">#&gt; 21                         Yellow Fever                  0                0.0</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
