@@ -61,7 +61,7 @@ format_week_num <- function(data) {
 read_epitrax_data <- function(data_file = NULL) {
 
   # If data_file is provided, use it; otherwise, prompt user to choose a file
-  fpath <- ifelse(!is.null(data_file), data_file, file.choose())
+  fpath <- data_file %||% file.choose()
 
   if (!file.exists(fpath) || !grepl("\\.csv$", fpath)) {
     stop("Please select an EpiTrax data file (.csv).")
