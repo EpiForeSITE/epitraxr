@@ -35,7 +35,6 @@ validate_epitrax <- function(epitrax, report.check = TRUE) {
 #' @param fsys List. Contains paths to report folders with elements:
 #'   - internal: Folder for internal reports
 #'   - public: Folder for public reports
-#'   - settings: Folder for settings files
 #'
 #' @returns NULL if valid, otherwise throws an error.
 #' @export
@@ -43,14 +42,12 @@ validate_epitrax <- function(epitrax, report.check = TRUE) {
 #' @examples
 #' fsys <- list(
 #'   internal = "internal_reports",
-#'   public = "public_reports",
-#'   settings = "report_settings"
+#'   public = "public_reports"
 #' )
 #' validate_filesystem(fsys)
 validate_filesystem <- function(fsys) {
   stopifnot(is.character(fsys$internal))
   stopifnot(is.character(fsys$public))
-  stopifnot(is.character(fsys$settings))
 }
 
 

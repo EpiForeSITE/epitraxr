@@ -18,8 +18,7 @@ expect_silent(validate_epitrax(epitrax, report.check = TRUE))
 # Test validate_filesystem() ---------------------------------------------------
 expect_silent(validate_filesystem(list(
   internal = "test_internal",
-  public = "test_public",
-  settings = "test_settings"
+  public = "test_public"
 )))
 expect_error(validate_filesystem(list(
   internal = "test_internal"
