@@ -217,26 +217,27 @@ reshape_annual_wide <- function(df) {
 
 #' Prepare data for report
 #'
-#' 'prep_report_data' removes rows from the data that shouldn't appear in the
-#' report and adds rows for diseases that should be in the report, but weren't
-#' in the input dataset. Added rows are filled with 0s.
+#' 'standardize_report_diseases' removes rows from the data that
+#' shouldn't appear in the report and adds rows for diseases that
+#' should be in the report, but weren't in the input dataset.
+#' Added rows are filled with 0s.
 #'
 #' @param data Dataframe. Current report data.
-#' @param report_d_list String vector. Diseases to include in the report.
+#' @param diseases String vector. Diseases to include in the report.
 #'
 #' @returns Report data with rows for all diseases to report.
 #' @export
 #'
 #' @examples
 #' df <- data.frame(disease=c("A","B","D"), counts=c(5,7,8))
-#' prep_report_data(df, c("A","C"))
-prep_report_data <- function(data, report_d_list) {
+#' standardize_report_diseases(df, c("A","C"))
+standardize_report_diseases <- function(data, diseases) {
 
   # - Remove rows from data that aren't going into the public report
-  data <- data[data$disease %in% report_d_list, ]
+  data <- data[data$disease %in% diseases, ]
 
   # - Get diseases from report list that weren't in the data
-  missing_diseases <- report_d_list[!(report_d_list %in% data$disease)]
+  missing_diseases <- diseases[!(diseases %in% data$disease)]
 
   # If there are any missing diseases, add them
   if (length(missing_diseases) > 0) {
