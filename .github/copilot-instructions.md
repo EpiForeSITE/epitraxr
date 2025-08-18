@@ -27,8 +27,8 @@ Always reference these instructions first and fallback to search or bash command
 ## Key Development Operations
 
 **R CMD check (for comprehensive validation):**
-- `R CMD check --no-manual .` -- Note: Currently fails due to DESCRIPTION format issues, but this is a known limitation.
-- The package functions correctly despite check failures.
+- `R CMD check --no-manual .`
+- The package should pass R CMD check
 
 **Pre-commit hooks:**
 - Install: `pip install pre-commit && pre-commit install`
@@ -43,7 +43,7 @@ Always reference these instructions first and fallback to search or bash command
 - `inst/sample_data/` - Sample EpiTrax CSV data for testing and examples
 - `inst/tinytest/` - Test suite using tinytest framework
 - `scripts/` - Utility and example scripts showing package usage
-- `man/` - Generated documentation files
+- `man/` - Generated documentation files. Since these are automatically generated, never manually change anything in this directory. Running the R command `devtools::check()` should build these for you.
 - `tests/tinytest.R` - Entry point for running tests
 
 **Key files:**
