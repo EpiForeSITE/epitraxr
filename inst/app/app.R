@@ -108,17 +108,22 @@ ui <- fluidPage(
       
       # Download buttons in a row
       fluidRow(
-        column(4, 
+        column(3, 
                downloadButton("download_csv",
                               "Download CSV",
                               class = "btn-primary",
                               style = "width: 100%;")),
-        column(4, 
+        column(3, 
                downloadButton("download_excel", 
                               "Download Excel",
                               class = "btn-info",
                               style = "width: 100%;")),
-        column(4, 
+        column(3, 
+               downloadButton("download_pdf",
+                              "Download PDF",
+                              class = "btn-secondary",
+                              style = "width: 100%;")),
+        column(3, 
                downloadButton("download_all",
                               "Download All",
                               class = "btn-warning",
@@ -145,6 +150,7 @@ server <- function(input, output, session) {
   observe({
     shinyjs::disable("download_csv")
     shinyjs::disable("download_excel")
+    shinyjs::disable("download_pdf")
     shinyjs::disable("download_all")
   })
   
@@ -235,6 +241,7 @@ server <- function(input, output, session) {
       # Enable download buttons
       shinyjs::enable("download_csv")
       shinyjs::enable("download_excel")
+      shinyjs::enable("download_pdf")
       shinyjs::enable("download_all")
       
       showNotification("Reports generated successfully!", type = "message")
@@ -244,6 +251,7 @@ server <- function(input, output, session) {
       epitrax_obj(NULL)
       shinyjs::disable("download_csv")
       shinyjs::disable("download_excel")
+      shinyjs::disable("download_pdf")
       shinyjs::disable("download_all")
     })
   })
@@ -370,6 +378,95 @@ server <- function(input, output, session) {
     contentType = "application/zip"
   )
 
+  # Download PDF files
+  output$download_pdf <- downloadHandler(
+    filename = function() {
+      paste0("epitrax_pdf_reports_", Sys.Date(), ".zip")
+    },
+    content = function(file) {
+      req(epitrax_obj())
+      
+      # Create temporary directory
+      temp_dir <- tempdir()
+      # Create a directory with the same name as the ZIP file (without extension)
+      zip_name <- tools::file_path_sans_ext(basename(paste0("epitrax_pdf_reports_", Sys.Date(), ".zip")))
+      pdf_dir <- file.path(temp_dir, zip_name)
+      dir.create(pdf_dir, showWarnings = FALSE, recursive = TRUE)
+      
+      tryCatch({
+        epitrax <- epitrax_obj()
+        
+        # Create filesystem structure for PDF generation
+        fsys <- list(
+          internal = file.path(pdf_dir, "internal"),
+          public = file.path(pdf_dir, "public"),
+          settings = pdf_dir
+        )
+        
+        # Create directories
+        dir.create(fsys$internal, showWarnings = FALSE, recursive = TRUE)
+        dir.create(fsys$public, showWarnings = FALSE, recursive = TRUE)
+        dir.create(fsys$settings, showWarnings = FALSE, recursive = TRUE)
+        
+        # PDF report parameters
+        params <- list(
+          title = "Disease Surveillance Report",
+          author = "EpiTrax Report Generator"
+        )
+        
+        # Generate PDFs for public reports (excluding grouped stats)
+        if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+          # Check if rmarkdown is available before attempting PDF generation
+          if (requireNamespace("rmarkdown", quietly = TRUE)) {
+            tryCatch({
+              epitrax_write_pdf_public_reports(epitrax, params, fsys)
+            }, error = function(e) {
+              # PDF generation failed, but continue
+              showNotification("PDF generation failed for public reports", type = "warning")
+            })
+          } else {
+            showNotification("rmarkdown package required for PDF generation", type = "warning")
+          }
+        }
+        
+        # Generate PDFs for grouped stats reports (both internal and public)
+        if ((!is.null(epitrax$internal_reports) && any(grepl("^grouped_stats_", names(epitrax$internal_reports)))) ||
+            (!is.null(epitrax$public_reports) && any(grepl("^grouped_stats_", names(epitrax$public_reports))))) {
+          # Check if rmarkdown is available before attempting PDF generation
+          if (requireNamespace("rmarkdown", quietly = TRUE)) {
+            tryCatch({
+              epitrax_write_pdf_grouped_stats(epitrax, params, fsys)
+            }, error = function(e) {
+              # PDF generation failed, but continue
+              showNotification("PDF generation failed for grouped stats reports", type = "warning")
+            })
+          } else {
+            showNotification("rmarkdown package required for PDF generation", type = "warning")
+          }
+        }
+        
+        # Remove empty directories
+        if (length(list.files(fsys$internal)) == 0) {
+          unlink(fsys$internal, recursive = TRUE)
+        }
+        if (length(list.files(fsys$public)) == 0) {
+          unlink(fsys$public, recursive = TRUE)
+        }
+        
+        # Create ZIP file with proper structure
+        # Change to temp_dir and zip the named directory
+        old_wd <- getwd()
+        setwd(temp_dir)
+        zip(file, zip_name, flags = "-r")
+        setwd(old_wd)
+        
+      }, error = function(e) {
+        showNotification(paste("Error creating PDF download:", e$message), type = "error")
+      })
+    },
+    contentType = "application/zip"
+  )
+
   # Download All files (both CSV and Excel)
   output$download_all <- downloadHandler(
     filename = function() {
@@ -452,6 +549,66 @@ server <- function(input, output, session) {
                        row.names = FALSE)
             }
           }
+        }
+        
+        # Create PDF subdirectory
+        pdf_dir <- file.path(all_dir, "pdf_reports")
+        dir.create(pdf_dir, showWarnings = FALSE, recursive = TRUE)
+        
+        # Create filesystem structure for PDF generation
+        pdf_fsys <- list(
+          internal = file.path(pdf_dir, "internal"),
+          public = file.path(pdf_dir, "public"),
+          settings = pdf_dir
+        )
+        
+        # Create directories
+        dir.create(pdf_fsys$internal, showWarnings = FALSE, recursive = TRUE)
+        dir.create(pdf_fsys$public, showWarnings = FALSE, recursive = TRUE)
+        dir.create(pdf_fsys$settings, showWarnings = FALSE, recursive = TRUE)
+        
+        # PDF report parameters
+        params <- list(
+          title = "Disease Surveillance Report",
+          author = "EpiTrax Report Generator"
+        )
+        
+        # Generate PDFs for public reports (excluding grouped stats)
+        if (!is.null(epitrax$public_reports) && length(epitrax$public_reports) > 0) {
+          # Check if rmarkdown is available before attempting PDF generation
+          if (requireNamespace("rmarkdown", quietly = TRUE)) {
+            tryCatch({
+              epitrax_write_pdf_public_reports(epitrax, params, pdf_fsys)
+            }, error = function(e) {
+              # PDF generation failed, but continue with other formats
+              showNotification("PDF generation failed for public reports", type = "warning")
+            })
+          }
+        }
+        
+        # Generate PDFs for grouped stats reports (both internal and public)
+        if ((!is.null(epitrax$internal_reports) && any(grepl("^grouped_stats_", names(epitrax$internal_reports)))) ||
+            (!is.null(epitrax$public_reports) && any(grepl("^grouped_stats_", names(epitrax$public_reports))))) {
+          # Check if rmarkdown is available before attempting PDF generation
+          if (requireNamespace("rmarkdown", quietly = TRUE)) {
+            tryCatch({
+              epitrax_write_pdf_grouped_stats(epitrax, params, pdf_fsys)
+            }, error = function(e) {
+              # PDF generation failed, but continue with other formats
+              showNotification("PDF generation failed for grouped stats reports", type = "warning")
+            })
+          }
+        }
+        
+        # Remove empty PDF directories
+        if (length(list.files(pdf_fsys$internal)) == 0) {
+          unlink(pdf_fsys$internal, recursive = TRUE)
+        }
+        if (length(list.files(pdf_fsys$public)) == 0) {
+          unlink(pdf_fsys$public, recursive = TRUE)
+        }
+        if (length(list.files(pdf_dir)) == 0) {
+          unlink(pdf_dir, recursive = TRUE)
         }
         
         # Create ZIP file with proper structure
