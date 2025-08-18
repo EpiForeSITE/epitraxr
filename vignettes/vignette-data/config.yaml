@@ -1,0 +1,5 @@
+current_population: 67000
+avg_5yr_population: 65000
+rounding_decimals: 2
+generate_csvs: true
+trend_threshold: 0.15
