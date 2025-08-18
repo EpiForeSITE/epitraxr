@@ -4,18 +4,21 @@
 \alias{read_epitrax_data}
 \title{Read in input EpiTrax data}
 \usage{
-read_epitrax_data(data_file = NULL)
+read_epitrax_data(data_file = NULL, num_yrs = 5)
 }
 \arguments{
 \item{data_file}{Optional filepath. Data file should be a CSV. If this parameter
 is NULL, the user will be prompted to choose a file interactively.}
+
+\item{num_yrs}{Integer. Number of years of data to keep. Defaults to 5.}
 }
 \value{
 The validated and formatted EpiTrax data from the input file.
 }
 \description{
-'read_epitrax_data' reads EpiTrax data from a CSV, validates and formats it,
-then returns the data. The file must contain the columns:
+'read_epitrax_data' reads EpiTrax data from a CSV, validates, and formats it.
+It also filters rows older than given number of years. The input file must
+contain the columns:
 \itemize{
 \item patient_mmwr_year: The year of the MMWR week
 \item patient_mmwr_week: The MMWR week number
@@ -31,6 +34,9 @@ read_epitrax_data()
 }
 
 # Using a file path:
-read_epitrax_data(system.file("sample_data/sample_epitrax_data.csv",
-                              package = "epitraxr"))
+read_epitrax_data(
+ data_file = system.file("sample_data/sample_epitrax_data.csv",
+                         package = "epitraxr"),
+ num_yrs = 3
+)
 }

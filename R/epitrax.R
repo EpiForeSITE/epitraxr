@@ -124,6 +124,7 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
 #'
 #' @param epitrax_file Optional path to the EpiTrax data file. Data file should
 #' be a CSV. If omitted, the user will be prompted to choose a file interactively.
+#' @param num_yrs Integer. Number of years of data to keep. Defaults to 5.
 #' @param disease_list_files Optional list containing filepaths to internal and
 #' public report disease lists. If omitted, the default lists will be used and
 #' a warning will be thrown.
@@ -149,7 +150,7 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
 #'   epitrax_file = data_file,
 #'   disease_list_files = disease_lists
 #' )
-setup_epitrax <- function(epitrax_file = NULL, disease_list_files = NULL, config_list = NULL, config_file = NULL) {
+setup_epitrax <- function(epitrax_file = NULL, num_yrs = 5, disease_list_files = NULL, config_list = NULL, config_file = NULL) {
 
     if (!is.null(config_list) && !is.null(config_file)) {
         stop(
@@ -158,7 +159,7 @@ setup_epitrax <- function(epitrax_file = NULL, disease_list_files = NULL, config
         )
     }
 
-    epitrax <- get_epitrax(epitrax_file) |>
+    epitrax <- get_epitrax(epitrax_file, num_yrs = num_yrs) |>
         epitrax_add_report_diseases(disease_list_files)
 
     if (!is.null(config_file)) {

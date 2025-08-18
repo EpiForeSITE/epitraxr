@@ -4,11 +4,13 @@
 \alias{get_epitrax}
 \title{Create an EpiTrax object from data file}
 \usage{
-get_epitrax(data_file = NULL)
+get_epitrax(data_file = NULL, num_yrs = 5)
 }
 \arguments{
 \item{data_file}{Optional filepath. Data file should be a CSV. If this parameter
 is NULL, the user will be prompted to choose a file interactively.}
+
+\item{num_yrs}{Integer. Number of years of data to keep. Defaults to 5.}
 }
 \value{
 An object of class "epitrax" containing:
