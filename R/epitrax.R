@@ -53,9 +53,7 @@ epitrax_set_config_from_list <- function(epitrax, config = NULL) {
 
     validate_epitrax(epitrax, report.check = FALSE)
 
-    if (is.null(config)) {
-        config <- list()
-    }
+    config <- config %||% list()
 
     if (inherits(config, "list")) {
         epitrax$config <- do.call(epitraxr_config, config)
