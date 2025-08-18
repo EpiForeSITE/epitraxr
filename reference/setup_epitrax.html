@@ -51,6 +51,7 @@ disease lists. It is a convenience function that combines <code>get_epitrax</cod
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">setup_epitrax</span><span class="op">(</span></span>
 <span>  epitrax_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  num_yrs <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  disease_list_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  config_list <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  config_file <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -64,6 +65,10 @@ disease lists. It is a convenience function that combines <code>get_epitrax</cod
 <dl><dt id="arg-epitrax-file">epitrax_file<a class="anchor" aria-label="anchor" href="#arg-epitrax-file"></a></dt>
 <dd><p>Optional path to the EpiTrax data file. Data file should
 be a CSV. If omitted, the user will be prompted to choose a file interactively.</p></dd>
+
+
+<dt id="arg-num-yrs">num_yrs<a class="anchor" aria-label="anchor" href="#arg-num-yrs"></a></dt>
+<dd><p>Integer. Number of years of data to keep. Defaults to 5.</p></dd>
 
 
 <dt id="arg-disease-list-files">disease_list_files<a class="anchor" aria-label="anchor" href="#arg-disease-list-files"></a></dt>
