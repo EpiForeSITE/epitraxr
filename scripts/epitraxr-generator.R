@@ -161,7 +161,7 @@ for (offset in 0:3) {
 }
 
 # - Create current YTD report
-ytd_report_rates <- prep_report_data(
+ytd_report_rates <- standardize_report_diseases(
   ytd_report_rates,
   report_diseases$public$EpiTrax_name
 )

@@ -123,12 +123,12 @@ expect_equal(result$`2020`, expected_df$`2020`)
 expect_equal(result$`2021`, expected_df$`2021`)
 
 
-# Test prep_report_data() ------------------------------------------------------
+# Test standardize_report_diseases() ------------------------------------------------------
 
 df <- data.frame(disease=c("A","B","D"), Jan=c(5,7,8), Feb=c(6,8,9))
 report_diseases <- c("A","C")
 
-res <- prep_report_data(df, report_diseases)
+res <- standardize_report_diseases(df, report_diseases)
 
 # Check that only diseases in report_diseases are present
 expect_equal(report_diseases, res$disease)

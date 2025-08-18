@@ -179,7 +179,7 @@ create_report_annual_counts <- function(data, disease_names) {
   annual_counts <- reshape_annual_wide(annual_counts)
 
   # - Add missing diseases
-  annual_counts <- prep_report_data(annual_counts, disease_names)
+  annual_counts <- standardize_report_diseases(annual_counts, disease_names)
 
   # - Clear row names
   rownames(annual_counts) <- NULL
@@ -225,7 +225,7 @@ create_report_monthly_counts <- function(data, y, disease_names) {
   month_counts <- reshape_monthly_wide(month_counts)
 
   # - Add missing diseases
-  month_counts <- prep_report_data(month_counts, disease_names)
+  month_counts <- standardize_report_diseases(month_counts, disease_names)
 
   # - Clear row names
   rownames(month_counts) <- NULL
@@ -274,7 +274,7 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
   monthly_avgs <- reshape_monthly_wide(monthly_avgs)
 
   # - Add missing diseases
-  monthly_avgs <- prep_report_data(monthly_avgs, disease_names)
+  monthly_avgs <- standardize_report_diseases(monthly_avgs, disease_names)
 
   # - Clear row names
   rownames(monthly_avgs) <- NULL
@@ -396,14 +396,14 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
   # Compute current year-to-date (YTD) counts
   current_ytd <- month_counts[month_counts$year == y, ]
   current_ytd <- stats::aggregate(counts ~ disease, data = current_ytd, FUN = sum)
-  current_ytd <- prep_report_data(current_ytd, disease_names)
+  current_ytd <- standardize_report_diseases(current_ytd, disease_names)
 
   # Compute average YTD counts for the previous years
   avg_5yr_ytd <- with(month_counts, month_counts[year != y & month <= m, ])
   avg_5yr_ytd <- stats::aggregate(counts ~ disease, data = avg_5yr_ytd, FUN = sum)
   avg_5yr_ytd$counts <- round(avg_5yr_ytd$counts / num_prev_yrs,
                               config$rounding_decimals)
-  avg_5yr_ytd <- prep_report_data(avg_5yr_ytd, disease_names)
+  avg_5yr_ytd <- standardize_report_diseases(avg_5yr_ytd, disease_names)
 
   # Assemble YTD report
   ytd_report <- data.frame(disease = current_ytd$disease)
