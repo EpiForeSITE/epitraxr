@@ -21,7 +21,11 @@ REPORT_OPTIONS <- list(
   "YTD Counts" = "ytd_counts",
   "YTD Rates" = "ytd_rates",
   "Monthly Cross-sections" = "month_crosssections",
-  "Public YTD Rates" = "public_ytd_rates"
+  "Public YTD Rates" = "public_ytd_rates",
+  "Combined Month/YTD" = "combined_month_ytd",
+  "Monthly Medians" = "monthly_medians",
+  "YTD Medians" = "ytd_medians",
+  "Grouped Stats" = "grouped_stats"
 )
 
 # Function to display DataFrame as table
@@ -206,6 +210,23 @@ server <- function(input, output, session) {
       
       if ("public_ytd_rates" %in% selected_reports) {
         epitrax <- epitrax_preport_ytd_rates(epitrax)
+      }
+      
+      if ("combined_month_ytd" %in% selected_reports) {
+        epitrax <- epitrax_preport_combined_month_ytd(epitrax)
+      }
+      
+      # Generate additional internal reports
+      if ("monthly_medians" %in% selected_reports) {
+        epitrax <- epitrax_report_monthly_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
+      }
+      
+      if ("ytd_medians" %in% selected_reports) {
+        epitrax <- epitrax_report_ytd_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
+      }
+      
+      if ("grouped_stats" %in% selected_reports) {
+        epitrax <- epitrax_report_grouped_stats(epitrax, is.public = FALSE)
       }
       
       # Store the epitrax object
