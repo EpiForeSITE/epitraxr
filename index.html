@@ -71,6 +71,23 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="installing-package-dependencies">Installing Package Dependencies<a class="anchor" aria-label="anchor" href="#installing-package-dependencies"></a>
+</h3>
+<p>Many features of <code>epitraxr</code> will work with the standard installation. However, there are several optional features, such as PDF report generation and the R Shiny app, that require you to install additional dependencies. You can do that with the command:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>For PDF reports, you may need to install a LaTeX distribution as well. We recommend using <a href="https://yihui.org/tinytex/" class="external-link">TinyTeX</a> as described in the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/install-latex.html" class="external-link">R Markdown Cookbook</a>. First, install the <code>tinytex</code> package:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tinytex"</span><span class="op">)</span></span></code></pre></div>
+<p>Then, install TinyTeX (the LaTeX distribution) using the <code>tinytex</code> package:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># to uninstall TinyTeX, run</span></span>
+<span><span class="co"># tinytex::uninstall_tinytex()</span></span></code></pre></div>
+<p>At this point, the package should run fully for you.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -79,7 +96,7 @@
 <div class="section level3">
 <h3 id="standard-mode">Standard Mode<a class="anchor" aria-label="anchor" href="#standard-mode"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
@@ -102,7 +119,7 @@
 <div class="section level3">
 <h3 id="piped-mode-recommended">Piped Mode (recommended)<a class="anchor" aria-label="anchor" href="#piped-mode-recommended"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">config_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
@@ -129,7 +146,7 @@
 <span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
 <span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span></code></pre></div>
 <p>Piped mode makes it super simple to add additional reports.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -169,11 +186,25 @@
 </h3>
 <p>The epitraxr package includes a Shiny app, which provides a user-friendly interface for running report generation operations with epitraxr.</p>
 <p>To run the Shiny app, you’ll need to install the optional dependencies, such as <code>shiny</code> and <code>DT</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Then you can run the app with <code><a href="reference/run_app.html">run_app()</a></code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># library(epitraxr)</span></span>
+<span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="scripts">Scripts<a class="anchor" aria-label="anchor" href="#scripts"></a>
+</h3>
+<p>We’ve developed a couple of handy scripts that are included in the <a href="https://github.com/EpiForeSITE/epitraxr" class="external-link">GitHub repo</a> under the <a href="https://github.com/EpiForeSITE/epitraxr/tree/main/scripts" class="external-link"><code>scripts/</code> folder</a>:</p>
+<ul>
+<li>
+<a href="https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R" class="external-link"><code>epitraxr-piped.R</code></a>: Showcases report generation using epitraxr’s Piped Mode <strong>(recommended)</strong>
+</li>
+<li>
+<a href="https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-generator.R" class="external-link"><code>epitraxr-generator.R</code></a>: Showcases report generation using the epitraxr’s Standard Mode</li>
+</ul>
+<p>These scripts provide you with a full report generation process that should run successfully if you have the package installed with all additional dependencies (see above). They provide identical output to the <a href="https://github.com/EpiForeSITE/epitrax-report-automation" class="external-link">original project</a> (currently inactive).</p>
 </div>
 </div>
 <div class="section level2">
