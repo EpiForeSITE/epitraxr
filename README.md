@@ -31,11 +31,6 @@ and generate reports. With `epitraxr` it is simple to setup a report
 pipeline, then you simply hit “run” and select your latest EpiTrax
 export—`epitraxr` will do the rest!
 
-The package is targeted toward public health officials. Work to create
-this package was made possible by cooperative agreement
-CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak
-Analytics.
-
 ## Installation
 
 You can install the development version of `epitraxr` from
@@ -45,6 +40,39 @@ You can install the development version of `epitraxr` from
 # install.packages("devtools")
 devtools::install_github("EpiForeSITE/epitraxr")
 ```
+
+### Installing Package Dependencies
+
+Many features of `epitraxr` will work with the standard installation.
+However, there are several optional features, such as PDF report
+generation and the R Shiny app, that require you to install additional
+dependencies. You can do that with the command:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
+```
+
+For PDF reports, you may need to install a LaTeX distribution as well.
+We recommend using [TinyTeX](https://yihui.org/tinytex/) as described in
+the [R Markdown
+Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/install-latex.html).
+First, install the `tinytex` package:
+
+``` r
+install.packages("tinytex")
+```
+
+Then, install TinyTeX (the LaTeX distribution) using the `tinytex`
+package:
+
+``` r
+tinytex::install_tinytex()
+# to uninstall TinyTeX, run
+# tinytex::uninstall_tinytex()
+```
+
+At this point, the package should run fully for you.
 
 ## Usage
 
@@ -158,8 +186,29 @@ devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
 Then you can run the app with `run_app()`.
 
 ``` r
+# library(epitraxr)
 run_app()
 ```
+
+### Scripts
+
+We’ve developed a couple of handy scripts that are included in the
+[GitHub repo](https://github.com/EpiForeSITE/epitraxr) under the
+[`scripts/`
+folder](https://github.com/EpiForeSITE/epitraxr/tree/main/scripts):
+
+- [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R):
+  Showcases report generation using epitraxr’s Piped Mode
+  **(recommended)**
+- [`epitraxr-generator.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-generator.R):
+  Showcases report generation using the epitraxr’s Standard Mode
+
+These scripts provide you with a full report generation process that
+should run successfully if you have the package installed with all
+additional dependencies (see above). They provide identical output to
+the [original
+project](https://github.com/EpiForeSITE/epitrax-report-automation)
+(currently inactive).
 
 ## Getting Help
 
@@ -173,3 +222,11 @@ Please note that the epitraxr project is released with a [Contributor
 Code of
 Conduct](https://epiforesite.github.io/epitraxr/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
+
+## Acknowledgments
+
+This project was made possible by cooperative agreement
+CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak
+Analytics. Its contents are solely the responsibility of the authors and
+do not necessarily represent the official views of the Centers for
+Disease Control and Prevention.

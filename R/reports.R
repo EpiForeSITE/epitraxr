@@ -218,7 +218,6 @@ create_report_monthly_counts <- function(data, y, disease_names) {
   month_counts <- month_counts[month_counts$year == y, ]
 
   # - Remove year column (don't want to include in report)
-  # TODO: could just not return this column at the end of the function
   month_counts$year <- NULL
 
   # - Reshape data to use months as columns and diseases as rows
