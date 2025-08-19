@@ -108,26 +108,42 @@ ui <- shiny::fluidPage(
 
       # Download buttons in a row
       shiny::fluidRow(
-        shiny::column(3,
-               shiny::downloadButton("download_csv",
-                              "Download CSV",
-                              class = "btn-primary",
-                              style = "width: 100%;")),
-        shiny::column(3,
-               shiny::downloadButton("download_excel",
-                              "Download Excel",
-                              class = "btn-info",
-                              style = "width: 100%;")),
-        shiny::column(3,
-               shiny::downloadButton("download_pdf",
-                              "Download PDF",
-                              class = "btn-secondary",
-                              style = "width: 100%;")),
-        shiny::column(3,
-               shiny::downloadButton("download_all",
-                              "Download All",
-                              class = "btn-warning",
-                              style = "width: 100%;"))
+        shiny::column(
+          width = 3,
+          shiny::downloadButton(
+            "download_csv",
+            "Download CSV",
+            class = "btn-primary",
+            style = "width: 100%;"
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shiny::downloadButton(
+            "download_excel",
+            "Download Excel",
+            class = "btn-info",
+            style = "width: 100%;"
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shiny::downloadButton(
+            "download_pdf",
+            "Download PDF",
+            class = "btn-secondary",
+            style = "width: 100%;"
+          )
+        ),
+        shiny::column(
+          width = 3,
+          shiny::downloadButton(
+            "download_all",
+            "Download All",
+            class = "btn-warning",
+            style = "width: 100%;"
+          )
+        )
       )
     ),
 
@@ -160,7 +176,11 @@ server <- function(input, output, session) {
 
     tryCatch({
       # Show progress
-      shiny::showNotification("Generating reports...", type = "message", duration = 2)
+      shiny::showNotification(
+        "Generating reports...",
+        type = "message",
+        duration = 2
+      )
 
       # Create config list from frontend inputs
       config_list <- list(

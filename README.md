@@ -124,7 +124,7 @@ list(epitrax$internal_reports)
 #> 1   Chickenpox  218  318  263  234  249  292
 #> 2 Lyme disease    0    0    0    0    0    0
 #> 3      Measles  211  326  292  414  586  304
-#>
+#> 
 #> [[1]]$`monthly_avgs_2019-2024`
 #>        disease  Jan    Feb    Mar    Apr    May    Jun    Jul  Aug    Sep
 #> 1   Chickenpox 23.5 22.333 21.000 26.667 19.833 19.167 24.167 20.0 18.833
@@ -134,12 +134,31 @@ list(epitrax$internal_reports)
 #> 1 25.333 19.000 22.500
 #> 2  0.000  0.000  0.000
 #> 3 36.333 29.167 28.667
-#>
+#> 
 #> [[1]]$ytd_counts
 #>        disease Current_YTD_Counts Avg_5yr_YTD_Counts
 #> 1   Chickenpox                292              256.4
 #> 2 Lyme disease                  0                0.0
 #> 3      Measles                304              365.8
+```
+
+### Shiny App
+
+The epitraxr package includes a Shiny app, which provides a
+user-friendly interface for running report generation operations with
+epitraxr.
+
+To run the Shiny app, you’ll need to install the optional dependencies,
+such as `shiny` and `DT`.
+
+``` r
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
+```
+
+Then you can run the app with `run_app()`.
+
+``` r
+run_app()
 ```
 
 ## Getting Help

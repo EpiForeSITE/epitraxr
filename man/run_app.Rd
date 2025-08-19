@@ -17,7 +17,7 @@ on the console.
 \code{run_app} launches the interactive Shiny web application for
 EpiTrax data analysis and report generation. The app provides a user-friendly
 interface for uploading data, configuring reports, and generating various
-types of disease surveillance reports without requiring R programming knowledge.
+types of disease surveillance reports.
 }
 \examples{
 if (interactive()) {
