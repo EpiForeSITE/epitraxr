@@ -6,6 +6,21 @@ params:
     title: "Disease Surveillance Report"
     author: "epitraxr"
     report_data: NULL
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
 ---
 
 <!-- general_report.Rmd is a template R Markdown document used for generating PDF reports of disease statistics -->
@@ -14,8 +29,17 @@ params:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r get-data, message=FALSE, warning=FALSE}
+```{r table, message=FALSE, warning=FALSE, results='asis'}
+library(kableExtra)
+
 r_data <- params$report_data
 
-knitr::kable(r_data, row.names = FALSE)
+kbl(
+    r_data,
+    col.names = c("Disease", "Cases", "Avg", "Trend", "YTD Cases", "YTD Avg", "YTD Rate", "YTD Avg"),
+    booktabs = TRUE
+    ) |>
+    kable_styling(
+        font_size = 8
+    )
 ```
