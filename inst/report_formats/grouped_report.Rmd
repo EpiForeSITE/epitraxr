@@ -37,36 +37,28 @@ r_data <- r_data[order(r_data$Group, r_data$Disease), ]
 
 if (length(names(r_data)) == 10) {
     kbl(
-        r_data,
+        r_data[,2:10],
         row.names = FALSE,
-        col.names = c("Group", "Disease", "Cases", "Rate", "Avg", "Median", "Cases", "Avg", "Median", "Trend"), 
+        col.names = c("Disease", "Cases", "Rate", "Avg", "Median", "Cases", "Avg", "Median", "Trend"),
         booktabs = TRUE
         ) |>
-        add_header_above(c(" ", " ", "Current" = 2, "Historical" = 2, "Current" = 1, "Historical" = 2, " ")) |>
-        add_header_above(c(" ", " ", "Month" = 4, "YTD" = 4)) |>
+        add_header_above(c(" ", "Current" = 2, "Historical" = 2, "Current" = 1, "Historical" = 2, " ")) |>
+        add_header_above(c(" ", "Month" = 4, "YTD" = 4)) |>
         kable_styling(
             latex_options = c("scale_down")
         ) |>
         column_spec(
-            10,
+            9,
             background = ifelse(
                 r_data$`YTD Trend` == "Elevated", "red",
                 ifelse(r_data$`YTD Trend` == "Expected", "yellow",
                 "green"))
+        ) |>
+        pack_rows(
+            index = table(r_data$Group),
+            latex_gap_space = "1em"
         )
 }
 ```
 
-<!-- ```{r print-group-tables, echo = FALSE, results='asis'}
-for (g in unique(r_data$Group)) {
-    gr_data <- r_data[r_data$Group == g, ]
-    gr_data$Group <- NULL  # Remove Group column for display
-    print(knitr::kable(
-        gr_data,
-        align = "lccccccc",
-        row.names = FALSE,
-        caption = paste("Group:", g)))
-    cat("\n\n")
-}
-``` -->
 
