@@ -32,13 +32,13 @@ pipeline, then you simply hit “run” and select your latest EpiTrax
 export—`epitraxr` will do the rest!
 
 The package is targeted toward public health officials. Work to create
-this software tool was made possible by cooperative agreement
+this package was made possible by cooperative agreement
 CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak
 Analytics.
 
 ## Installation
 
-You can install the development version of epitraxr from
+You can install the development version of `epitraxr` from
 [GitHub](https://github.com/EpiForeSITE/epitraxr) with:
 
 ``` r
@@ -62,11 +62,9 @@ data_file <- system.file(
 )
 epitrax_data <- read_epitrax_data(data_file)
 
-diseases <- c("Chickenpox", "Measles", "Lyme disease")
-
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = diseases
+  disease_names = c("Chickenpox", "Measles", "Lyme disease")
 )
 
 report
@@ -143,3 +141,16 @@ list(epitrax$internal_reports)
 #> 2 Lyme disease                  0                0.0
 #> 3      Measles                304              365.8
 ```
+
+## Getting Help
+
+If you encounter a clear bug, please file an issue with a minimal
+reproducible example on
+[GitHub](https://github.com/EpiForeSITE/epitraxr/issues).
+
+## Code of Conduct
+
+Please note that the epitraxr project is released with a [Contributor
+Code of
+Conduct](https://epiforesite.github.io/epitraxr/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

@@ -1,17 +1,19 @@
 # Test create_filesystem() -----------------------------------------------------
-internal_folder <- "internal_reports"
-public_folder <- "public_reports"
-settings_folder <- "report_settings"
-
-create_filesystem(
-  internal = internal_folder,
-  public = public_folder,
-  settings = settings_folder
+test_folders <- list(
+  internal = file.path(tempdir(), "test_internal"),
+  public = file.path(tempdir(), "test_public"),
+  settings = file.path(tempdir(), "test_settings")
 )
 
-expect_true(dir.exists(internal_folder))
-expect_true(dir.exists(public_folder))
-expect_true(dir.exists(settings_folder))
+create_filesystem(
+  internal = test_folders$internal,
+  public = test_folders$public,
+  settings = test_folders$settings
+)
+
+expect_true(dir.exists(test_folders$internal))
+expect_true(dir.exists(test_folders$public))
+expect_true(dir.exists(test_folders$settings))
 
 
 # Test clear_old_reports() -----------------------------------------------------
@@ -19,14 +21,14 @@ expect_true(dir.exists(settings_folder))
 i_report_name <- "internal_report.csv"
 p_report_name <- "public_report.csv"
 
-file.copy(file.path("test_files/reports/", i_report_name), internal_folder)
-file.copy(file.path("test_files/reports/", p_report_name), public_folder)
+file.copy(file.path("test_files/reports/", i_report_name), test_folders$internal)
+file.copy(file.path("test_files/reports/", p_report_name), test_folders$public)
 
 # Test files deleted
-i_file <- file.path(internal_folder, i_report_name)
-p_file <- file.path(public_folder, p_report_name)
+i_file <- file.path(test_folders$internal, i_report_name)
+p_file <- file.path(test_folders$public, p_report_name)
 
-expect_silent(old_files <- clear_old_reports(internal_folder, public_folder))
+expect_silent(old_files <- clear_old_reports(test_folders$internal, test_folders$public))
 expect_equal(old_files[[1]], i_file)
 expect_equal(old_files[[2]], p_file)
 
@@ -35,12 +37,6 @@ expect_false(file.exists(p_file))
 
 
 # Test setup_filesystem() -----------------------------------------------------
-# Clean start with fresh temp directories
-test_folders <- list(
-  internal = file.path(tempdir(), "test_internal"),
-  public = file.path(tempdir(), "test_public"),
-  settings = file.path(tempdir(), "test_settings")
-)
 
 # Test basic setup without clearing reports
 expect_silent(result <- setup_filesystem(test_folders))
@@ -64,11 +60,6 @@ expect_true(file.exists(test_file2))
 expect_silent(setup_filesystem(test_folders, clear.reports = TRUE))
 expect_false(file.exists(test_file1))
 expect_false(file.exists(test_file2))
-
-# Cleanup test directories
-unlink(test_folders$internal, recursive = TRUE)
-unlink(test_folders$public, recursive = TRUE)
-unlink(test_folders$settings, recursive = TRUE)
 
 
 # Test read_report_config() ----------------------------------------------------
@@ -147,6 +138,10 @@ expect_warning(result_config <- epitraxr_config(
 expect_equal(result_config, default_config)
 
 
+# Test writing to files --------------------------------------------------------
+# Clear test directories
+setup_filesystem(test_folders, clear.reports = TRUE)
+
 # Test write_report_csv() ------------------------------------------------------
 r_data <- data.frame(
   Disease = c("Measles", "Chickenpox"),
@@ -154,9 +149,9 @@ r_data <- data.frame(
 )
 r_file <- "report.csv"
 
-expect_silent(write_report_csv(r_data, r_file, public_folder))
+expect_silent(write_report_csv(r_data, r_file, test_folders$public))
 
-csv_fp <- file.path(public_folder, r_file)
+csv_fp <- file.path(test_folders$public, r_file)
 expect_true(file.exists(csv_fp))
 csv_data <- utils::read.csv(csv_fp)
 expect_equal(csv_data, r_data)
@@ -171,9 +166,9 @@ r_xl <- list()
 r_xl[["report"]] <- r_data
 r_file <- "report.xlsx"
 
-expect_silent(write_report_xlsx(r_data, r_file, public_folder))
+expect_silent(write_report_xlsx(r_data, r_file, test_folders$public))
 
-xlsx_fp <- file.path(public_folder, r_file)
+xlsx_fp <- file.path(test_folders$public, r_file)
 expect_true(file.exists(xlsx_fp))
 
 # Read Excel file back and compare
@@ -322,6 +317,4 @@ expect_equal(
 
 
 # Cleanup after tests (NO TESTS AFTER THIS STEP) -------------------------------
-unlink(internal_folder, recursive = TRUE)
-unlink(public_folder, recursive = TRUE)
-unlink(settings_folder, recursive = TRUE)
+unlink(unlist(test_folders, use.names = FALSE), recursive = TRUE)

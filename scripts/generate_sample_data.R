@@ -20,7 +20,7 @@ set.seed(123)  # For reproducible examples
 
 # Setup parameters
 years <- 2019:2024
-diseases <- c("COVID-19", "Influenza", "Measles", "Syphilis", "Chickenpox")
+diseases <- c("Coronavirus, Novel (2019-nCoV)", "Influenza-associated hospitalization", "Measles (rubeola)", "Syphilis, primary", "Chickenpox (Varicella)")
 
 # Function to get MMWR week from a date
 get_mmwr_week <- function(date) {
@@ -37,11 +37,11 @@ for (year in years) {
   for (disease in diseases) {
     # Determine number of cases based on disease type
     yearly_cases <- switch(disease,
-      "COVID-19" = sample(600:2400, 1),  # 50-200 per month average
-      "Influenza" = sample(600:2400, 1),
-      "Measles" = sample(120:600, 1),    # 10-50 per month average
-      "Syphilis" = sample(120:600, 1),
-      "Chickenpox" = sample(120:360, 1)  # 10-30 per month average
+      "Coronavirus, Novel (2019-nCoV)" = sample(600:2400, 1),  # 50-200 per month average
+      "Influenza-associated hospitalization" = sample(600:2400, 1),
+      "Measles (rubeola)" = sample(120:600, 1),    # 10-50 per month average
+      "Syphilis, primary" = sample(120:600, 1),
+      "Chickenpox (Varicella)" = sample(120:360, 1)  # 10-30 per month average
     )
 
     # Generate random dates throughout the year

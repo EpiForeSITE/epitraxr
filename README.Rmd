@@ -30,11 +30,11 @@ EpiTrax is a central repository for epidemiological data developed by Utah State
 
 The `epitraxr` package makes it fast and easy to process EpiTrax data and generate reports. With `epitraxr` it is simple to setup a report pipeline, then you simply hit "run" and select your latest EpiTrax export---`epitraxr` will do the rest!
 
-The package is targeted toward public health officials. Work to create this software tool was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC's Center for Forecasting and Outbreak Analytics.
+The package is targeted toward public health officials. Work to create this package was made possible by cooperative agreement CDC-RFA-FT-23-0069 from the CDC's Center for Forecasting and Outbreak Analytics.
 
 ## Installation
 
-You can install the development version of epitraxr from [GitHub](https://github.com/EpiForeSITE/epitraxr) with:
+You can install the development version of `epitraxr` from [GitHub](https://github.com/EpiForeSITE/epitraxr) with:
 
 ``` r
 # install.packages("devtools")
@@ -56,11 +56,9 @@ data_file <- system.file(
 )
 epitrax_data <- read_epitrax_data(data_file)
 
-diseases <- c("Chickenpox", "Measles", "Lyme disease")
-
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = diseases
+  disease_names = c("Chickenpox", "Measles", "Lyme disease")
 )
 
 report
@@ -107,3 +105,11 @@ epitrax <- get_epitrax(data_file) |>
 
 list(epitrax$internal_reports)
 ```
+
+## Getting Help
+
+If you encounter a clear bug, please file an issue with a minimal reproducible example on  [GitHub](https://github.com/EpiForeSITE/epitraxr/issues).
+
+## Code of Conduct
+
+Please note that the epitraxr project is released with a [Contributor Code of Conduct](https://epiforesite.github.io/epitraxr/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

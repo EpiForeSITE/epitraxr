@@ -26,20 +26,14 @@ The epitraxr package makes it fast and easy to process EpiTrax data and produce 
 
 ## EpiTrax Data
 
-To explore basic report functions in epitraxr, we'll use the sample dataset included in the package. This can be read in using the `read_epitrax_data()` function:
+To explore basic report functions in epitraxr, we'll use this sample dataset:
 
 ```{r sample-data}
-data_file <- system.file(
-  "sample_data/sample_epitrax_data.csv",
-  package = "epitraxr"
-)
-
+data_file <- "vignette-data/epitrax_data.csv"
 head(read.csv(data_file))
 ```
 
-When you export data from EpiTrax, each row corresponds to a single disease case. In general, this will also correspond to a single patient, but if a patient is diagnosed with multiple diseases they will have a separate row in the data for each disease.
-
-EpiTrax can provide many different data points, but epitraxr only cares about three:
+When you export data from EpiTrax, each row corresponds to a single disease case. EpiTrax can provide many different data points, but epitraxr only cares about three:
 
 - `patient_disease`: The disease
 - `patient_mmwr_week`: The week number (1-52) of disease onset
@@ -47,87 +41,89 @@ EpiTrax can provide many different data points, but epitraxr only cares about th
 
 The package ignores all other columns.
 
-We read the data in using the `read_epitrax_data()` function:
+Read in the data with the `read_epitrax_data()` function:
 
 ```{r read_epitrax_data}
 epitrax_data <- read_epitrax_data(data_file)
-
 head(epitrax_data)
 ```
 
 This validates the input data and converts the week number to a month number (1-12), because reports generally use months instead of weeks. The function also adds the `counts` column (initially all rows have a count of 1), which is used internally in manipulating the data while generating reports.
 
+## Disease Lists
+
+Before you can generate reports from the data, epitraxr needs a list of diseases to include in the report. Often, you'll have two lists, one for internal reports and one for public reports. Read these files in using the functions `get_internal_disease_list()` and `get_public_disease_list()`.
+
+```{r get-ilist}
+internal_disease_list <- "vignette-data/ireport_diseases.csv"
+internal_diseases <- get_internal_disease_list(internal_disease_list)
+head(internal_diseases)
+```
+`internal_diseases` has two columns. `EpiTrax_name` is the disease name *as reported by EpiTrax*. All internal reports need the values in this column. `Group_name` is for grouping diseases, which is only used by `create_report_grouped_stats()`. If you aren't creating grouped reports, you don't need `Group_name` in your internal disease list.
+
+```{r get-plist}
+public_disease_list <- "vignette-data/preport_diseases.csv"
+public_diseases <- get_public_disease_list(public_disease_list)
+head(public_diseases)
+```
+`public_diseases` also has two columns. Like `internal_diseases`, `EpiTrax_name` is the disease name *as reported by EpiTrax*. All public reports need the values in this column to properly compute statistics from the data. `Public_name` is used by certain functions (prefixed with `create_public_report_`) to translate the EpiTrax disease name to something more accessible to the public. `Public_name` is also used to combine related diseases in the final report (e.g., "Syphilis, primary" and "Syphilis, secondary" publicly reported by the collected statistic of "Syphilis").
+
 ## Generating Reports: Standard Mode
 
-We have the data, but before we can begin generating reports from it, we need a list of diseases to include in the report. Often, you'll have two lists, one for internal reports and one for public reports. These lists might include diseases that aren't included in the dataset, but which you are tracking and reporting. If you had a specific list you wanted to use, you could read those in using the functions `get_internal_disease_list()` and `get_public_disease_list()`. For this example, we'll simply use the diseases in the dataset:
+We can now call the report generation functions, such as `create_report_annual_counts()`, providing the list of diseases we want to include in our report.
 
-```{r disease-list}
-diseases <- unique(epitrax_data$disease)
-```
-
-We can now call one of the report creation functions:
 ```{r annual-report-1}
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = diseases
+  disease_names = internal_diseases$EpiTrax_name
 )
 
-report
+head(report)
 ```
+
 This gives us a data frame containing a row for each disease in our disease list and a column showing the case counts for each year in the dataset.
 
-Let's call the report function again, but this time give it a different disease list.
+Let's call the report function again, but this time give it the public disease list.
 
 ```{r annual-report}
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = c("Chickenpox", "Measles", "Lyme disease")
+  disease_names = public_diseases$EpiTrax_name
 )
 
-report
+head(report)
 ```
-
-This new report only includes three diseases and shows there are no cases of "Lyme disease" in the dataset.
-
 
 ## Generating Reports: Piped Mode (recommended)
 
-The epitraxr package includes a separate piping mode to make it easy to chain together multiple reports without needing to specify the disease list and input data each time. This family of functions has the prefix `epitrax_`. Report functions within this family have one of two prefixes: `epitrax_preports_` or `epitrax_ireports_`, which correspond to public and internal reports respectively.
+The epitraxr package includes a separate piped mode to make it easy to chain together multiple reports without needing to specify the disease list and input data each time. **This is our recommended mode for epitraxr.** See `vignette("piped-mode")` for more information.
 
-In piping mode you first setup an `epitrax` object which will contain the data and configuration options needed for all reports. As each report function is called, the report is appended to the appropriate list in the epitrax object and the epitrax object is passed to the next function.
-
-Let's look at the same annual counts report generation using the piping method. For this method, we need the disease list to be in a CSV file and we also need to provide a list of configuration options. These are discussed in more detail in other vignettes.
+Here is a brief example of how the same annual counts report generation would work in piped mode.
 
 ```{r annual-counts-piping}
-config_file <- system.file(
-  "sample_data/sample_config.yml",
-  package = "epitraxr"
+# Data and configuration files
+data_file <- "vignette-data/epitrax_data.csv"
+config_file <- "vignette-data/config.yaml"
+disease_lists <- list(
+  internal = "vignette-data/ireport_diseases.csv",
+  public = "vignette-data/preport_diseases.csv"
 )
 
-disease_list_file <- system.file(
-  "sample_data/sample_disease_list.csv",
-  package = "epitraxr"
-)
-
+# Run pipe
 epitrax <- get_epitrax(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(list(
-    internal = disease_list_file,
-    public = disease_list_file
-  )) |>
+  epitrax_add_report_diseases(disease_lists) |>
   epitrax_ireport_annual_counts()
 
-epitrax$internal_reports$annual_counts
+# View report
+head(epitrax$internal_reports$annual_counts)
 ```
-The piping method can feel like overkill for generating a single report, but it really shines when we're creating multiple reports all at once.
+Piped mode really shines when we're creating multiple reports all at once.
 
 ```{r many-reports-piping}
 epitrax <- get_epitrax(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(list(
-    internal = disease_list_file,
-    public = disease_list_file
-  )) |>
+  epitrax_add_report_diseases(disease_lists) |>
   epitrax_ireport_annual_counts() |>
   epitrax_ireport_monthly_avgs() |>
   epitrax_ireport_ytd_counts_for_month()

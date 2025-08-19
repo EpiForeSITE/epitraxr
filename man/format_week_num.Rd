@@ -10,11 +10,12 @@ format_week_num(data)
 \item{data}{Dataframe. Data to format.}
 }
 \value{
-The formatted data.
+The formatted data with columns "disease", "month", "year",
+and "counts".
 }
 \description{
 'format_week_num' formats the input EpiTrax dataset with month numbers
-using the field 'patient_mmwr_week' and filters rows older than five years.
+using the field 'patient_mmwr_week'.
 }
 \examples{
 df <- data.frame(patient_mmwr_year=2020L, patient_mmwr_week=1L, patient_disease="A")
