@@ -106,6 +106,22 @@ epitrax <- get_epitrax(data_file) |>
 list(epitrax$internal_reports)
 ```
 
+### Shiny App
+
+The epitraxr package includes a Shiny app, which provides a user-friendly interface for running report generation operations with epitraxr.
+
+To run the Shiny app, you'll need to install the optional dependencies, such as `shiny` and `DT`.
+
+``` r
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
+```
+
+Then you can run the app with `run_app()`.
+
+``` r
+run_app()
+```
+
 ## Getting Help
 
 If you encounter a clear bug, please file an issue with a minimal reproducible example on  [GitHub](https://github.com/EpiForeSITE/epitraxr/issues).
