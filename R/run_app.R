@@ -1,4 +1,4 @@
-#' Launch the EpiTraxR Shiny Application
+#' Launch the epitraxr Shiny Application
 #'
 #' `run_app` launches the interactive Shiny web application for
 #' EpiTrax data analysis and report generation. The app provides a user-friendly
@@ -8,7 +8,7 @@
 #' @param ... Additional arguments passed to `shiny::shinyAppDir()`.
 #'
 #' @returns Starts the execution of the app, printing the port
-#' on the console.
+#' to the console.
 #' @export
 #'
 #' @examples

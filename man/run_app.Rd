@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_app.R
 \name{run_app}
 \alias{run_app}
-\title{Launch the EpiTraxR Shiny Application}
+\title{Launch the epitraxr Shiny Application}
 \usage{
 run_app(...)
 }
@@ -11,7 +11,7 @@ run_app(...)
 }
 \value{
 Starts the execution of the app, printing the port
-on the console.
+to the console.
 }
 \description{
 \code{run_app} launches the interactive Shiny web application for
