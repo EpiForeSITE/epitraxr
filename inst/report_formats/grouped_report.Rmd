@@ -6,6 +6,21 @@ params:
     title: "Grouped Disease Surveillance Report"
     author: "epitraxr"
     report_data: NULL
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
 ---
 
 <!-- grouped_report.Rmd is a template R Markdown document used for generating a PDF report with diseases grouped into categories -->
@@ -14,14 +29,35 @@ params:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r get-data, echo=FALSE, message=FALSE, warning=FALSE}
+```{r table, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(kableExtra)
+
 r_data <- params$report_data
 r_data <- r_data[order(r_data$Group, r_data$Disease), ]
 
-# knitr::kable(r_data, row.names = FALSE)
+if (length(names(r_data)) == 10) {
+    kbl(
+        r_data,
+        row.names = FALSE,
+        col.names = c("Group", "Disease", "Cases", "Rate", "Avg", "Median", "Cases", "Avg", "Median", "Trend"), 
+        booktabs = TRUE
+        ) |>
+        add_header_above(c(" ", " ", "Current" = 2, "Historical" = 2, "Current" = 1, "Historical" = 2, " ")) |>
+        add_header_above(c(" ", " ", "Month" = 4, "YTD" = 4)) |>
+        kable_styling(
+            latex_options = c("scale_down")
+        ) |>
+        column_spec(
+            10,
+            background = ifelse(
+                r_data$`YTD Trend` == "Elevated", "red",
+                ifelse(r_data$`YTD Trend` == "Expected", "yellow",
+                "green"))
+        )
+}
 ```
 
-```{r print-group-tables, echo = FALSE, results='asis'}
+<!-- ```{r print-group-tables, echo = FALSE, results='asis'}
 for (g in unique(r_data$Group)) {
     gr_data <- r_data[r_data$Group == g, ]
     gr_data$Group <- NULL  # Remove Group column for display
@@ -32,5 +68,5 @@ for (g in unique(r_data$Group)) {
         caption = paste("Group:", g)))
     cat("\n\n")
 }
-```
+``` -->
 
