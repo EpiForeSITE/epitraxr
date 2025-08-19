@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,7 +147,7 @@
 <span><span class="co">#&gt; 1   Chickenpox  218  318  263  234  249  292</span></span>
 <span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
 <span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]]$`monthly_avgs_2019-2024`</span></span>
 <span><span class="co">#&gt;        disease  Jan    Feb    Mar    Apr    May    Jun    Jul  Aug    Sep</span></span>
 <span><span class="co">#&gt; 1   Chickenpox 23.5 22.333 21.000 26.667 19.833 19.167 24.167 20.0 18.833</span></span>
@@ -157,12 +157,23 @@
 <span><span class="co">#&gt; 1 25.333 19.000 22.500</span></span>
 <span><span class="co">#&gt; 2  0.000  0.000  0.000</span></span>
 <span><span class="co">#&gt; 3 36.333 29.167 28.667</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]]$ytd_counts</span></span>
 <span><span class="co">#&gt;        disease Current_YTD_Counts Avg_5yr_YTD_Counts</span></span>
 <span><span class="co">#&gt; 1   Chickenpox                292              256.4</span></span>
 <span><span class="co">#&gt; 2 Lyme disease                  0                0.0</span></span>
 <span><span class="co">#&gt; 3      Measles                304              365.8</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="shiny-app">Shiny App<a class="anchor" aria-label="anchor" href="#shiny-app"></a>
+</h3>
+<p>The epitraxr package includes a Shiny app, which provides a user-friendly interface for running report generation operations with epitraxr.</p>
+<p>To run the Shiny app, you’ll need to install the optional dependencies, such as <code>shiny</code> and <code>DT</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Then you can run the app with <code><a href="reference/run_app.html">run_app()</a></code>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -203,6 +214,7 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Andrew Pulsipher <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0773-3210" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Nate Lanza <br><small class="roles"> Author, contributor </small>   </li>
 <li>Centers for Disease Control and Prevention's Center for Forecasting and Outbreak Analytics <br><small class="roles"> Funder </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
@@ -225,7 +237,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Andrew Pulsipher, Centers for Disease Control and Prevention’s Center for Forecasting and Outbreak Analytics.</p>
+  <p>Developed by Andrew Pulsipher, Nate Lanza, Centers for Disease Control and Prevention’s Center for Forecasting and Outbreak Analytics.</p>
 </div>
 
 <div class="pkgdown-footer-right">
