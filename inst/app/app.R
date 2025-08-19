@@ -1,11 +1,3 @@
-library(shiny)
-library(DT)
-library(devtools)
-library(writexl)
-library(shinyjs)
-library(stringr)
-library(epitraxr)
-
 # Dictionary constant for multiselect options matching epitraxr functions
 REPORT_OPTIONS <- list(
   "Annual Counts" = "annual_counts",
@@ -38,97 +30,112 @@ display_dataframe_table <- function(df) {
 }
 
 # Define UI
-ui <- fluidPage(
-  useShinyjs(),  # Enable shinyjs functionality
-  titlePanel("EpiTrax Report Generator"),
+ui <- shiny::fluidPage(
+  shinyjs::useShinyjs(),  # Enable shinyjs functionality
+  shiny::titlePanel("EpiTrax Report Generator"),
 
-  sidebarLayout(
-    sidebarPanel(
+  shiny::sidebarLayout(
+    shiny::sidebarPanel(
       # File upload field for CSV
-      fileInput("epitrax_file",
-                "EpiTrax Data Export:",
-                accept = c(".csv", ".CSV"),
-                placeholder = "Choose CSV file..."),
+      shiny::fileInput(
+        "epitrax_file",
+        "EpiTrax Data Export:",
+        accept = c(".csv", ".CSV"),
+        placeholder = "Choose CSV file..."
+      ),
 
       # File upload for internal disease list
-      fileInput("internal_disease_file",
-                "Internal Disease List:",
-                accept = c(".csv", ".CSV"),
-                placeholder = "Choose internal disease CSV..."),
+      shiny::fileInput(
+        "internal_disease_file",
+        "Internal Disease List:",
+        accept = c(".csv", ".CSV"),
+        placeholder = "Choose internal disease CSV..."
+      ),
 
       # File upload for public disease list
-      fileInput("public_disease_file",
-                "Public Disease List:",
-                accept = c(".csv", ".CSV"),
-                placeholder = "Choose public disease CSV..."),
+      shiny::fileInput(
+        "public_disease_file",
+        "Public Disease List:",
+        accept = c(".csv", ".CSV"),
+        placeholder = "Choose public disease CSV..."
+      ),
 
       # Multiselect with epitraxr function options
-      selectInput("report_options",
+      shiny::selectInput(
+        "report_options",
         "Reports to Generate:",
         choices = REPORT_OPTIONS,
         multiple = TRUE,
         selected = NULL
-        ),
+      ),
 
       # Current Population input
-      numericInput("current_population",
-                   "Current Population:",
-                   value = 100000,
-                   min = 1,
-                   step = 1000),
+      shiny::numericInput(
+        "current_population",
+        "Current Population:",
+        value = 100000,
+        min = 1,
+        step = 1000
+      ),
 
       # Average 5-Year Population input
-      numericInput("avg_population",
-                   "Average 5-Year Population:",
-                   value = 100000,
-                   min = 1,
-                   step = 1000),
+      shiny::numericInput(
+        "avg_population",
+        "Average 5-Year Population:",
+        value = 100000,
+        min = 1,
+        step = 1000
+      ),
 
       # Rounding Decimal Places input
-      numericInput("decimal_places",
-                   "Rounding Decimal Places:",
-                   value = 2,
-                   min = 0,
-                   max = 10,
-                   step = 1),
-
+      shiny::numericInput(
+        "decimal_places",
+        "Rounding Decimal Places:",
+        value = 2,
+        min = 0,
+        max = 10,
+        step = 1
+      ),
+      
       # Generate Reports button
-      actionButton("generate",
-                   "Generate Reports",
-                   class = "btn-success"),
+      shiny::actionButton(
+        "generate",
+        "Generate Reports",
+        class = "btn-success"
+      ),
 
-      br(), br(),
+      shiny::br(), shiny::br(),
 
       # Download buttons in a row
-      fluidRow(
-        column(3,
-               downloadButton("download_csv",
+      shiny::fluidRow(
+        shiny::column(3,
+               shiny::downloadButton("download_csv",
                               "Download CSV",
                               class = "btn-primary",
                               style = "width: 100%;")),
-        column(3,
-               downloadButton("download_excel",
+        shiny::column(3,
+               shiny::downloadButton("download_excel",
                               "Download Excel",
                               class = "btn-info",
                               style = "width: 100%;")),
-        column(3,
-               downloadButton("download_pdf",
+        shiny::column(3,
+               shiny::downloadButton("download_pdf",
                               "Download PDF",
                               class = "btn-secondary",
                               style = "width: 100%;")),
-        column(3,
-               downloadButton("download_all",
+        shiny::column(3,
+               shiny::downloadButton("download_all",
                               "Download All",
                               class = "btn-warning",
                               style = "width: 100%;"))
       )
     ),
 
-    mainPanel(
-      h3("Generated Reports"),
+    shiny::mainPanel(
+      shiny::h3("Generated Reports"),
 
       # Dynamic tabset panel based on selected reports
-      uiOutput("report_tabs")
+      shiny::uiOutput("report_tabs")
     )
   )
 )
@@ -137,10 +144,10 @@ ui <- fluidPage(
 server <- function(input, output, session) {
 
   # Reactive values to store data and reports
-  epitrax_obj <- reactiveVal(NULL)
+  epitrax_obj <- shiny::reactiveVal(NULL)
 
   # Disable download buttons initially
-  observe({
+  shiny::observe({
     shinyjs::disable("download_csv")
     shinyjs::disable("download_excel")
     shinyjs::disable("download_pdf")
@@ -148,12 +155,12 @@ server <- function(input, output, session) {
   })
 
   # Generate Reports button click handler
-  observeEvent(input$generate, {
-    req(input$epitrax_file, input$report_options)
+  shiny::observeEvent(input$generate, {
+    shiny::req(input$epitrax_file, input$report_options)
 
     tryCatch({
       # Show progress
-      showNotification("Generating reports...", type = "message", duration = 2)
+      shiny::showNotification("Generating reports...", type = "message", duration = 2)
 
       # Create config list from frontend inputs
       config_list <- list(
@@ -237,10 +244,10 @@ server <- function(input, output, session) {
       shinyjs::enable("download_pdf")
       shinyjs::enable("download_all")
 
-      showNotification("Reports generated successfully!", type = "message")
+      shiny::showNotification("Reports generated successfully!", type = "message")
 
     }, error = function(e) {
-      showNotification(paste("Error generating reports:", e$message), type = "error")
+      shiny::showNotification(paste("Error generating reports:", e$message), type = "error")
       epitrax_obj(NULL)
       shinyjs::disable("download_csv")
       shinyjs::disable("download_excel")
@@ -250,12 +257,12 @@ server <- function(input, output, session) {
   })
 
   # Download CSV files as ZIP
-  output$download_csv <- downloadHandler(
+  output$download_csv <- shiny::downloadHandler(
     filename = function() {
       paste0("epitrax_csv_reports_", Sys.Date(), ".zip")
     },
     content = function(file) {
-      req(epitrax_obj())
+      shiny::req(epitrax_obj())
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -295,23 +302,23 @@ server <- function(input, output, session) {
         # Change to temp_dir and zip the named directory
         old_wd <- getwd()
         setwd(temp_dir)
-        zip(file, zip_name, flags = "-r")
+        utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
       }, error = function(e) {
-        showNotification(paste("Error creating CSV download:", e$message), type = "error")
+        shiny::showNotification(paste("Error creating CSV download:", e$message), type = "error")
       })
     },
     contentType = "application/zip"
   )
 
   # Download Excel files
-  output$download_excel <- downloadHandler(
+  output$download_excel <- shiny::downloadHandler(
     filename = function() {
       paste0("epitrax_excel_reports_", Sys.Date(), ".zip")
     },
     content = function(file) {
-      req(epitrax_obj())
+      shiny::req(epitrax_obj())
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -361,23 +368,23 @@ server <- function(input, output, session) {
         # Change to temp_dir and zip the named directory
         old_wd <- getwd()
         setwd(temp_dir)
-        zip(file, zip_name, flags = "-r")
+        utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
       }, error = function(e) {
-        showNotification(paste("Error creating Excel download:", e$message), type = "error")
+        shiny::showNotification(paste("Error creating Excel download:", e$message), type = "error")
       })
     },
     contentType = "application/zip"
   )
 
   # Download PDF files
-  output$download_pdf <- downloadHandler(
+  output$download_pdf <- shiny::downloadHandler(
     filename = function() {
       paste0("epitrax_pdf_reports_", Sys.Date(), ".zip")
     },
     content = function(file) {
-      req(epitrax_obj())
+      shiny::req(epitrax_obj())
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -415,10 +422,10 @@ server <- function(input, output, session) {
               epitrax_write_pdf_public_reports(epitrax, params, fsys)
             }, error = function(e) {
               # PDF generation failed, but continue
-              showNotification("PDF generation failed for public reports", type = "warning")
+              shiny::showNotification("PDF generation failed for public reports", type = "warning")
             })
           } else {
-            showNotification("rmarkdown package required for PDF generation", type = "warning")
+            shiny::showNotification("rmarkdown package required for PDF generation", type = "warning")
           }
         }
 
@@ -431,10 +438,10 @@ server <- function(input, output, session) {
               epitrax_write_pdf_grouped_stats(epitrax, params, fsys)
             }, error = function(e) {
               # PDF generation failed, but continue
-              showNotification("PDF generation failed for grouped stats reports", type = "warning")
+              shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
             })
           } else {
-            showNotification("rmarkdown package required for PDF generation", type = "warning")
+            shiny::showNotification("rmarkdown package required for PDF generation", type = "warning")
           }
         }
 
@@ -450,23 +457,23 @@ server <- function(input, output, session) {
         # Change to temp_dir and zip the named directory
         old_wd <- getwd()
         setwd(temp_dir)
-        zip(file, zip_name, flags = "-r")
+        utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
       }, error = function(e) {
-        showNotification(paste("Error creating PDF download:", e$message), type = "error")
+        shiny::showNotification(paste("Error creating PDF download:", e$message), type = "error")
       })
     },
     contentType = "application/zip"
   )
 
   # Download All files (both CSV and Excel)
-  output$download_all <- downloadHandler(
+  output$download_all <- shiny::downloadHandler(
     filename = function() {
       paste0("epitrax_all_reports_", Sys.Date(), ".zip")
     },
     content = function(file) {
-      req(epitrax_obj())
+      shiny::req(epitrax_obj())
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -574,7 +581,7 @@ server <- function(input, output, session) {
               epitrax_write_pdf_public_reports(epitrax, params, pdf_fsys)
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
-              showNotification("PDF generation failed for public reports", type = "warning")
+              shiny::showNotification("PDF generation failed for public reports", type = "warning")
             })
           }
         }
@@ -588,7 +595,7 @@ server <- function(input, output, session) {
               epitrax_write_pdf_grouped_stats(epitrax, params, pdf_fsys)
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
-              showNotification("PDF generation failed for grouped stats reports", type = "warning")
+              shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
             })
           }
         }
@@ -608,21 +615,21 @@ server <- function(input, output, session) {
         # Change to temp_dir and zip the named directory
         old_wd <- getwd()
         setwd(temp_dir)
-        zip(file, zip_name, flags = "-r")
+        utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
       }, error = function(e) {
-        showNotification(paste("Error creating combined download:", e$message), type = "error")
+        shiny::showNotification(paste("Error creating combined download:", e$message), type = "error")
       })
     },
     contentType = "application/zip"
   )
 
   # Dynamic UI for report tabs
-  output$report_tabs <- renderUI({
+  output$report_tabs <- shiny::renderUI({
     epitrax <- epitrax_obj()
     if (is.null(epitrax)) {
-      return(div(h4("No reports generated yet. Please upload files and click 'Generate Reports'.")))
+      return(shiny::div(shiny::h4("No reports generated yet. Please upload files and click 'Generate Reports'.")))
     }
 
     # Create top-level tabs for Internal and Public reports
@@ -633,18 +640,18 @@ server <- function(input, output, session) {
       internal_sub_tabs <- list()
 
       for (report_name in names(epitrax$internal_reports)) {
-        internal_sub_tabs[[length(internal_sub_tabs) + 1]] <- tabPanel(
-          title = gsub("_", " ", str_to_title(report_name)),
+        internal_sub_tabs[[length(internal_sub_tabs) + 1]] <- shiny::tabPanel(
+          title = gsub("_", " ", stringr::str_to_title(report_name)),
           value = paste0("internal_", report_name),
-          div(style = "margin-top: 10px;",
+          shiny::div(style = "margin-top: 10px;",
               DT::dataTableOutput(paste0("table_", report_name)))
         )
       }
 
-      top_level_tabs[[length(top_level_tabs) + 1]] <- tabPanel(
+      top_level_tabs[[length(top_level_tabs) + 1]] <- shiny::tabPanel(
         title = "Internal Reports",
         value = "internal_tab",
-        div(style = "margin-top: 10px;",
+        shiny::div(style = "margin-top: 10px;",
             do.call(tabsetPanel, internal_sub_tabs))
       )
     }
@@ -654,31 +661,31 @@ server <- function(input, output, session) {
       public_sub_tabs <- list()
 
       for (report_name in names(epitrax$public_reports)) {
-        public_sub_tabs[[length(public_sub_tabs) + 1]] <- tabPanel(
-          title = gsub("_", " ", str_to_title(report_name)),
+        public_sub_tabs[[length(public_sub_tabs) + 1]] <- shiny::tabPanel(
+          title = gsub("_", " ", stringr::str_to_title(report_name)),
           value = paste0("public_", report_name),
-          div(style = "margin-top: 10px;",
+          shiny::div(style = "margin-top: 10px;",
               DT::dataTableOutput(paste0("table_", report_name)))
         )
       }
 
-      top_level_tabs[[length(top_level_tabs) + 1]] <- tabPanel(
+      top_level_tabs[[length(top_level_tabs) + 1]] <- shiny::tabPanel(
         title = "Public Reports",
         value = "public_tab",
-        div(style = "margin-top: 10px;",
+        shiny::div(style = "margin-top: 10px;",
             do.call(tabsetPanel, public_sub_tabs))
       )
     }
 
     if (length(top_level_tabs) == 0) {
-      return(div(h4("No report data available.")))
+      return(shiny::div(shiny::h4("No report data available.")))
     }
 
-    do.call(tabsetPanel, top_level_tabs)
+    do.call(shiny::tabsetPanel, top_level_tabs)
   })
 
   # Dynamic table outputs for each report
-  observe({
+  shiny::observe({
     epitrax <- epitrax_obj()
     if (!is.null(epitrax)) {
 
@@ -710,4 +717,4 @@ server <- function(input, output, session) {
 }
 
 # Run the application
-shinyApp(ui = ui, server = server)
+shiny::shinyApp(ui = ui, server = server)
