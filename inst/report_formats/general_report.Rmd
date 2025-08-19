@@ -34,12 +34,39 @@ library(kableExtra)
 
 r_data <- params$report_data
 
-kbl(
-    r_data,
-    col.names = c("Disease", "Cases", "Avg", "Trend", "YTD Cases", "YTD Avg", "YTD Rate", "YTD Avg"),
-    booktabs = TRUE
-    ) |>
-    kable_styling(
-        font_size = 8
-    )
+if (length(names(r_data)) == 8) {
+    kbl(
+        r_data,
+        col.names = c("Disease", "Cases", "Avg", "Trend", "Cases", "Avg", "Rate", "Avg"),
+        booktabs = TRUE
+        ) |>
+        add_header_above(c(" ", "Month" = 3, "YTD" = 4)) |>
+        kable_styling(
+            latex_options = c("scale_down")
+        ) |>
+        column_spec(
+            4,
+            background = ifelse(
+                r_data$Trend == "Elevated", "red",
+                ifelse(r_data$Trend == "Expected", "yellow",
+                "green"))
+        )
+} else if (length(names(r_data)) == 4) {
+    kbl(
+        r_data,
+        col.names = c("Disease", "Rate", "Avg", "Trend"),
+        booktabs = TRUE
+        ) |>
+        kable_styling(
+            latex_options = c("scale_down")
+        ) |>
+        column_spec(
+            4,
+            background = ifelse(
+                r_data$Trend == "Elevated", "red",
+                ifelse(r_data$Trend == "Expected", "yellow",
+                "green"))
+        )
+}
+
 ```
