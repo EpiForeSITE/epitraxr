@@ -31,11 +31,6 @@ and generate reports. With `epitraxr` it is simple to setup a report
 pipeline, then you simply hit “run” and select your latest EpiTrax
 export—`epitraxr` will do the rest!
 
-The package is targeted toward public health officials. Work to create
-this package was made possible by cooperative agreement
-CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak
-Analytics.
-
 ## Installation
 
 You can install the development version of `epitraxr` from
@@ -227,3 +222,11 @@ Please note that the epitraxr project is released with a [Contributor
 Code of
 Conduct](https://epiforesite.github.io/epitraxr/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
+
+## Acknowledgments
+
+This project was made possible by cooperative agreement
+CDC-RFA-FT-23-0069 from the CDC’s Center for Forecasting and Outbreak
+Analytics. Its contents are solely the responsibility of the authors and
+do not necessarily represent the official views of the Centers for
+Disease Control and Prevention.
