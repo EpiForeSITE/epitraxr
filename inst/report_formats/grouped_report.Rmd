@@ -2,6 +2,7 @@
 title: "`r params$title`"
 author: "`r params$author`"
 output: pdf_document
+classoption: landscape
 params:
     title: "Grouped Disease Surveillance Report"
     author: "epitraxr"
@@ -40,12 +41,15 @@ if (length(names(r_data)) == 10) {
         r_data[,2:10],
         row.names = FALSE,
         col.names = c("Disease", "Cases", "Rate", "Avg", "Median", "Cases", "Avg", "Median", "Trend"),
-        booktabs = TRUE
+        booktabs = TRUE,
+        longtable = TRUE,
+        caption = "Grouped Disease Surveillance Report"
         ) |>
         add_header_above(c(" ", "Current" = 2, "Historical" = 2, "Current" = 1, "Historical" = 2, " ")) |>
         add_header_above(c(" ", "Month" = 4, "YTD" = 4)) |>
         kable_styling(
-            latex_options = c("scale_down")
+            font_size = 7,
+            latex_options = c("scale_down", "repeat_header")
         ) |>
         column_spec(
             9,
