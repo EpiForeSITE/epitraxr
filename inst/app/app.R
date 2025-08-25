@@ -162,7 +162,20 @@ server <- function(input, output, session) {
 
   # Generate Reports button click handler
   shiny::observeEvent(input$generate, {
-    shiny::req(input$epitrax_file, input$report_options)
+    
+    # Check if file is uploaded
+    if (is.null(input$epitrax_file)) {
+      shiny::showNotification("Please upload an EpiTrax data file before generating reports.", type = "error")
+      return()
+    }
+    
+    # Check if any reports are selected
+    if (is.null(input$report_options) || length(input$report_options) == 0) {
+      shiny::showNotification("Please select at least one report type to generate.", type = "error")
+      return()
+    }
+    
+    print("Past validation checks - starting report generation")
 
     tryCatch({
       # Show progress
@@ -662,7 +675,7 @@ server <- function(input, output, session) {
         title = "Internal Reports",
         value = "internal_tab",
         shiny::div(style = "margin-top: 10px;",
-            do.call(tabsetPanel, internal_sub_tabs))
+            do.call(shiny::tabsetPanel, internal_sub_tabs))
       )
     }
 
@@ -683,7 +696,7 @@ server <- function(input, output, session) {
         title = "Public Reports",
         value = "public_tab",
         shiny::div(style = "margin-top: 10px;",
-            do.call(tabsetPanel, public_sub_tabs))
+            do.call(shiny::tabsetPanel, public_sub_tabs))
       )
     }
 
