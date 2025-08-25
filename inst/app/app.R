@@ -175,7 +175,7 @@ server <- function(input, output, session) {
       return()
     }
     
-    print("Past validation checks - starting report generation")
+    message("Generating reports...")
 
     tryCatch({
       # Show progress
@@ -277,6 +277,8 @@ server <- function(input, output, session) {
       shinyjs::disable("download_pdf")
       shinyjs::disable("download_all")
     })
+
+    message(".......Done.")
   })
 
   # Download CSV files as ZIP
