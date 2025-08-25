@@ -4,15 +4,10 @@
 \alias{epitrax_write_pdf_public_reports}
 \title{Create formatted PDF report of monthly cross-section reports}
 \usage{
-epitrax_write_pdf_public_reports(epitrax, params, fsys)
+epitrax_write_pdf_public_reports(epitrax, fsys)
 }
 \arguments{
 \item{epitrax}{Object of class \code{epitrax}.}
-
-\item{params}{List. Report parameters containing:
-\itemize{
-\item author: Report author (defaults to "epitraxr")
-}}
 
 \item{fsys}{Filesystem list containing path for public reports.}
 }
@@ -43,16 +38,12 @@ a header and footer.
    public = "use_defaults"
  )
 
- params <- list(
-   author = "Public Health Department"
- )
-
  epitrax <- setup_epitrax(
    epitrax_file = data_file,
    config_file = config_file,
    disease_list_files = disease_lists
  ) |>
   epitrax_preport_month_crosssections(month_offsets = 0) |>
-  epitrax_write_pdf_public_reports(params = params, fsys = fsys)
+  epitrax_write_pdf_public_reports(fsys = fsys)
 }
 }

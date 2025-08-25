@@ -1,11 +1,27 @@
 ---
-title: "`r params$title`"
-author: "`r params$author`"
 output: pdf_document
+classoption: landscape
 params:
     title: "Grouped Disease Surveillance Report"
-    author: "epitraxr"
+    report_year: 2025
+    report_month: 1
+    trend_threshold: 0.15
     report_data: NULL
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
 ---
 
 <!-- grouped_report.Rmd is a template R Markdown document used for generating a PDF report with diseases grouped into categories -->
@@ -14,23 +30,85 @@ params:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r get-data, echo=FALSE, message=FALSE, warning=FALSE}
+```{r table, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(kableExtra)
+
 r_data <- params$report_data
 r_data <- r_data[order(r_data$Group, r_data$Disease), ]
 
-# knitr::kable(r_data, row.names = FALSE)
-```
+r_year <- params$report_year
+r_month <- params$report_month
+r_month_abb <- month.abb[r_month]
 
-```{r print-group-tables, echo = FALSE, results='asis'}
-for (g in unique(r_data$Group)) {
-    gr_data <- r_data[r_data$Group == g, ]
-    gr_data$Group <- NULL  # Remove Group column for display
-    print(knitr::kable(
-        gr_data,
-        align = "lccccccc",
+r_threshold <- params$trend_threshold
+# Set threshold to default, if out of bounds
+if (r_threshold < 0 | r_threshold > 1) {
+    r_threshold <- 0.15
+}
+
+if (length(names(r_data)) == 10) {
+    # Set header row from input parameters
+    # This workaround is needed to dynamically create the header names
+    header_2 <- c(2, 2, 1, 2)
+    names(header_2) <- c(
+        paste(r_month_abb, r_year),
+        paste("Historical", r_month_abb),
+        paste0(r_year, " YTD", footnote_marker_symbol(5, double_escape = TRUE)),
+        paste0("Historical YTD", footnote_marker_symbol(5, double_escape = TRUE))
+    )
+    header_2 <- c(" ", header_2, " ")
+
+    # Build the table
+    kbl(
+        r_data[,2:10],
         row.names = FALSE,
-        caption = paste("Group:", g)))
-    cat("\n\n")
+        col.names = c(
+            "Disease",
+            paste0("Cases", footnote_marker_symbol(1)),
+            paste0("Rate", footnote_marker_symbol(2)),
+            paste0("Avg", footnote_marker_symbol(3)),
+            paste0("Median", footnote_marker_symbol(4)),
+            paste0("Cases", footnote_marker_symbol(1)),
+            paste0("Avg", footnote_marker_symbol(3)),
+            paste0("Median", footnote_marker_symbol(4)),
+            paste0("Trend", footnote_marker_symbol(6))
+        ),
+        booktabs = TRUE,
+        longtable = TRUE,
+        caption = params$title,
+        align = "lcccccccl",
+        escape = FALSE
+        ) |>
+        add_header_above(header_2, escape = FALSE) |>
+        kable_styling(
+            font_size = 7,
+            latex_options = c("scale_down", "repeat_header")
+        ) |>
+        column_spec(
+            9,
+            background = ifelse(
+                r_data$`YTD Trend` == "Elevated", "red",
+                ifelse(r_data$`YTD Trend` == "Expected", "yellow",
+                "green"))
+        ) |>
+        pack_rows(
+            index = table(r_data$Group),
+            latex_gap_space = "1em"
+        ) |>
+        footnote(symbol = c(
+            "Number of reported cases",
+            "Cases per 100,000 people",
+            "5-year average cases. Averages are susceptible to skewing due to outbreaks and should be interpreted with care.",
+            "5-year median cases. Median is provided to compare with averages due to possible skewing.",
+            "Year-to-Date",
+            paste0(
+                "Trend is computed by comparing the current YTD to the historical YTD average. A percent change of ",
+                r_threshold * 100,
+                "% or more will result in a change in the trend."
+            )
+            ))
+        
 }
 ```
+
 

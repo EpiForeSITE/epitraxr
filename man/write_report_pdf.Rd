@@ -12,7 +12,9 @@ write_report_pdf(data, params, filename, folder)
 \item{params}{List. Report parameters containing:
 \itemize{
 \item title: Report title (defaults to "Disease Report")
-\item author: Report author (defaults to "epitraxr")
+\item report_year: Report year (defaults to 2025)
+\item report_month: Report month (defaults to 1)
+\item trend_threshold: Threshold for trend calculations (defaults to 0.15)
 }}
 
 \item{filename}{String. Output filename for the rendered report.}
@@ -42,7 +44,9 @@ types of report.
  # Set report parameters
  params <- list(
    title = "Monthly Disease Surveillance Report",
-   author = "Public Health Department"
+   report_year = 2024,
+   report_month = 3,
+   trend_threshold = 0.20
  )
 
  # Write to temporary directory
