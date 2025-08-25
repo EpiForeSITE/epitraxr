@@ -1,10 +1,9 @@
 ---
-title: "`r params$title`"
-author: "`r params$author`"
 output: pdf_document
 params:
     title: "Disease Surveillance Report"
-    author: "epitraxr"
+    report_year: 2025
+    report_month: 1
     report_data: NULL
 header-includes:
 - \usepackage{booktabs}
@@ -34,13 +33,38 @@ library(kableExtra)
 
 r_data <- params$report_data
 
+r_year <- params$report_year
+r_month <- params$report_month
+r_month_name <- month.name[r_month]
+
 if (length(names(r_data)) == 8) {
+    # Set header row from input parameters
+    # This workaround is needed to dynamically create the header names
+    header_2 <- c(3, 4)
+    names(header_2) <- c(
+        paste(r_month_name, r_year),
+        paste0(r_year, " YTD", footnote_marker_symbol(4, double_escape = TRUE))
+    )
+    header_2 <- c(" ", header_2)
+
+    # Build the table
     kbl(
         r_data,
-        col.names = c("Disease", "Cases", "Avg", "Trend", "Cases", "Avg", "Rate", "Avg"),
-        booktabs = TRUE
+        col.names = c(
+            "Disease",
+            paste0("Cases", footnote_marker_symbol(1)),
+            paste0("Avg", footnote_marker_symbol(3)),
+            paste0("Trend", footnote_marker_symbol(5)),
+            paste0("Cases", footnote_marker_symbol(1)),
+            paste0("Avg", footnote_marker_symbol(3)),
+            paste0("Rate", footnote_marker_symbol(2)),
+            paste0("Avg", footnote_marker_symbol(3))
+        ),
+        booktabs = TRUE,
+        align = "lcclcccc",
+        escape = FALSE
         ) |>
-        add_header_above(c(" ", "Month" = 3, "YTD" = 4)) |>
+        add_header_above(header_2, escape = FALSE) |>
         kable_styling(
             latex_options = c("scale_down")
         ) |>
@@ -50,12 +74,26 @@ if (length(names(r_data)) == 8) {
                 r_data$Trend == "Elevated", "red",
                 ifelse(r_data$Trend == "Expected", "yellow",
                 "green"))
-        )
+        ) |>
+        footnote(symbol = c(
+            "Number of reported cases",
+            "Cases per 100,000 people",
+            "5-year average. Averages are susceptible to skewing due to outbreaks and should be interpreted with care.",
+            "Year-to-Date",
+            "A percent change of 15% or more will result in a change in the trend"
+            ))
 } else if (length(names(r_data)) == 4) {
     kbl(
         r_data,
-        col.names = c("Disease", "Rate", "Avg", "Trend"),
-        booktabs = TRUE
+        col.names = c(
+            "Disease",
+            paste0("Rate", footnote_marker_symbol(1)),
+            paste0("Avg", footnote_marker_symbol(2)),
+            paste0("Trend", footnote_marker_symbol(3))
+        ),
+        booktabs = TRUE,
+        align = "lccl",
+        escape = FALSE
         ) |>
         kable_styling(
             latex_options = c("scale_down")
@@ -66,7 +104,12 @@ if (length(names(r_data)) == 8) {
                 r_data$Trend == "Elevated", "red",
                 ifelse(r_data$Trend == "Expected", "yellow",
                 "green"))
-        )
+        ) |>
+        footnote(symbol = c(
+            "Number of reported cases per 100,000 people",
+            "5-year average",
+            "A percent change of 15% or more will result in a change in the trend"
+            ))
 }
 
 ```

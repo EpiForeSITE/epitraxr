@@ -895,8 +895,6 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #' a header and footer.
 #'
 #' @param epitrax Object of class `epitrax`.
-#' @param params List. Report parameters containing:
-#'   - author: Report author (defaults to "epitraxr")
 #' @param fsys Filesystem list containing path for public reports.
 #'
 #' @returns The original EpiTrax object, unchanged.
@@ -920,19 +918,15 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #'    public = "use_defaults"
 #'  )
 #'
-#'  params <- list(
-#'    author = "Public Health Department"
-#'  )
-#'
 #'  epitrax <- setup_epitrax(
 #'    epitrax_file = data_file,
 #'    config_file = config_file,
 #'    disease_list_files = disease_lists
 #'  ) |>
 #'   epitrax_preport_month_crosssections(month_offsets = 0) |>
-#'   epitrax_write_pdf_public_reports(params = params, fsys = fsys)
+#'   epitrax_write_pdf_public_reports(fsys = fsys)
 #' }
-epitrax_write_pdf_public_reports <- function(epitrax, params, fsys) {
+epitrax_write_pdf_public_reports <- function(epitrax, fsys) {
 
     validate_epitrax(epitrax)
     validate_filesystem(fsys)
@@ -945,7 +939,10 @@ epitrax_write_pdf_public_reports <- function(epitrax, params, fsys) {
 
         report <- epitrax$public_reports[[name]]
 
+        params <- list()
         params$title <- paste("Report", name)
+        params$report_year <- epitrax$report_year
+        params$report_month <- epitrax$report_month
 
         write_report_pdf(
             data = report,

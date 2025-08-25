@@ -93,7 +93,7 @@ if (length(names(r_data)) == 10) {
             "Cases per 100,000 people",
             "5-year average cases. Averages are susceptible to skewing due to outbreaks and should be interpreted with care.",
             "5-year median cases. Median is provided to compare with averages due to possible skewing.",
-            "YTD indicates counts are year-to-date",
+            "Year-to-Date",
             "Trend is computed by comparing the current YTD to the historical YTD average. A percent change of 15% or more will result in a change in the trend."
             ))
         
