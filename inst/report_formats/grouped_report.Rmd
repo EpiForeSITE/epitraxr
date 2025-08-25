@@ -5,6 +5,7 @@ params:
     title: "Grouped Disease Surveillance Report"
     report_year: 2025
     report_month: 1
+    trend_threshold: 0.15
     report_data: NULL
 header-includes:
 - \usepackage{booktabs}
@@ -38,6 +39,12 @@ r_data <- r_data[order(r_data$Group, r_data$Disease), ]
 r_year <- params$report_year
 r_month <- params$report_month
 r_month_abb <- month.abb[r_month]
+
+r_threshold <- params$trend_threshold
+# Set threshold to default, if out of bounds
+if (r_threshold < 0 | r_threshold > 1) {
+    r_threshold <- 0.15
+}
 
 if (length(names(r_data)) == 10) {
     # Set header row from input parameters
@@ -94,7 +101,11 @@ if (length(names(r_data)) == 10) {
             "5-year average cases. Averages are susceptible to skewing due to outbreaks and should be interpreted with care.",
             "5-year median cases. Median is provided to compare with averages due to possible skewing.",
             "Year-to-Date",
-            "Trend is computed by comparing the current YTD to the historical YTD average. A percent change of 15% or more will result in a change in the trend."
+            paste0(
+                "Trend is computed by comparing the current YTD to the historical YTD average. A percent change of ",
+                r_threshold * 100,
+                "% or more will result in a change in the trend."
+            )
             ))
         
 }

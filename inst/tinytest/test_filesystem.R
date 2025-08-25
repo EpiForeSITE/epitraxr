@@ -198,7 +198,8 @@ if (at_home()) {
   params <- list(
     title = "Monthly Disease Surveillance Report",
     report_year = 2024,
-    report_month = 3
+    report_month = 3,
+    trend_threshold = 0.20
   )
 
   # Write to temporary directory
@@ -230,7 +231,9 @@ if (at_home()) {
   # Set report parameters
   params <- list(
     title = "Monthly Disease Surveillance Report",
-    author = "Public Health Department"
+    report_year = 2024,
+    report_month = 3,
+    trend_threshold = 0.20
   )
 
   # Write to temporary directory

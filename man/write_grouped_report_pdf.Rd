@@ -14,6 +14,7 @@ write_grouped_report_pdf(data, params, filename, folder)
 \item title: Report title (defaults to "Grouped Report")
 \item report_year: Report year (defaults to 2025)
 \item report_month: Report month (defaults to 1)
+\item trend_threshold: Threshold for trend calculations (defaults to 0.15)
 }}
 
 \item{filename}{String. Output filename for the rendered report.}
@@ -50,7 +51,8 @@ disease statistics organized by groups with current and historical data.
  params <- list(
    title = "Grouped Disease Surveillance Report",
    report_year = 2024,
-   report_month = 3
+   report_month = 3,
+   trend_threshold = 0.20
  )
 
  # Write to temporary directory

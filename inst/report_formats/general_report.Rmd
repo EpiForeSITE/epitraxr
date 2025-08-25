@@ -4,6 +4,7 @@ params:
     title: "Disease Surveillance Report"
     report_year: 2025
     report_month: 1
+    trend_threshold: 0.15
     report_data: NULL
 header-includes:
 - \usepackage{booktabs}
@@ -36,6 +37,12 @@ r_data <- params$report_data
 r_year <- params$report_year
 r_month <- params$report_month
 r_month_name <- month.name[r_month]
+
+r_threshold <- params$trend_threshold
+# Set threshold to default, if out of bounds
+if (r_threshold < 0 | r_threshold > 1) {
+    r_threshold <- 0.15
+}
 
 if (length(names(r_data)) == 8) {
     # Set header row from input parameters
@@ -80,7 +87,11 @@ if (length(names(r_data)) == 8) {
             "Cases per 100,000 people",
             "5-year average. Averages are susceptible to skewing due to outbreaks and should be interpreted with care.",
             "Year-to-Date",
-            "A percent change of 15% or more will result in a change in the trend"
+            paste0(
+                "A percent change of ",
+                r_threshold * 100,
+                "% or more will result in a change in the trend"
+            )
             ))
 } else if (length(names(r_data)) == 4) {
     kbl(
@@ -108,7 +119,11 @@ if (length(names(r_data)) == 8) {
         footnote(symbol = c(
             "Number of reported cases per 100,000 people",
             "5-year average",
-            "A percent change of 15% or more will result in a change in the trend"
+            paste0(
+                "A percent change of ",
+                r_threshold * 100,
+                "% or more will result in a change in the trend"
+            )
             ))
 }
 

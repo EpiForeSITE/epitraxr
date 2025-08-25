@@ -943,6 +943,7 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys) {
         params$title <- paste("Report", name)
         params$report_year <- epitrax$report_year
         params$report_month <- epitrax$report_month
+        params$trend_threshold <- epitrax$config$trend_threshold
 
         write_report_pdf(
             data = report,
@@ -1009,6 +1010,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
 
     params$report_year <- epitrax$report_year
     params$report_month <- epitrax$report_month
+    params$trend_threshold <- epitrax$config$trend_threshold
 
     # Write internal grouped stats reports to PDF
     for (name in names(epitrax$internal_reports)) {
