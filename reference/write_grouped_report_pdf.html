@@ -11,7 +11,7 @@ disease statistics organized by groups with current and historical data."></head
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,9 @@ disease statistics organized by groups with current and historical data.</p>
 
 <dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
 <dd><p>List. Report parameters containing:</p><ul><li><p>title: Report title (defaults to "Grouped Report")</p></li>
-<li><p>author: Report author (defaults to "epitraxr")</p></li>
+<li><p>report_year: Report year (defaults to 2025)</p></li>
+<li><p>report_month: Report month (defaults to 1)</p></li>
+<li><p>trend_threshold: Threshold for trend calculations (defaults to 0.15)</p></li>
 </ul></dd>
 
 
@@ -100,8 +102,10 @@ disease statistics organized by groups with current and historical data.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co"># Set report parameters</span></span></span>
 <span class="r-in"><span> <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>   title <span class="op">=</span> <span class="st">"Monthly Disease Surveillance Report"</span>,</span></span>
-<span class="r-in"><span>   author <span class="op">=</span> <span class="st">"Public Health Department"</span></span></span>
+<span class="r-in"><span>   title <span class="op">=</span> <span class="st">"Grouped Disease Surveillance Report"</span>,</span></span>
+<span class="r-in"><span>   report_year <span class="op">=</span> <span class="fl">2024</span>,</span></span>
+<span class="r-in"><span>   report_month <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>   trend_threshold <span class="op">=</span> <span class="fl">0.20</span></span></span>
 <span class="r-in"><span> <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="co"># Write to temporary directory</span></span></span>
