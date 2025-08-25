@@ -101,49 +101,39 @@ ui <- shiny::fluidPage(
       shiny::actionButton(
         "generate",
         "Generate Reports",
-        class = "btn-success"
+        class = "btn-success",
+        style = "width: 100%;"
       ),
 
       shiny::br(), shiny::br(),
 
-      # Download buttons in a row
-      shiny::fluidRow(
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_csv",
-            "Download CSV",
-            class = "btn-primary",
-            style = "width: 100%;"
-          )
-        ),
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_excel",
-            "Download Excel",
-            class = "btn-info",
-            style = "width: 100%;"
-          )
-        ),
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_pdf",
-            "Download PDF",
-            class = "btn-secondary",
-            style = "width: 100%;"
-          )
-        ),
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_all",
-            "Download All",
-            class = "btn-warning",
-            style = "width: 100%;"
-          )
-        )
+      # Download buttons in individual rows
+      shiny::downloadButton(
+        "download_csv",
+        "Download CSV",
+        class = "btn-primary",
+        style = "width: 100%; margin-bottom: 5px;"
+      ),
+      
+      shiny::downloadButton(
+        "download_excel",
+        "Download Excel",
+        class = "btn-info",
+        style = "width: 100%; margin-bottom: 5px;"
+      ),
+      
+      shiny::downloadButton(
+        "download_pdf",
+        "Download PDF",
+        class = "btn-secondary",
+        style = "width: 100%; margin-bottom: 5px;"
+      ),
+      
+      shiny::downloadButton(
+        "download_all",
+        "Download All",
+        class = "btn-warning",
+        style = "width: 100%;"
       )
     ),
 
@@ -172,7 +162,20 @@ server <- function(input, output, session) {
 
   # Generate Reports button click handler
   shiny::observeEvent(input$generate, {
-    shiny::req(input$epitrax_file, input$report_options)
+    
+    # Check if file is uploaded
+    if (is.null(input$epitrax_file)) {
+      shiny::showNotification("Please upload an EpiTrax data file before generating reports.", type = "error")
+      return()
+    }
+    
+    # Check if any reports are selected
+    if (is.null(input$report_options) || length(input$report_options) == 0) {
+      shiny::showNotification("Please select at least one report type to generate.", type = "error")
+      return()
+    }
+    
+    message("Generating reports...")
 
     tryCatch({
       # Show progress
@@ -274,6 +277,8 @@ server <- function(input, output, session) {
       shinyjs::disable("download_pdf")
       shinyjs::disable("download_all")
     })
+
+    message(".......Done.")
   })
 
   # Download CSV files as ZIP
@@ -672,7 +677,7 @@ server <- function(input, output, session) {
         title = "Internal Reports",
         value = "internal_tab",
         shiny::div(style = "margin-top: 10px;",
-            do.call(tabsetPanel, internal_sub_tabs))
+            do.call(shiny::tabsetPanel, internal_sub_tabs))
       )
     }
 
@@ -693,7 +698,7 @@ server <- function(input, output, session) {
         title = "Public Reports",
         value = "public_tab",
         shiny::div(style = "margin-top: 10px;",
-            do.call(tabsetPanel, public_sub_tabs))
+            do.call(shiny::tabsetPanel, public_sub_tabs))
       )
     }
 
