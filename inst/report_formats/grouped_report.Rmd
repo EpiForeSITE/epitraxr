@@ -42,21 +42,37 @@ r_month_abb <- month.abb[r_month]
 if (length(names(r_data)) == 10) {
     # Set header row from input parameters
     # This workaround is needed to dynamically create the header names
-    header_2 <- c(2, 2, 1)
-    names(header_2) <- c(paste(r_month_abb, r_year), paste("Historical", r_month_abb), paste(r_year, "YTD"))
-    header_2 <- c(" ", header_2, "Historical YTD" = 2, " ")
+    header_2 <- c(2, 2, 1, 2)
+    names(header_2) <- c(
+        paste(r_month_abb, r_year),
+        paste("Historical", r_month_abb),
+        paste0(r_year, " YTD", footnote_marker_symbol(5, double_escape = TRUE)),
+        paste0("Historical YTD", footnote_marker_symbol(5, double_escape = TRUE))
+    )
+    header_2 <- c(" ", header_2, " ")
 
     # Build the table
     kbl(
         r_data[,2:10],
         row.names = FALSE,
-        col.names = c("Disease", "Cases", "Rate", "Avg", "Median", "Cases", "Avg", "Median", "Trend"),
+        col.names = c(
+            "Disease",
+            paste0("Cases", footnote_marker_symbol(1)),
+            paste0("Rate", footnote_marker_symbol(2)),
+            paste0("Avg", footnote_marker_symbol(3)),
+            paste0("Median", footnote_marker_symbol(4)),
+            paste0("Cases", footnote_marker_symbol(1)),
+            paste0("Avg", footnote_marker_symbol(3)),
+            paste0("Median", footnote_marker_symbol(4)),
+            paste0("Trend", footnote_marker_symbol(6))
+        ),
         booktabs = TRUE,
         longtable = TRUE,
         caption = params$title,
-        align = "lcccccccl"
+        align = "lcccccccl",
+        escape = FALSE
         ) |>
-        add_header_above(header_2) |>
+        add_header_above(header_2, escape = FALSE) |>
         kable_styling(
             font_size = 7,
             latex_options = c("scale_down", "repeat_header")
@@ -71,7 +87,15 @@ if (length(names(r_data)) == 10) {
         pack_rows(
             index = table(r_data$Group),
             latex_gap_space = "1em"
-        )
+        ) |>
+        footnote(symbol = c(
+            "Number of reported cases",
+            "Cases per 100,000 people",
+            "5-year average cases. Averages are susceptible to skewing due to outbreaks and should be interpreted with care.",
+            "5-year median cases. Median is provided to compare with averages due to possible skewing.",
+            "YTD indicates counts are year-to-date",
+            "Trend is computed by comparing the current YTD to the historical YTD average. A percent change of 15% or more will result in a change in the trend."
+            ))
         
 }
 ```
