@@ -12,7 +12,8 @@ write_grouped_report_pdf(data, params, filename, folder)
 \item{params}{List. Report parameters containing:
 \itemize{
 \item title: Report title (defaults to "Grouped Report")
-\item author: Report author (defaults to "epitraxr")
+\item report_year: Report year (defaults to 2025)
+\item report_month: Report month (defaults to 1)
 }}
 
 \item{filename}{String. Output filename for the rendered report.}
@@ -47,8 +48,9 @@ disease statistics organized by groups with current and historical data.
 
  # Set report parameters
  params <- list(
-   title = "Monthly Disease Surveillance Report",
-   author = "Public Health Department"
+   title = "Grouped Disease Surveillance Report",
+   report_year = 2024,
+   report_month = 3
  )
 
  # Write to temporary directory

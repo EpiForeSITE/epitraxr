@@ -1,11 +1,10 @@
 ---
-title: "`r params$title`"
-author: "`r params$author`"
 output: pdf_document
 classoption: landscape
 params:
     title: "Grouped Disease Surveillance Report"
-    author: "epitraxr"
+    report_year: 2025
+    report_month: 1
     report_data: NULL
 header-includes:
 - \usepackage{booktabs}
@@ -36,17 +35,28 @@ library(kableExtra)
 r_data <- params$report_data
 r_data <- r_data[order(r_data$Group, r_data$Disease), ]
 
+r_year <- params$report_year
+r_month <- params$report_month
+r_month_abb <- month.abb[r_month]
+
 if (length(names(r_data)) == 10) {
+    # Set header row from input parameters
+    # This workaround is needed to dynamically create the header names
+    header_2 <- c(2, 2, 1)
+    names(header_2) <- c(paste(r_month_abb, r_year), paste("Historical", r_month_abb), paste(r_year, "YTD"))
+    header_2 <- c(" ", header_2, "Historical YTD" = 2, " ")
+
+    # Build the table
     kbl(
         r_data[,2:10],
         row.names = FALSE,
         col.names = c("Disease", "Cases", "Rate", "Avg", "Median", "Cases", "Avg", "Median", "Trend"),
         booktabs = TRUE,
         longtable = TRUE,
-        caption = "Grouped Disease Surveillance Report"
+        caption = params$title,
+        align = "lcccccccl"
         ) |>
-        add_header_above(c(" ", "Current" = 2, "Historical" = 2, "Current" = 1, "Historical" = 2, " ")) |>
-        add_header_above(c(" ", "Month" = 4, "YTD" = 4)) |>
+        add_header_above(header_2) |>
         kable_styling(
             font_size = 7,
             latex_options = c("scale_down", "repeat_header")
@@ -62,6 +72,7 @@ if (length(names(r_data)) == 10) {
             index = table(r_data$Group),
             latex_gap_space = "1em"
         )
+        
 }
 ```
 

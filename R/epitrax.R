@@ -969,7 +969,6 @@ epitrax_write_pdf_public_reports <- function(epitrax, params, fsys) {
 #' @param epitrax Object of class `epitrax`.
 #' @param params List. Report parameters containing:
 #'   - title: Report title (defaults to "Grouped Report")
-#'   - author: Report author (defaults to "epitraxr")
 #' @param fsys Filesystem list containing paths for internal and public reports.
 #'
 #' @returns The original EpiTrax object, unchanged.
@@ -995,8 +994,7 @@ epitrax_write_pdf_public_reports <- function(epitrax, params, fsys) {
 #'  )
 #'
 #'  params <- list(
-#'    title = "Monthly Grouped Disease Statistics",
-#'    author = "Public Health Department"
+#'    title = "Monthly Grouped Disease Statistics"
 #'  )
 #'
 #'  epitrax <- setup_epitrax(
@@ -1011,6 +1009,9 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
 
     validate_epitrax(epitrax)
     validate_filesystem(fsys)
+
+    params$report_year <- epitrax$report_year
+    params$report_month <- epitrax$report_month
 
     # Write internal grouped stats reports to PDF
     for (name in names(epitrax$internal_reports)) {
