@@ -442,7 +442,7 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_public_reports(epitrax, params, fsys)
+              epitrax_write_pdf_public_reports(epitrax, fsys)
             }, error = function(e) {
               # PDF generation failed, but continue
               shiny::showNotification("PDF generation failed for public reports", type = "warning")
@@ -458,7 +458,7 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_grouped_stats(epitrax, params, fsys)
+              epitrax_write_pdf_grouped_stats(epitrax, params = list(title = "Grouped Disease Surveillance Report"), fsys = fsys)
             }, error = function(e) {
               # PDF generation failed, but continue
               shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
@@ -601,7 +601,7 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_public_reports(epitrax, params, pdf_fsys)
+              epitrax_write_pdf_public_reports(epitrax, pdf_fsys)
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
               shiny::showNotification("PDF generation failed for public reports", type = "warning")
@@ -615,7 +615,7 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_grouped_stats(epitrax, params, pdf_fsys)
+              epitrax_write_pdf_grouped_stats(epitrax, params = list(title = "Grouped Disease Surveillance Report"), fsys = pdf_fsys)
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
               shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")

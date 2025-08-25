@@ -12,7 +12,6 @@ epitrax_write_pdf_grouped_stats(epitrax, params, fsys)
 \item{params}{List. Report parameters containing:
 \itemize{
 \item title: Report title (defaults to "Grouped Report")
-\item author: Report author (defaults to "epitraxr")
 }}
 
 \item{fsys}{Filesystem list containing paths for internal and public reports.}
@@ -45,8 +44,7 @@ internal and public grouped statistics reports.
  )
 
  params <- list(
-   title = "Monthly Grouped Disease Statistics",
-   author = "Public Health Department"
+   title = "Monthly Grouped Disease Statistics"
  )
 
  epitrax <- setup_epitrax(

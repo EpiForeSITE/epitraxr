@@ -342,13 +342,9 @@ if (at_home()) {
 
 
   # Test epitrax_write_pdf_public_reports() ------------------------------------
-  params <- list(
-    author = "Public Health Department"
-  )
   expect_silent(
     epitrax <- epitrax_write_pdf_public_reports(
       epitrax,
-      params = params,
       fsys = fsys
     )
   )
@@ -370,8 +366,7 @@ if (at_home()) {
 
   # Set up parameters for PDF generation
   params <- list(
-    title = "Test Grouped Disease Statistics Report",
-    author = "Test Author"
+    title = "Test Grouped Disease Statistics Report"
   )
 
   # - Test with existing grouped stats reports
