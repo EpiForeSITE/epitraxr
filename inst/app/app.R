@@ -101,49 +101,39 @@ ui <- shiny::fluidPage(
       shiny::actionButton(
         "generate",
         "Generate Reports",
-        class = "btn-success"
+        class = "btn-success",
+        style = "width: 100%;"
       ),
 
       shiny::br(), shiny::br(),
 
-      # Download buttons in a row
-      shiny::fluidRow(
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_csv",
-            "Download CSV",
-            class = "btn-primary",
-            style = "width: 100%;"
-          )
-        ),
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_excel",
-            "Download Excel",
-            class = "btn-info",
-            style = "width: 100%;"
-          )
-        ),
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_pdf",
-            "Download PDF",
-            class = "btn-secondary",
-            style = "width: 100%;"
-          )
-        ),
-        shiny::column(
-          width = 3,
-          shiny::downloadButton(
-            "download_all",
-            "Download All",
-            class = "btn-warning",
-            style = "width: 100%;"
-          )
-        )
+      # Download buttons in individual rows
+      shiny::downloadButton(
+        "download_csv",
+        "Download CSV",
+        class = "btn-primary",
+        style = "width: 100%; margin-bottom: 5px;"
+      ),
+      
+      shiny::downloadButton(
+        "download_excel",
+        "Download Excel",
+        class = "btn-info",
+        style = "width: 100%; margin-bottom: 5px;"
+      ),
+      
+      shiny::downloadButton(
+        "download_pdf",
+        "Download PDF",
+        class = "btn-secondary",
+        style = "width: 100%; margin-bottom: 5px;"
+      ),
+      
+      shiny::downloadButton(
+        "download_all",
+        "Download All",
+        class = "btn-warning",
+        style = "width: 100%;"
       )
     ),
 
