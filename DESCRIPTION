@@ -1,6 +1,6 @@
 Package: epitraxr
 Title: Manipulate Epitrax Data And Generate Reports
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
     person("Andrew", "Pulsipher", , "pulsipher.a@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0773-3210")),
@@ -20,6 +20,7 @@ Imports:
     yaml
 Suggests:
     DT,
+    kableExtra,
     knitr,
     readxl,
     rmarkdown,

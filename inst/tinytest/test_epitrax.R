@@ -370,8 +370,7 @@ if (at_home()) {
 
   # Set up parameters for PDF generation
   params <- list(
-    title = "Test Grouped Disease Statistics Report",
-    author = "Test Author"
+    title = "Test Grouped Disease Statistics Report"
   )
 
   # - Test with existing grouped stats reports

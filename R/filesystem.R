@@ -253,7 +253,8 @@ write_report_xlsx <- function(data, filename, folder) {
 #' @param data Dataframe. Report data containing grouped disease statistics.
 #' @param params List. Report parameters containing:
 #'   - title: Report title (defaults to "Grouped Report")
-#'   - author: Report author (defaults to "epitraxr")
+#'   - report_year: Report year (defaults to 2025)
+#'   - report_month: Report month (defaults to 1)
 #' @param filename String. Output filename for the rendered report.
 #' @param folder Filepath. Output directory for the rendered report.
 #'
@@ -280,8 +281,9 @@ write_report_xlsx <- function(data, filename, folder) {
 #'
 #'  # Set report parameters
 #'  params <- list(
-#'    title = "Monthly Disease Surveillance Report",
-#'    author = "Public Health Department"
+#'    title = "Grouped Disease Surveillance Report",
+#'    report_year = 2024,
+#'    report_month = 3
 #'  )
 #'
 #'  # Write to temporary directory
@@ -317,7 +319,8 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
     input = template_path,
     params = list(
       title = params$title %||% "Grouped Report",
-      author = params$author %||% "epitraxr",
+      report_year = params$report_year %||% 2025,
+      report_month = params$report_month %||% 1,
       report_data = data
     ),
     output_file = filename,
