@@ -36,9 +36,17 @@ epitrax <- setup_epitrax(
     public = file.path(fsys$settings, "public_report_diseases.csv")
   )) |>
   epitrax_preport_combined_month_ytd() |>
-  epitrax_write_xlsxs(fsys = fsys) |>
+  epitrax_preport_month_crosssections() |>
+  epitrax_preport_ytd_rates() |>
+  epitrax_report_grouped_stats() |>
   epitrax_write_pdf_public_reports(
-    params = list(title = "Monthly Combined Report", author = "Health Department"),
-    fsys = fsys)
+    fsys = fsys
+  ) |>
+  epitrax_write_pdf_grouped_stats(
+    params = list(
+      title = "Grouped Disease Surveillance Report"
+    ),
+    fsys = fsys
+  )
 
 message(".......Done.")
