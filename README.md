@@ -132,9 +132,11 @@ devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE, force = TR
 #### Input Data
 
 `epitraxr` expects input data in CSV format (not Excel) that contains
-EpiTrax data exported with the following columns: - `patient_mmwr_week`
-(integer) - `patient_mmwr_year` (integer) - `patient_disease`
-(character)
+EpiTrax data exported with the following columns:
+
+- `patient_mmwr_week` (integer)
+- `patient_mmwr_year` (integer)
+- `patient_disease` (character)
 
 For example:
 
@@ -156,8 +158,8 @@ rest of the data.
 
 To configure your reports, `epitraxr` accepts three **OPTIONAL** files:
 
-1.  Internal Disease List: CSV file listing the diseases to include in
-    internal reports as they are represented in EpiTrax.
+1.  **Internal Disease List:** CSV file listing the diseases to include
+    in internal reports as they are represented in EpiTrax.
     - This file is named `internal_report_diseases.csv` in our example
       scripts.
     - This file can have up to two columns:
@@ -173,7 +175,7 @@ To configure your reports, `epitraxr` accepts three **OPTIONAL** files:
         “Uncategorized”.
     - If the Internal Disease List is not provided, `epitraxr` will
       default to using whatever diseases are found in the input dataset.
-2.  Public Disease List: CSV file listing the diseases to include in
+2.  **Public Disease List:** CSV file listing the diseases to include in
     public reports as they are represented in EpiTrax.
     - This file is named `public_report_diseases.csv` in our example
       scripts.
@@ -189,24 +191,21 @@ To configure your reports, `epitraxr` accepts three **OPTIONAL** files:
           simply set the `Public_name` of both diseases to “Syphilis”.
     - If the Public Disease List is not provided, the program will
       default to using whatever diseases are found in the input dataset.
-3.  Report Config: YAML file providing additional configuration
-    information, such as:
-    - `current_population`: Population to use for converting case counts
-      for the **current year** to Rates per 100k
-      - If not provided, defaults to 100k.
+3.  **Report Config:** YAML file providing additional configuration
+    information:
+    - `current_population`: Population for converting case counts for
+      the **current year** to Rates per 100k. Defaults to 100k.
     - `avg_5yr_population`: Population to use for converting case counts
-      for the **5yr historical average** to Rates per 100k
-      - If not provided, defaults to `current_population`.
-    - `rounding_decimals`: How many digits to round decimals
-      - If not provided, defaults to 2.
-    - `generate_csvs`: Whether to generate CSV files for internal
-      reports. When FALSE, only Excel files will be generated.
-      - If not provided, defaults to `TRUE`.
-    - `trend_threshold`: The threshold for determining the “Trend”
-      column in reports that compute this statistic. A percent change
-      above or below the `trend_threshold` will result in a change in
-      the trend.
-      - If not provided, defaults to `0.15` (15%)
+      for the **5yr historical average** to Rates per 100k. Defaults to
+      `current_population`.
+    - `rounding_decimals`: How many digits to round decimal values.
+      Defaults to 2.
+    - `generate_csvs`: Whether to generate CSVs. When false, only Excel
+      files will be generated. Defaults to `TRUE`.
+    - `trend_threshold`: Threshold for determining the “Trend” column in
+      reports that compute this statistic. A percent change above or
+      below the `trend_threshold` will result in a change in the trend.
+      Defaults to `0.15` (15%).
     - The Report Config file is named `report_config.yaml` in our
       example scripts.
 
@@ -222,10 +221,12 @@ case, their values will simply be 0s in the generated reports.
 `epitraxr` can output reports as CSVs, Excel files, or PDFs. To write
 reports to outputs, you need to provide the output functions with
 folders where `epitraxr` will write the outputs. Generally, we’ll use
-three folders: - `report_settings/`: Holds settings files for report
-generation. - `internal_reports/`: Holds reports intended for internal
-use by the health department. - `public_reports/`: Holds reports
-intended for public use.
+three folders:
+
+- `report_settings/`: Holds settings files for report generation.
+- `internal_reports/`: Holds reports intended for internal use by the
+  health department.
+- `public_reports/`: Holds reports intended for public use.
 
 You can create these manually or you can use the `setup_filesystem()`
 function to create the directories. The example scripts in the
