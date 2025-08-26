@@ -195,7 +195,8 @@ server <- function(input, output, session) {
       shiny::showNotification(
         "Generating reports...",
         type = "message",
-        duration = 2
+        duration = NULL,
+        id = "report_progress_notification"
       )
 
       # Create config list from frontend inputs
@@ -279,6 +280,8 @@ server <- function(input, output, session) {
       shinyjs::enable("download_pdf")
       shinyjs::enable("download_all")
 
+      # Show progress
+      shiny::removeNotification(id = "report_progress_notification")
       shiny::showNotification("Reports generated successfully!", type = "message")
 
     }, error = function(e) {
@@ -305,7 +308,8 @@ server <- function(input, output, session) {
       shiny::showNotification(
         "Generating CSVs...",
         type = "message",
-        duration = 2
+        duration = NULL,
+        id = "csv_progress_notification"
       )
 
       # Create temporary directory
@@ -353,6 +357,7 @@ server <- function(input, output, session) {
         unlink(csv_dir, recursive = TRUE)
 
         # Show progress
+        shiny::removeNotification(id = "csv_progress_notification")
         shiny::showNotification("CSVs generated successfully!", type = "message")
 
       }, error = function(e) {
@@ -374,7 +379,8 @@ server <- function(input, output, session) {
       shiny::showNotification(
         "Generating Excel files...",
         type = "message",
-        duration = 2
+        duration = NULL,
+        id = "excel_progress_notification"
       )
 
       # Create temporary directory
@@ -432,6 +438,7 @@ server <- function(input, output, session) {
         unlink(excel_dir, recursive = TRUE)
 
         # Show progress
+        shiny::removeNotification(id = "excel_progress_notification")
         shiny::showNotification("Excel files generated successfully!", type = "message")
 
       }, error = function(e) {
@@ -562,10 +569,10 @@ server <- function(input, output, session) {
 
       # Show progress
       shiny::showNotification(
-        "Generating PDFs...",
+        "Generating CSV, Excel, and PDF files...",
         type = "message",
         duration = NULL,
-        id = "pdf_progress_notification"
+        id = "all_progress_notification"
       )
 
       # Create temporary directory
@@ -720,8 +727,8 @@ server <- function(input, output, session) {
         unlink(all_dir, recursive = TRUE)
 
         # Show progress
-        shiny::removeNotification(id = "pdf_progress_notification")
-        shiny::showNotification("PDFs generated successfully!", type = "message")
+        shiny::removeNotification(id = "all_progress_notification")
+        shiny::showNotification("Files generated successfully!", type = "message")
 
       }, error = function(e) {
         shiny::showNotification(paste("Error creating combined download:", e$message), type = "error")
