@@ -342,6 +342,9 @@ server <- function(input, output, session) {
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
+        # Clear generated reports
+        unlink(csv_dir, recursive = TRUE)
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating CSV download:", e$message), type = "error")
       })
@@ -408,6 +411,9 @@ server <- function(input, output, session) {
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
+        # Clear generated reports
+        unlink(excel_dir, recursive = TRUE)
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating Excel download:", e$message), type = "error")
       })
@@ -441,9 +447,7 @@ server <- function(input, output, session) {
         )
 
         # Create directories
-        dir.create(fsys$internal, showWarnings = FALSE, recursive = TRUE)
-        dir.create(fsys$public, showWarnings = FALSE, recursive = TRUE)
-        dir.create(fsys$settings, showWarnings = FALSE, recursive = TRUE)
+        setup_filesystem(fsys, clear.reports = TRUE)
 
         # PDF report parameters
         params <- list(
@@ -489,7 +493,7 @@ server <- function(input, output, session) {
           }
         }
 
-        # Remove empty directories
+        # Remove empty directories (so they don't appear in zip archive)
         if (length(list.files(fsys$internal)) == 0) {
           unlink(fsys$internal, recursive = TRUE)
         }
@@ -503,6 +507,11 @@ server <- function(input, output, session) {
         setwd(temp_dir)
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
+
+        # Clear generated reports
+        unlink(fsys$internal, recursive = TRUE)
+        unlink(fsys$public, recursive = TRUE)
+        unlink(fsys$settings, recursive = TRUE)
 
       }, error = function(e) {
         shiny::showNotification(paste("Error creating PDF download:", e$message), type = "error")
@@ -607,9 +616,7 @@ server <- function(input, output, session) {
         )
 
         # Create directories
-        dir.create(pdf_fsys$internal, showWarnings = FALSE, recursive = TRUE)
-        dir.create(pdf_fsys$public, showWarnings = FALSE, recursive = TRUE)
-        dir.create(pdf_fsys$settings, showWarnings = FALSE, recursive = TRUE)
+        setup_filesystem(pdf_fsys, clear.reports = TRUE)
 
         # PDF report parameters
         params <- list(
@@ -651,7 +658,7 @@ server <- function(input, output, session) {
           }
         }
 
-        # Remove empty PDF directories
+        # Remove empty PDF directories (so they don't appear in zip archive)
         if (length(list.files(pdf_fsys$internal)) == 0) {
           unlink(pdf_fsys$internal, recursive = TRUE)
         }
@@ -668,6 +675,9 @@ server <- function(input, output, session) {
         setwd(temp_dir)
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
+
+        # Clear generated reports
+        unlink(all_dir, recursive = TRUE)
 
       }, error = function(e) {
         shiny::showNotification(paste("Error creating combined download:", e$message), type = "error")
