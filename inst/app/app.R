@@ -301,6 +301,13 @@ server <- function(input, output, session) {
     content = function(file) {
       shiny::req(epitrax_obj())
 
+      # Show progress
+      shiny::showNotification(
+        "Generating CSVs...",
+        type = "message",
+        duration = 2
+      )
+
       # Create temporary directory
       temp_dir <- tempdir()
       # Create a directory with the same name as the ZIP file (without extension)
@@ -345,6 +352,9 @@ server <- function(input, output, session) {
         # Clear generated reports
         unlink(csv_dir, recursive = TRUE)
 
+        # Show progress
+        shiny::showNotification("CSVs generated successfully!", type = "message")
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating CSV download:", e$message), type = "error")
       })
@@ -359,6 +369,13 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating Excel files...",
+        type = "message",
+        duration = 2
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -414,6 +431,9 @@ server <- function(input, output, session) {
         # Clear generated reports
         unlink(excel_dir, recursive = TRUE)
 
+        # Show progress
+        shiny::showNotification("Excel files generated successfully!", type = "message")
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating Excel download:", e$message), type = "error")
       })
@@ -428,6 +448,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating PDFs...",
+        type = "message",
+        duration = NULL,
+        id = "pdf_progress_notification"
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -513,6 +541,10 @@ server <- function(input, output, session) {
         unlink(fsys$public, recursive = TRUE)
         unlink(fsys$settings, recursive = TRUE)
 
+        # Show progress
+        shiny::removeNotification(id = "pdf_progress_notification")
+        shiny::showNotification("PDFs generated successfully!", type = "message")
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating PDF download:", e$message), type = "error")
       })
@@ -527,6 +559,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating PDFs...",
+        type = "message",
+        duration = NULL,
+        id = "pdf_progress_notification"
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -678,6 +718,10 @@ server <- function(input, output, session) {
 
         # Clear generated reports
         unlink(all_dir, recursive = TRUE)
+
+        # Show progress
+        shiny::removeNotification(id = "pdf_progress_notification")
+        shiny::showNotification("PDFs generated successfully!", type = "message")
 
       }, error = function(e) {
         shiny::showNotification(paste("Error creating combined download:", e$message), type = "error")
