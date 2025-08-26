@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# title: EpiTraxr Report Generator (Package Version)
+# title: EpiTraxr Report Generator (Standard Mode)
 # author: Andrew Pulsipher
 # date: 2025-07-10
 #
@@ -10,9 +10,6 @@
 # The script is maintained by the Insight Net center ForeSITE. All the code is
 # available on GitHub at
 # https://github.com/EpiForeSITE/epitraxr.
-# It is based on the epitrax-report-automation ForeSITE project, which is
-# available on GitHub at
-# https://github.com/EpiForeSITE/epitrax-report-automation.
 #
 # For questions, updates, or bug reports, please visit the GitHub repository.
 # ------------------------------------------------------------------------------

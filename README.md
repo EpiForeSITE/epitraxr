@@ -374,7 +374,7 @@ folder:
 - [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R):
   Showcases report generation using epitraxr’s Piped Mode
   **(recommended)**
-- [`epitraxr-generator.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-generator.R):
+- [`epitraxr-standard.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-standard.R):
   Showcases report generation using the epitraxr’s Standard Mode
 
 These scripts provide you with a full report generation process that
