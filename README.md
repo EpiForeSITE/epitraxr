@@ -14,6 +14,7 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Ep
 [![R-CMD-check](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml)
 [![pkgdown](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml)
 [![codecov](https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://codecov.io/gh/EpiForeSITE/epitraxr)
+
 <!-- badges: end -->
 
 ## Overview
@@ -41,8 +42,9 @@ You can install the development version of `epitraxr` from
 devtools::install_github("EpiForeSITE/epitraxr")
 ```
 
-For local health departments, we recommend going through [this
-list](.README.md#installation-for-local-health-departments) (below). Our
+For local health departments, we recommend going through the steps under
+[Installation For Local Health
+Departments](#installation-for-local-health-departments) (below). Our
 experience is that LHD-managed machines need additional tools and
 packages installed first. This list will walk you through those steps.
 
