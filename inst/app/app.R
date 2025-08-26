@@ -1,16 +1,16 @@
 # Dictionary constant for multiselect options matching epitraxr functions
 REPORT_OPTIONS <- list(
-  "Annual Counts" = "annual_counts",
-  "Monthly Counts All Years" = "monthly_counts_all_yrs",
-  "Monthly Averages" = "monthly_avgs",
-  "YTD Counts" = "ytd_counts",
-  "YTD Rates" = "ytd_rates",
-  "Monthly Cross-sections" = "month_crosssections",
-  "Public YTD Rates" = "public_ytd_rates",
-  "Combined Month/YTD" = "combined_month_ytd",
-  "Monthly Medians" = "monthly_medians",
-  "YTD Medians" = "ytd_medians",
-  "Grouped Stats" = "grouped_stats"
+  "(internal) Annual Counts" = "annual_counts",
+  "(internal) Monthly Counts All Years" = "monthly_counts_all_yrs",
+  "(internal) Monthly Averages" = "monthly_avgs",
+  "(internal) YTD Counts" = "ytd_counts",
+  "(internal) YTD Rates" = "ytd_rates",
+  "(internal) Grouped Stats" = "grouped_stats",
+  "(internal) Monthly Medians" = "monthly_medians",
+  "(internal) YTD Medians" = "ytd_medians",
+  "(public) Monthly Cross-sections" = "month_crosssections",
+  "(public) YTD Rates" = "public_ytd_rates",
+  "(public) Combined Month/YTD" = "combined_month_ytd"
 )
 
 # Function to display DataFrame as table
@@ -107,6 +107,17 @@ ui <- shiny::fluidPage(
 
       shiny::br(), shiny::br(),
 
+      # Trend Only checkboxes
+      shiny::checkboxGroupInput(
+        "trend_only_options",
+        "Trend Only PDFs:",
+        choices = list(
+          "Internal Reports" = "internal",
+          "Public Reports" = "public"
+        ),
+        selected = NULL
+      ),
+
       # Download buttons in individual rows
       shiny::downloadButton(
         "download_csv",
@@ -184,7 +195,8 @@ server <- function(input, output, session) {
       shiny::showNotification(
         "Generating reports...",
         type = "message",
-        duration = 2
+        duration = NULL,
+        id = "report_progress_notification"
       )
 
       # Create config list from frontend inputs
@@ -234,6 +246,18 @@ server <- function(input, output, session) {
         epitrax <- epitrax_ireport_ytd_counts_for_month(epitrax, as.rates = TRUE)
       }
 
+      if ("grouped_stats" %in% selected_reports) {
+        epitrax <- epitrax_report_grouped_stats(epitrax, is.public = FALSE)
+      }
+
+      if ("monthly_medians" %in% selected_reports) {
+        epitrax <- epitrax_report_monthly_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
+      }
+
+      if ("ytd_medians" %in% selected_reports) {
+        epitrax <- epitrax_report_ytd_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
+      }
+
       # Generate public reports
       if ("month_crosssections" %in% selected_reports) {
         epitrax <- epitrax_preport_month_crosssections(epitrax, month_offsets = 0:3)
@@ -247,19 +271,6 @@ server <- function(input, output, session) {
         epitrax <- epitrax_preport_combined_month_ytd(epitrax)
       }
 
-      # Generate additional internal reports
-      if ("monthly_medians" %in% selected_reports) {
-        epitrax <- epitrax_report_monthly_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
-      }
-
-      if ("ytd_medians" %in% selected_reports) {
-        epitrax <- epitrax_report_ytd_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
-      }
-
-      if ("grouped_stats" %in% selected_reports) {
-        epitrax <- epitrax_report_grouped_stats(epitrax, is.public = FALSE)
-      }
-
       # Store the epitrax object
       epitrax_obj(epitrax)
 
@@ -269,6 +280,8 @@ server <- function(input, output, session) {
       shinyjs::enable("download_pdf")
       shinyjs::enable("download_all")
 
+      # Show progress
+      shiny::removeNotification(id = "report_progress_notification")
       shiny::showNotification("Reports generated successfully!", type = "message")
 
     }, error = function(e) {
@@ -290,6 +303,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating CSVs...",
+        type = "message",
+        duration = NULL,
+        id = "csv_progress_notification"
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -332,6 +353,13 @@ server <- function(input, output, session) {
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
+        # Clear generated reports
+        unlink(csv_dir, recursive = TRUE)
+
+        # Show progress
+        shiny::removeNotification(id = "csv_progress_notification")
+        shiny::showNotification("CSVs generated successfully!", type = "message")
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating CSV download:", e$message), type = "error")
       })
@@ -346,6 +374,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating Excel files...",
+        type = "message",
+        duration = NULL,
+        id = "excel_progress_notification"
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -398,6 +434,13 @@ server <- function(input, output, session) {
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
 
+        # Clear generated reports
+        unlink(excel_dir, recursive = TRUE)
+
+        # Show progress
+        shiny::removeNotification(id = "excel_progress_notification")
+        shiny::showNotification("Excel files generated successfully!", type = "message")
+
       }, error = function(e) {
         shiny::showNotification(paste("Error creating Excel download:", e$message), type = "error")
       })
@@ -412,6 +455,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating PDFs...",
+        type = "message",
+        duration = NULL,
+        id = "pdf_progress_notification"
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -431,9 +482,7 @@ server <- function(input, output, session) {
         )
 
         # Create directories
-        dir.create(fsys$internal, showWarnings = FALSE, recursive = TRUE)
-        dir.create(fsys$public, showWarnings = FALSE, recursive = TRUE)
-        dir.create(fsys$settings, showWarnings = FALSE, recursive = TRUE)
+        setup_filesystem(fsys, clear.reports = TRUE)
 
         # PDF report parameters
         params <- list(
@@ -446,7 +495,8 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_public_reports(epitrax, fsys)
+              trend_only <- "public" %in% input$trend_only_options
+              epitrax_write_pdf_public_reports(epitrax, fsys, trend.only = trend_only)
             }, error = function(e) {
               # PDF generation failed, but continue
               shiny::showNotification("PDF generation failed for public reports", type = "warning")
@@ -462,7 +512,13 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_grouped_stats(epitrax, params = list(title = "Grouped Disease Surveillance Report"), fsys = fsys)
+              trend_only <- "internal" %in% input$trend_only_options
+              epitrax_write_pdf_grouped_stats(
+                epitrax,
+                params = list(title = "Grouped Disease Surveillance Report"),
+                fsys = fsys,
+                trend.only = trend_only
+              )
             }, error = function(e) {
               # PDF generation failed, but continue
               shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
@@ -472,7 +528,7 @@ server <- function(input, output, session) {
           }
         }
 
-        # Remove empty directories
+        # Remove empty directories (so they don't appear in zip archive)
         if (length(list.files(fsys$internal)) == 0) {
           unlink(fsys$internal, recursive = TRUE)
         }
@@ -486,6 +542,15 @@ server <- function(input, output, session) {
         setwd(temp_dir)
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
+
+        # Clear generated reports
+        unlink(fsys$internal, recursive = TRUE)
+        unlink(fsys$public, recursive = TRUE)
+        unlink(fsys$settings, recursive = TRUE)
+
+        # Show progress
+        shiny::removeNotification(id = "pdf_progress_notification")
+        shiny::showNotification("PDFs generated successfully!", type = "message")
 
       }, error = function(e) {
         shiny::showNotification(paste("Error creating PDF download:", e$message), type = "error")
@@ -501,6 +566,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       shiny::req(epitrax_obj())
+
+      # Show progress
+      shiny::showNotification(
+        "Generating CSV, Excel, and PDF files...",
+        type = "message",
+        duration = NULL,
+        id = "all_progress_notification"
+      )
 
       # Create temporary directory
       temp_dir <- tempdir()
@@ -590,9 +663,7 @@ server <- function(input, output, session) {
         )
 
         # Create directories
-        dir.create(pdf_fsys$internal, showWarnings = FALSE, recursive = TRUE)
-        dir.create(pdf_fsys$public, showWarnings = FALSE, recursive = TRUE)
-        dir.create(pdf_fsys$settings, showWarnings = FALSE, recursive = TRUE)
+        setup_filesystem(pdf_fsys, clear.reports = TRUE)
 
         # PDF report parameters
         params <- list(
@@ -605,7 +676,8 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_public_reports(epitrax, pdf_fsys)
+              trend_only <- "public" %in% input$trend_only_options
+              epitrax_write_pdf_public_reports(epitrax, pdf_fsys, trend.only = trend_only)
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
               shiny::showNotification("PDF generation failed for public reports", type = "warning")
@@ -619,7 +691,13 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_grouped_stats(epitrax, params = list(title = "Grouped Disease Surveillance Report"), fsys = pdf_fsys)
+              trend_only <- "internal" %in% input$trend_only_options
+              epitrax_write_pdf_grouped_stats(
+                epitrax,
+                params = list(title = "Grouped Disease Surveillance Report"),
+                fsys = pdf_fsys,
+                trend.only = trend_only
+              )
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
               shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
@@ -627,7 +705,7 @@ server <- function(input, output, session) {
           }
         }
 
-        # Remove empty PDF directories
+        # Remove empty PDF directories (so they don't appear in zip archive)
         if (length(list.files(pdf_fsys$internal)) == 0) {
           unlink(pdf_fsys$internal, recursive = TRUE)
         }
@@ -644,6 +722,13 @@ server <- function(input, output, session) {
         setwd(temp_dir)
         utils::zip(file, zip_name, flags = "-r")
         setwd(old_wd)
+
+        # Clear generated reports
+        unlink(all_dir, recursive = TRUE)
+
+        # Show progress
+        shiny::removeNotification(id = "all_progress_notification")
+        shiny::showNotification("Files generated successfully!", type = "message")
 
       }, error = function(e) {
         shiny::showNotification(paste("Error creating combined download:", e$message), type = "error")

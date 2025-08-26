@@ -4,7 +4,7 @@
 \alias{epitrax_write_pdf_grouped_stats}
 \title{Write grouped statistics reports from EpiTrax object to PDF files}
 \usage{
-epitrax_write_pdf_grouped_stats(epitrax, params, fsys)
+epitrax_write_pdf_grouped_stats(epitrax, params, fsys, trend.only = FALSE)
 }
 \arguments{
 \item{epitrax}{Object of class \code{epitrax}.}
@@ -15,6 +15,8 @@ epitrax_write_pdf_grouped_stats(epitrax, params, fsys)
 }}
 
 \item{fsys}{Filesystem list containing paths for internal and public reports.}
+
+\item{trend.only}{Logical. Whether to show only trend in the PDF report.}
 }
 \value{
 The original EpiTrax object, unchanged.

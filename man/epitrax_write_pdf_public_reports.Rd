@@ -4,12 +4,14 @@
 \alias{epitrax_write_pdf_public_reports}
 \title{Create formatted PDF report of monthly cross-section reports}
 \usage{
-epitrax_write_pdf_public_reports(epitrax, fsys)
+epitrax_write_pdf_public_reports(epitrax, fsys, trend.only = FALSE)
 }
 \arguments{
 \item{epitrax}{Object of class \code{epitrax}.}
 
 \item{fsys}{Filesystem list containing path for public reports.}
+
+\item{trend.only}{Logical. Whether to show only trend in the PDF report.}
 }
 \value{
 The original EpiTrax object, unchanged.

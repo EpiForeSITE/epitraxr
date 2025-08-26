@@ -6,6 +6,7 @@ params:
     report_month: 1
     trend_threshold: 0.15
     report_data: NULL
+    trend_only: FALSE
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{longtable}
@@ -44,7 +45,38 @@ if (r_threshold < 0 | r_threshold > 1) {
     r_threshold <- 0.15
 }
 
-if (length(names(r_data)) == 8) {
+if(params$trend_only) {
+    r_data <- r_data[, c("Disease", "Trend")]
+
+    kbl(
+        r_data,
+        col.names = c(
+            "Disease",
+            paste0("Trend", footnote_marker_symbol(1))
+        ),
+        booktabs = TRUE,
+        align = "ll",
+        escape = FALSE
+        ) |>
+        kable_styling(
+            latex_options = c("scale_down")
+        ) |>
+        column_spec(
+            2,
+            background = ifelse(
+                r_data$Trend == "Elevated", "red",
+                ifelse(r_data$Trend == "Expected", "yellow",
+                "green"))
+        ) |>
+        footnote(symbol = c(
+            paste0(
+                "A percent change of ",
+                r_threshold * 100,
+                "% or more will result in a change in the trend"
+            )
+            ))
+    
+} else if (length(names(r_data)) == 8) {
     # Set header row from input parameters
     # This workaround is needed to dynamically create the header names
     header_2 <- c(3, 4)
