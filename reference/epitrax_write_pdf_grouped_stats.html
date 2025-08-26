@@ -49,7 +49,7 @@ internal and public grouped statistics reports.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epitrax_write_pdf_grouped_stats</span><span class="op">(</span><span class="va">epitrax</span>, <span class="va">params</span>, <span class="va">fsys</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epitrax_write_pdf_grouped_stats</span><span class="op">(</span><span class="va">epitrax</span>, <span class="va">params</span>, <span class="va">fsys</span>, trend.only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,6 +67,10 @@ internal and public grouped statistics reports.</p>
 
 <dt id="arg-fsys">fsys<a class="anchor" aria-label="anchor" href="#arg-fsys"></a></dt>
 <dd><p>Filesystem list containing paths for internal and public reports.</p></dd>
+
+
+<dt id="arg-trend-only">trend.only<a class="anchor" aria-label="anchor" href="#arg-trend-only"></a></dt>
+<dd><p>Logical. Whether to show only trend in the PDF report.</p></dd>
 
 </dl></div>
     <div class="section level2">
