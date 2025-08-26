@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span><span class="op">)</span></span></code></pre></div>
+<p>For local health departments, we recommend going through the steps under <a href="#installation-for-local-health-departments">Installation For Local Health Departments</a> (below). Our experience is that LHD-managed machines need additional tools and packages installed first. This list will walk you through those steps.</p>
 <div class="section level3">
 <h3 id="installing-package-dependencies">Installing Package Dependencies<a class="anchor" aria-label="anchor" href="#installing-package-dependencies"></a>
 </h3>
@@ -85,7 +86,44 @@
 <code class="sourceCode R"><span><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># to uninstall TinyTeX, run</span></span>
 <span><span class="co"># tinytex::uninstall_tinytex()</span></span></code></pre></div>
-<p>At this point, the package should run fully for you.</p>
+<p>After that, you can use <code>epitraxr</code> to generate PDF reports.</p>
+</div>
+<div class="section level3">
+<h3 id="installation-for-local-health-departments">Installation For Local Health Departments<a class="anchor" aria-label="anchor" href="#installation-for-local-health-departments"></a>
+</h3>
+<p>In our experience, machines managed by local health departments (LHDs) are less likely to have installed all necessary packages and tools. For these users, we recommend completing the following steps before installing the package using the instructions above.</p>
+<ol style="list-style-type: decimal">
+<li>Install the <a href="https://cran.rstudio.com" class="external-link">latest version of R</a>
+</li>
+<li><a href="https://posit.co/download/rstudio-desktop/" class="external-link">Install RStudio</a></li>
+<li>If on Windows, install the version of <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a> corresponding to the version of R you installed. This is needed to build and install certain types of packages.</li>
+<li>Install <code>devtools</code> (needed to install the package from GitHub)</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li>Install the <code>tinytex</code> package</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tinytex"</span><span class="op">)</span></span></code></pre></div>
+<ol start="6" style="list-style-type: decimal">
+<li>Install TinyTeX (the LaTeX distribution) using the <code>tinytex</code> package</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<ol start="7" style="list-style-type: decimal">
+<li>Install <code>epitraxr</code>
+</li>
+</ol>
+<ul>
+<li>
+<strong>Note:</strong> If you previously attempted to install <code>epitraxr</code> and ran into an error (such as one solved by the above steps), you will need to install the package again with the option <code>force = TRUE</code>. This ensures the full package is downloaded and installed properly.</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li>This command will also update the package (e.g., if you want to get the latest version from GitHub.).</li>
+</ul>
 </div>
 </div>
 <div class="section level2">
@@ -95,7 +133,7 @@
 <div class="section level3">
 <h3 id="standard-mode">Standard Mode<a class="anchor" aria-label="anchor" href="#standard-mode"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
@@ -118,7 +156,7 @@
 <div class="section level3">
 <h3 id="piped-mode-recommended">Piped Mode (recommended)<a class="anchor" aria-label="anchor" href="#piped-mode-recommended"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">config_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
@@ -145,7 +183,7 @@
 <span><span class="co">#&gt; 2 Lyme disease    0    0    0    0    0    0</span></span>
 <span><span class="co">#&gt; 3      Measles  211  326  292  414  586  304</span></span></code></pre></div>
 <p>Piped mode makes it super simple to add additional reports.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -185,17 +223,19 @@
 </h3>
 <p>The epitraxr package includes a Shiny app, which provides a user-friendly interface for running report generation operations with epitraxr.</p>
 <p>To run the Shiny app, you’ll need to install the optional dependencies, such as <code>shiny</code> and <code>DT</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Then you can run the app with <code><a href="reference/run_app.html">run_app()</a></code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># library(epitraxr)</span></span>
-<span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Next, load the package:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://epiforesite.github.io/epitraxr/">epitraxr</a></span><span class="op">)</span></span></code></pre></div>
+<p>Finally, use <code><a href="reference/run_app.html">run_app()</a></code> to launch the app:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="scripts">Scripts<a class="anchor" aria-label="anchor" href="#scripts"></a>
 </h3>
-<p>We’ve developed a couple of handy scripts that are included in the <a href="https://github.com/EpiForeSITE/epitraxr" class="external-link">GitHub repo</a> under the <a href="https://github.com/EpiForeSITE/epitraxr/tree/main/scripts" class="external-link"><code>scripts/</code> folder</a>:</p>
+<p>We’ve developed a couple of handy scripts that are included in the <a href="https://github.com/EpiForeSITE/epitraxr" class="external-link">GitHub repo</a> under the <a href="https://github.com/EpiForeSITE/epitraxr/tree/main/scripts" class="external-link"><code>scripts/</code></a> folder:</p>
 <ul>
 <li>
 <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R" class="external-link"><code>epitraxr-piped.R</code></a>: Showcases report generation using epitraxr’s Piped Mode <strong>(recommended)</strong>
@@ -204,6 +244,13 @@
 <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-generator.R" class="external-link"><code>epitraxr-generator.R</code></a>: Showcases report generation using the epitraxr’s Standard Mode</li>
 </ul>
 <p>These scripts provide you with a full report generation process that should run successfully if you have the package installed with all additional dependencies (see above). They provide identical output to the <a href="https://github.com/EpiForeSITE/epitrax-report-automation" class="external-link">original project</a> (currently inactive).</p>
+</div>
+<div class="section level3">
+<h3 id="troubleshooting-common-usage-problems">Troubleshooting: Common Usage Problems<a class="anchor" aria-label="anchor" href="#troubleshooting-common-usage-problems"></a>
+</h3>
+<ul>
+<li>If <code>epitraxr</code> unexpectedly fails to generate reports after previously succeeding, check that none of the generated reports are open on your machine. Often, an <code>epitraxr</code> script will start by deleting existing reports from folders before generating new ones. If the files are opened, <code>epitraxr</code> cannot delete them. Close any open files and try running the script again.</li>
+</ul>
 </div>
 </div>
 <div class="section level2">
