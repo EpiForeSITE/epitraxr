@@ -382,7 +382,9 @@ should run successfully if you have the package installed with all
 additional dependencies (see above). They provide identical output to
 the [original
 project](https://github.com/EpiForeSITE/epitrax-report-automation)
-(currently inactive).
+(currently inactive), though
+[`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R)
+additionally provides a few new reports and generates PDFs.
 
 ### Troubleshooting: Common Usage Problems
 

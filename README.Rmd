@@ -259,7 +259,7 @@ We've developed a couple of handy scripts that are included in the [GitHub repo]
 -   [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R): Showcases report generation using epitraxr's Piped Mode **(recommended)**
 -   [`epitraxr-generator.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-generator.R): Showcases report generation using the epitraxr's Standard Mode
 
-These scripts provide you with a full report generation process that should run successfully if you have the package installed with all additional dependencies (see above). They provide identical output to the [original project](https://github.com/EpiForeSITE/epitrax-report-automation) (currently inactive).
+These scripts provide you with a full report generation process that should run successfully if you have the package installed with all additional dependencies (see above). They provide identical output to the [original project](https://github.com/EpiForeSITE/epitrax-report-automation) (currently inactive), though [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R) additionally provides a few new reports and generates PDFs.
 
 ### Troubleshooting: Common Usage Problems
 
