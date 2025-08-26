@@ -1,5 +1,10 @@
 # epitraxr (development version)
 
+* Add formatted PDF reports
+* Add option to produce trend-only PDF reports
+* Update installation instructions in README
+* Increase file upload size limit in Shiny app
+
 # epitraxr 0.4.0
 
 ## Major Changes

@@ -41,6 +41,12 @@ You can install the development version of `epitraxr` from
 devtools::install_github("EpiForeSITE/epitraxr")
 ```
 
+For local health departments, we recommend going through the steps under
+[Installation For Local Health
+Departments](#installation-for-local-health-departments) (below). Our
+experience is that LHD-managed machines need additional tools and
+packages installed first. This list will walk you through those steps.
+
 ### Installing Package Dependencies
 
 Many features of `epitraxr` will work with the standard installation.
@@ -72,7 +78,52 @@ tinytex::install_tinytex()
 # tinytex::uninstall_tinytex()
 ```
 
-At this point, the package should run fully for you.
+After that, you can use `epitraxr` to generate PDF reports.
+
+### Installation For Local Health Departments
+
+In our experience, machines managed by local health departments (LHDs)
+are less likely to have installed all necessary packages and tools. For
+these users, we recommend completing the following steps before
+installing the package using the instructions above.
+
+1.  Install the [latest version of R](https://cran.rstudio.com)
+2.  [Install RStudio](https://posit.co/download/rstudio-desktop/)
+3.  If on Windows, install the version of
+    [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+    corresponding to the version of R you installed. This is needed to
+    build and install certain types of packages.
+4.  Install `devtools` (needed to install the package from GitHub)
+
+``` r
+install.packages("devtools")
+```
+
+5.  Install the `tinytex` package
+
+``` r
+install.packages("tinytex")
+```
+
+6.  Install TinyTeX (the LaTeX distribution) using the `tinytex` package
+
+``` r
+tinytex::install_tinytex()
+```
+
+7.  Install `epitraxr`
+
+- **Note:** If you previously attempted to install `epitraxr` and ran
+  into an error (such as one solved by the above steps), you will need
+  to install the package again with the option `force = TRUE`. This
+  ensures the full package is downloaded and installed properly.
+
+``` r
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE, force = TRUE)
+```
+
+- This command will also update the package (e.g., if you want to get
+  the latest version from GitHub.).
 
 ## Usage
 
@@ -183,10 +234,15 @@ such as `shiny` and `DT`.
 devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
 ```
 
-Then you can run the app with `run_app()`.
+Next, load the package:
 
 ``` r
-# library(epitraxr)
+library(epitraxr)
+```
+
+Finally, use `run_app()` to launch the app:
+
+``` r
 run_app()
 ```
 
@@ -194,8 +250,8 @@ run_app()
 
 We’ve developed a couple of handy scripts that are included in the
 [GitHub repo](https://github.com/EpiForeSITE/epitraxr) under the
-[`scripts/`
-folder](https://github.com/EpiForeSITE/epitraxr/tree/main/scripts):
+[`scripts/`](https://github.com/EpiForeSITE/epitraxr/tree/main/scripts)
+folder:
 
 - [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R):
   Showcases report generation using epitraxr’s Piped Mode
@@ -209,6 +265,15 @@ additional dependencies (see above). They provide identical output to
 the [original
 project](https://github.com/EpiForeSITE/epitrax-report-automation)
 (currently inactive).
+
+### Troubleshooting: Common Usage Problems
+
+- If `epitraxr` unexpectedly fails to generate reports after previously
+  succeeding, check that none of the generated reports are open on your
+  machine. Often, an `epitraxr` script will start by deleting existing
+  reports from folders before generating new ones. If the files are
+  opened, `epitraxr` cannot delete them. Close any open files and try
+  running the script again.
 
 ## Getting Help
 
