@@ -1,16 +1,16 @@
 # Dictionary constant for multiselect options matching epitraxr functions
 REPORT_OPTIONS <- list(
-  "Annual Counts" = "annual_counts",
-  "Monthly Counts All Years" = "monthly_counts_all_yrs",
-  "Monthly Averages" = "monthly_avgs",
-  "YTD Counts" = "ytd_counts",
-  "YTD Rates" = "ytd_rates",
-  "Monthly Cross-sections" = "month_crosssections",
-  "Public YTD Rates" = "public_ytd_rates",
-  "Combined Month/YTD" = "combined_month_ytd",
-  "Monthly Medians" = "monthly_medians",
-  "YTD Medians" = "ytd_medians",
-  "Grouped Stats" = "grouped_stats"
+  "(internal) Annual Counts" = "annual_counts",
+  "(internal) Monthly Counts All Years" = "monthly_counts_all_yrs",
+  "(internal) Monthly Averages" = "monthly_avgs",
+  "(internal) YTD Counts" = "ytd_counts",
+  "(internal) YTD Rates" = "ytd_rates",
+  "(internal) Grouped Stats" = "grouped_stats",
+  "(internal) Monthly Medians" = "monthly_medians",
+  "(internal) YTD Medians" = "ytd_medians",
+  "(public) Monthly Cross-sections" = "month_crosssections",
+  "(public) YTD Rates" = "public_ytd_rates",
+  "(public) Combined Month/YTD" = "combined_month_ytd"
 )
 
 # Function to display DataFrame as table
@@ -106,6 +106,17 @@ ui <- shiny::fluidPage(
       ),
 
       shiny::br(), shiny::br(),
+
+      # Trend Only checkboxes
+      shiny::checkboxGroupInput(
+        "trend_only_options",
+        "Trend Only PDFs:",
+        choices = list(
+          "Internal Reports" = "internal",
+          "Public Reports" = "public"
+        ),
+        selected = NULL
+      ),
 
       # Download buttons in individual rows
       shiny::downloadButton(
@@ -234,6 +245,18 @@ server <- function(input, output, session) {
         epitrax <- epitrax_ireport_ytd_counts_for_month(epitrax, as.rates = TRUE)
       }
 
+      if ("grouped_stats" %in% selected_reports) {
+        epitrax <- epitrax_report_grouped_stats(epitrax, is.public = FALSE)
+      }
+
+      if ("monthly_medians" %in% selected_reports) {
+        epitrax <- epitrax_report_monthly_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
+      }
+
+      if ("ytd_medians" %in% selected_reports) {
+        epitrax <- epitrax_report_ytd_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
+      }
+
       # Generate public reports
       if ("month_crosssections" %in% selected_reports) {
         epitrax <- epitrax_preport_month_crosssections(epitrax, month_offsets = 0:3)
@@ -245,19 +268,6 @@ server <- function(input, output, session) {
 
       if ("combined_month_ytd" %in% selected_reports) {
         epitrax <- epitrax_preport_combined_month_ytd(epitrax)
-      }
-
-      # Generate additional internal reports
-      if ("monthly_medians" %in% selected_reports) {
-        epitrax <- epitrax_report_monthly_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
-      }
-
-      if ("ytd_medians" %in% selected_reports) {
-        epitrax <- epitrax_report_ytd_medians(epitrax, is.public = FALSE, exclude.report.year = TRUE)
-      }
-
-      if ("grouped_stats" %in% selected_reports) {
-        epitrax <- epitrax_report_grouped_stats(epitrax, is.public = FALSE)
       }
 
       # Store the epitrax object
@@ -446,7 +456,8 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_public_reports(epitrax, fsys)
+              trend_only <- "public" %in% input$trend_only_options
+              epitrax_write_pdf_public_reports(epitrax, fsys, trend.only = trend_only)
             }, error = function(e) {
               # PDF generation failed, but continue
               shiny::showNotification("PDF generation failed for public reports", type = "warning")
@@ -462,7 +473,13 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_grouped_stats(epitrax, params = list(title = "Grouped Disease Surveillance Report"), fsys = fsys)
+              trend_only <- "internal" %in% input$trend_only_options
+              epitrax_write_pdf_grouped_stats(
+                epitrax,
+                params = list(title = "Grouped Disease Surveillance Report"),
+                fsys = fsys,
+                trend.only = trend_only
+              )
             }, error = function(e) {
               # PDF generation failed, but continue
               shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
@@ -605,7 +622,8 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_public_reports(epitrax, pdf_fsys)
+              trend_only <- "public" %in% input$trend_only_options
+              epitrax_write_pdf_public_reports(epitrax, pdf_fsys, trend.only = trend_only)
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
               shiny::showNotification("PDF generation failed for public reports", type = "warning")
@@ -619,7 +637,13 @@ server <- function(input, output, session) {
           # Check if rmarkdown is available before attempting PDF generation
           if (requireNamespace("rmarkdown", quietly = TRUE)) {
             tryCatch({
-              epitrax_write_pdf_grouped_stats(epitrax, params = list(title = "Grouped Disease Surveillance Report"), fsys = pdf_fsys)
+              trend_only <- "internal" %in% input$trend_only_options
+              epitrax_write_pdf_grouped_stats(
+                epitrax,
+                params = list(title = "Grouped Disease Surveillance Report"),
+                fsys = pdf_fsys,
+                trend.only = trend_only
+              )
             }, error = function(e) {
               # PDF generation failed, but continue with other formats
               shiny::showNotification("PDF generation failed for grouped stats reports", type = "warning")
