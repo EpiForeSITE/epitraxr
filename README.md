@@ -345,7 +345,8 @@ user-friendly interface for running report generation operations with
 epitraxr.
 
 To run the Shiny app, you’ll need to install the optional dependencies,
-such as `shiny` and `DT`.
+such as `shiny` and `DT` (if you didn’t already do this during initial
+package installation).
 
 ``` r
 devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)

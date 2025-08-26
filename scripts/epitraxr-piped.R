@@ -43,9 +43,18 @@ epitrax <- setup_epitrax(
   epitrax_ireport_monthly_avgs(exclude.report.year = TRUE) |>
   epitrax_ireport_ytd_counts_for_month(as.rates = FALSE) |>
   epitrax_ireport_ytd_counts_for_month(as.rates = TRUE) |>
+  epitrax_report_grouped_stats() |>
+  epitrax_preport_combined_month_ytd() |>
   epitrax_preport_month_crosssections(month_offsets = 0:3) |>
   epitrax_preport_ytd_rates() |>
   epitrax_write_csvs(fsys = fsys) |>
-  epitrax_write_xlsxs(fsys = fsys)
+  epitrax_write_xlsxs(fsys = fsys) |>
+  epitrax_write_pdf_public_reports(fsys = fsys) |>
+  epitrax_write_pdf_grouped_stats(
+    params = list(
+      title = "Grouped Disease Surveillance Report"
+    ),
+    fsys = fsys
+  )
 
 message(".......Done.")
