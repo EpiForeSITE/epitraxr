@@ -70,8 +70,8 @@ After that, you can use `epitraxr` to generate PDF reports.
 
 In our experience, machines managed by local health departments (LHDs) are less likely to have installed all necessary packages and tools. For these users, we recommend completing the following steps before installing the package using the instructions above.
 
-1.  Install the [latest version of R](https://cran.rstudio.com)
-2.  [Install RStudio](https://posit.co/download/rstudio-desktop/)
+1.  Install the latest version of R: https://cran.rstudio.com
+2.  Install RStudio: https://posit.co/download/rstudio-desktop/
 3.  If on Windows, install the version of [Rtools](https://cran.r-project.org/bin/windows/Rtools/) corresponding to the version of R you installed. This is needed to build and install certain types of packages.
 4.  Install `devtools` (needed to install the package from GitHub)
 
@@ -103,9 +103,73 @@ devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE, force = TR
 
 ## Usage
 
+### Inputs
+
+#### Input Data
+
+`epitraxr` expects input data in CSV format (not Excel) that contains EpiTrax data exported with the following columns:
+
+- `patient_mmwr_week` (integer)
+- `patient_mmwr_year` (integer)
+- `patient_disease` (character)
+
+For example:
+```csv
+"patient_mmwr_week","patient_mmwr_year","patient_disease"
+"26","2020","Chlamydia trachomatis infection"
+```
+
+Your dataset can include other columns, but `epitraxr` will ignore them.
+
+Also, rows with missing or NA values in the input dataset will be ignored and a warning will be printed to the Console. The warning is intended to inform the user that their input had missing/NA values, in case the user wants to correct that (and re-run the report generation). It does not mean the program was unable to generate reports from the rest of the data.
+
+#### Report Settings
+
+To configure your reports, `epitraxr` accepts three **OPTIONAL** files:
+
+1. **Internal Disease List:** CSV file listing the diseases to include in internal reports as they are represented in EpiTrax.
+    - This file is named `internal_report_diseases.csv` in our example scripts.
+    - This file can have up to two columns:
+       - `EpiTrax_name`: A list of all diseases to include in the report **AS THEY ARE NAMED IN EPITRAX**. This column is **required**.
+       - `Group_name`: Containing the disease group (e.g., "Zoonotic Disease") for each disease in the `EpiTrax_name` column. This column is **optional** and is only used by the grouped disease report functions (`create_report_grouped_stats()` and `epitrax_report_grouped_stats()`). If omitted, most `epitraxr` functions will operate normally, but the grouped disease report functions will set all diseases to the single group "Uncategorized".
+    - If the Internal Disease List is not provided, `epitraxr` will default to using whatever diseases are found in the input dataset.
+2. **Public Disease List:** CSV file listing the diseases to include in public reports as they are represented in EpiTrax.
+    - This file is named `public_report_diseases.csv` in our example scripts.
+    - This file should have two columns:
+      - `EpiTrax_name`: A list of all diseases to include in the report **AS THEY ARE NAMED IN EPITRAX**.
+      - `Public_name`: How each disease should be named in the public report. For example, converting "Chlamydia trachomatis infection" to "Chlamydia".
+         - **NOTE:** If multiple diseases have the same `Public_name` their report entries will be combined. For example, to combine "Syphilis, primary" and "Syphilis, secondary" into "Syphilis", simply set the `Public_name` of both diseases to "Syphilis".
+    - If the Public Disease List is not provided, the program will default to using whatever diseases are found in the input dataset.
+3. **Report Config:** YAML file providing additional configuration information:
+    - `current_population`: Population for converting case counts for the **current year** to Rates per 100k. Defaults to 100k.
+    - `avg_5yr_population`: Population to use for converting case counts for the **5yr historical average** to Rates per 100k. Defaults to `current_population`.
+    - `rounding_decimals`: How many digits to round decimal values. Defaults to 2.
+    - `generate_csvs`: Whether to generate CSVs. When false, only Excel files will be generated. Defaults to `TRUE`.
+    - `trend_threshold`: Threshold for determining the "Trend" column in reports that compute this statistic. A percent change above or below the `trend_threshold` will result in a change in the trend. Defaults to `0.15` (15%).
+    - The Report Config file is named `report_config.yaml` in our example scripts.
+
+Again, these files are optional, but significantly improve the quality of your reports.
+
+**Note:** Disease lists (both internal and public) might include diseases for which there are no case data in the input dataset. In this case, their values will simply be 0s in the generated reports.
+
+#### Filesystem
+
+`epitraxr` can output reports as CSVs, Excel files, or PDFs. To write reports to outputs, you need to provide the output functions with folders where `epitraxr` will write the outputs. Generally, we'll use three folders:
+
+- `report_settings/`: Holds settings files for report generation.
+- `internal_reports/`: Holds reports intended for internal use by the health department.
+- `public_reports/`: Holds reports intended for public use.
+
+You can create these manually or you can use the `setup_filesystem()` function to create the directories. The example scripts in the [`scripts/`](https://github.com/EpiForeSITE/epitraxr/tree/main/scripts) folder all start by setting up the filesystem.
+
+**WARNING:** Do not place any of your own files in the `internal_reports` and `public_reports` folders you give `epitraxr` as typically *EVERYTHING* in these folders is *DELETED* each time the script runs (depending on how you configure `setup_filesystem()`). This is intended to remove reports from previous runs so they don't clutter your filesystem. If you want to save old reports, move them out of the `internal_reports`/`public_reports` folders before running your `epitraxr` script again.
+
+
+### Executing `epitraxr` Code
+
 `epitraxr` can be used in either "standard" mode or "piped" mode (recommended).
 
-### Standard Mode
+#### Standard Mode
 
 ```{r usage-standard}
 library(epitraxr)
@@ -124,7 +188,7 @@ report <- create_report_annual_counts(
 report
 ```
 
-### Piped Mode (recommended)
+#### Piped Mode (recommended)
 
 ```{r usage-piped}
 library(epitraxr)
@@ -170,7 +234,7 @@ list(epitrax$internal_reports)
 
 The epitraxr package includes a Shiny app, which provides a user-friendly interface for running report generation operations with epitraxr.
 
-To run the Shiny app, you'll need to install the optional dependencies, such as `shiny` and `DT`.
+To run the Shiny app, you'll need to install the optional dependencies, such as `shiny` and `DT` (if you didn't already do this during initial package installation).
 
 ``` r
 devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
@@ -195,7 +259,7 @@ We've developed a couple of handy scripts that are included in the [GitHub repo]
 -   [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R): Showcases report generation using epitraxr's Piped Mode **(recommended)**
 -   [`epitraxr-generator.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-generator.R): Showcases report generation using the epitraxr's Standard Mode
 
-These scripts provide you with a full report generation process that should run successfully if you have the package installed with all additional dependencies (see above). They provide identical output to the [original project](https://github.com/EpiForeSITE/epitrax-report-automation) (currently inactive).
+These scripts provide you with a full report generation process that should run successfully if you have the package installed with all additional dependencies (see above). They provide identical output to the [original project](https://github.com/EpiForeSITE/epitrax-report-automation) (currently inactive), though [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R) additionally provides a few new reports and generates PDFs.
 
 ### Troubleshooting: Common Usage Problems
 
