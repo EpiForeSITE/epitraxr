@@ -72,7 +72,49 @@ tinytex::install_tinytex()
 # tinytex::uninstall_tinytex()
 ```
 
-At this point, the package should run fully for you.
+### Installation Troubleshooting For Local Health Departments
+
+Here we document common troubleshooting steps that may arise for users
+at local health departments (LHDs). These are based on our experience
+installing the package on LHD-managed machines, which are less likely to
+have installed the necessary packages and tools. For new users with
+limited experience running R packages, you should run the following
+steps before attempting to install the package.
+
+- Install the [latest version of R](https://cran.rstudio.com)
+- [Install RStudio](https://posit.co/download/rstudio-desktop/)
+- If on Windows, install the version of
+  [Rtools](https://cran.r-project.org/bin/windows/Rtools/) corresponding
+  to the version of R you installed. This is needed to build and install
+  certain types of packages.
+- Install `devtools` (needed to install the package from GitHub)
+
+``` r
+install.packages("devtools")
+```
+
+- Install the `tinytex` package
+
+``` r
+install.packages("tinytex")
+```
+
+- Install TinyTeX (the LaTeX distribution) using the `tinytex` package
+
+``` r
+tinytex::install_tinytex()
+```
+
+- If you previously attempted to install `epitraxr` and ran into an
+  error (such as one solved by the above steps), you will need to
+  install again with the option `force = TRUE`. This is ensures that the
+  full package is downloaded and installed. **Note:** This command will
+  also update the package, if you want to get the latest version from
+  GitHub.
+
+``` r
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE, force = TRUE)
+```
 
 ## Usage
 
@@ -186,7 +228,7 @@ devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
 Then you can run the app with `run_app()`.
 
 ``` r
-# library(epitraxr)
+library(epitraxr)
 run_app()
 ```
 
@@ -209,6 +251,15 @@ additional dependencies (see above). They provide identical output to
 the [original
 project](https://github.com/EpiForeSITE/epitrax-report-automation)
 (currently inactive).
+
+### Troubleshooting: Common Usage Problems
+
+- If `epitraxr` suddenly fails to generate reports (after previously
+  succeeding), check that none of the generated reports are open on your
+  machine. Often, an `epitraxr` script will start by deleting existing
+  reports from folders before generating new ones. If the files are
+  opened, `epitraxr` cannot delete them. Close any open files and try
+  running the script again.
 
 ## Getting Help
 
