@@ -42,11 +42,22 @@ epitrax <- setup_epitrax(
   epitrax_write_pdf_public_reports(
     fsys = fsys
   ) |>
+  epitrax_write_pdf_public_reports(
+    fsys = fsys,
+    trend.only = TRUE
+  ) |>
   epitrax_write_pdf_grouped_stats(
     params = list(
       title = "Grouped Disease Surveillance Report"
     ),
     fsys = fsys
+  ) |>
+  epitrax_write_pdf_grouped_stats(
+    params = list(
+      title = "Disease Trend Report (Grouped)"
+    ),
+    fsys = fsys,
+    trend.only = TRUE
   )
 
 message(".......Done.")

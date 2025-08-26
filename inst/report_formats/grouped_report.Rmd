@@ -7,6 +7,7 @@ params:
     report_month: 1
     trend_threshold: 0.15
     report_data: NULL
+    trend_only: FALSE
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{longtable}
@@ -46,7 +47,54 @@ if (r_threshold < 0 | r_threshold > 1) {
     r_threshold <- 0.15
 }
 
-if (length(names(r_data)) == 10) {
+# Trend-only report
+if (params$trend_only) {
+    r_data <- r_data[, c("Group", "Disease", "YTD Trend")]
+
+    kbl(
+        r_data[,2:3],
+        row.names = FALSE,
+        col.names = c(
+            "Disease",
+            paste0(
+                r_year,
+                " YTD",  
+                footnote_marker_symbol(1),
+                " Trend",
+                footnote_marker_symbol(2)
+            )
+        ),
+        booktabs = TRUE,
+        longtable = TRUE,
+        caption = params$title,
+        align = "ll",
+        escape = FALSE
+        ) |>
+        kable_styling(
+            font_size = 7,
+            latex_options = c("scale_down", "repeat_header")
+        ) |>
+        column_spec(
+            2,
+            background = ifelse(
+                r_data$`YTD Trend` == "Elevated", "red",
+                ifelse(r_data$`YTD Trend` == "Expected", "yellow",
+                "green"))
+        ) |>
+        pack_rows(
+            index = table(r_data$Group),
+            latex_gap_space = "1em"
+        ) |>
+        footnote(symbol = c(
+            "Year-to-Date",
+            paste0(
+                "Trend is computed by comparing the current YTD to the historical YTD average. A percent change of ",
+                r_threshold * 100,
+                "% or more will result in a change in the trend."
+            )
+        ))
+
+} else if (length(names(r_data)) == 10) { # Full report
     # Set header row from input parameters
     # This workaround is needed to dynamically create the header names
     header_2 <- c(2, 2, 1, 2)
@@ -107,7 +155,6 @@ if (length(names(r_data)) == 10) {
                 "% or more will result in a change in the trend."
             )
             ))
-        
 }
 ```
 

@@ -258,6 +258,8 @@ write_report_xlsx <- function(data, filename, folder) {
 #'   - trend_threshold: Threshold for trend calculations (defaults to 0.15)
 #' @param filename String. Output filename for the rendered report.
 #' @param folder Filepath. Output directory for the rendered report.
+#' @param trend.only Logical. Whether to show only trend in the PDF report.
+#' If TRUE, "trend_only_" will be prepended to the filename.
 #'
 #' @returns NULL (called for side effects - creates the report file).
 #' @export
@@ -296,7 +298,7 @@ write_report_xlsx <- function(data, filename, folder) {
 #'    folder = tempdir()
 #'  )
 #' }
-write_grouped_report_pdf <- function(data, params, filename, folder) {
+write_grouped_report_pdf <- function(data, params, filename, folder, trend.only = FALSE) {
   # Check if rmarkdown is available
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
     stop(
@@ -316,6 +318,11 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
     dir.create(folder, recursive = TRUE)
   }
 
+  # Correct filename if trend.only is TRUE
+  corrected_filename <- ifelse(trend.only,
+                              paste0("trend_only_", filename),
+                              filename)
+
   # Render the report
   rmarkdown::render(
     input = template_path,
@@ -324,9 +331,10 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
       report_year = params$report_year %||% 2025,
       report_month = params$report_month %||% 1,
       trend_threshold = params$trend_threshold %||% 0.15,
-      report_data = data
+      report_data = data,
+      trend_only = trend.only
     ),
-    output_file = filename,
+    output_file = corrected_filename,
     output_dir = folder,
     quiet = TRUE,
     envir = new.env(parent = globalenv())
@@ -348,6 +356,8 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
 #'   - trend_threshold: Threshold for trend calculations (defaults to 0.15)
 #' @param filename String. Output filename for the rendered report.
 #' @param folder Filepath. Output directory for the rendered report.
+#' @param trend.only Logical. Whether to show only trend in the PDF report.
+#' If TRUE, "trend_only_" will be prepended to the filename.
 #'
 #' @returns NULL (called for side effects - creates the report file).
 #' @export
@@ -380,7 +390,7 @@ write_grouped_report_pdf <- function(data, params, filename, folder) {
 #'    folder = tempdir()
 #'  )
 #' }
-write_report_pdf <- function(data, params, filename, folder) {
+write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE) {
   # Check if rmarkdown is available
   if (!requireNamespace("rmarkdown", quietly = TRUE)) {
     stop(
@@ -400,6 +410,11 @@ write_report_pdf <- function(data, params, filename, folder) {
     dir.create(folder, recursive = TRUE)
   }
 
+  # Correct filename if trend.only is TRUE
+  corrected_filename <- ifelse(trend.only,
+                               paste0("trend_only_", filename),
+                               filename)
+
   # Render the report
   rmarkdown::render(
     input = template_path,
@@ -408,9 +423,10 @@ write_report_pdf <- function(data, params, filename, folder) {
       report_year = params$report_year %||% 2025,
       report_month = params$report_month %||% 1,
       trend_threshold = params$trend_threshold %||% 0.15,
-      report_data = data
+      report_data = data,
+      trend_only = trend.only
     ),
-    output_file = filename,
+    output_file = corrected_filename,
     output_dir = folder,
     quiet = TRUE,
     envir = new.env(parent = globalenv())

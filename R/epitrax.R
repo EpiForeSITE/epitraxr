@@ -896,6 +896,7 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #'
 #' @param epitrax Object of class `epitrax`.
 #' @param fsys Filesystem list containing path for public reports.
+#' @param trend.only Logical. Whether to show only trend in the PDF report.
 #'
 #' @returns The original EpiTrax object, unchanged.
 #' @export
@@ -926,7 +927,7 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #'   epitrax_preport_month_crosssections(month_offsets = 0) |>
 #'   epitrax_write_pdf_public_reports(fsys = fsys)
 #' }
-epitrax_write_pdf_public_reports <- function(epitrax, fsys) {
+epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) {
 
     validate_epitrax(epitrax)
     validate_filesystem(fsys)
@@ -949,7 +950,8 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys) {
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),
-            folder = fsys$public
+            folder = fsys$public,
+            trend.only = trend.only
         )
 
     }
@@ -968,6 +970,7 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys) {
 #' @param params List. Report parameters containing:
 #'   - title: Report title (defaults to "Grouped Report")
 #' @param fsys Filesystem list containing paths for internal and public reports.
+#' @param trend.only Logical. Whether to show only trend in the PDF report.
 #'
 #' @returns The original EpiTrax object, unchanged.
 #' @export
@@ -1003,7 +1006,7 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys) {
 #'   epitrax_report_grouped_stats() |>
 #'   epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
 #' }
-epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
+epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = FALSE) {
 
     validate_epitrax(epitrax)
     validate_filesystem(fsys)
@@ -1024,7 +1027,8 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),
-            folder = fsys$internal
+            folder = fsys$internal,
+            trend.only = trend.only
         )
     }
 
@@ -1040,7 +1044,8 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys) {
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),
-            folder = fsys$public
+            folder = fsys$public,
+            trend.only = trend.only
         )
     }
 

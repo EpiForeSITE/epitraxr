@@ -4,7 +4,7 @@
 \alias{write_report_pdf}
 \title{Write general PDF report of disease stats from R Markdown template}
 \usage{
-write_report_pdf(data, params, filename, folder)
+write_report_pdf(data, params, filename, folder, trend.only = FALSE)
 }
 \arguments{
 \item{data}{Dataframe. Report data containing disease statistics.}
@@ -20,6 +20,9 @@ write_report_pdf(data, params, filename, folder)
 \item{filename}{String. Output filename for the rendered report.}
 
 \item{folder}{Filepath. Output directory for the rendered report.}
+
+\item{trend.only}{Logical. Whether to show only trend in the PDF report.
+If TRUE, "trend_only_" will be prepended to the filename.}
 }
 \value{
 NULL (called for side effects - creates the report file).
