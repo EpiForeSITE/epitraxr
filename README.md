@@ -14,7 +14,6 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Ep
 [![R-CMD-check](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml)
 [![pkgdown](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml)
 [![codecov](https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://codecov.io/gh/EpiForeSITE/epitraxr)
-
 <!-- badges: end -->
 
 ## Overview
@@ -235,13 +234,13 @@ such as `shiny` and `DT`.
 devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
 ```
 
-Next, load the package.
+Next, load the package:
 
 ``` r
 library(epitraxr)
 ```
 
-Then you can run the app with `run_app()`.
+Finally, use `run_app()` to launch the app:
 
 ``` r
 run_app()
@@ -251,8 +250,8 @@ run_app()
 
 We’ve developed a couple of handy scripts that are included in the
 [GitHub repo](https://github.com/EpiForeSITE/epitraxr) under the
-[`scripts/`
-folder](https://github.com/EpiForeSITE/epitraxr/tree/main/scripts):
+[`scripts/`](https://github.com/EpiForeSITE/epitraxr/tree/main/scripts)
+folder:
 
 - [`epitraxr-piped.R`](https://github.com/EpiForeSITE/epitraxr/blob/main/scripts/epitraxr-piped.R):
   Showcases report generation using epitraxr’s Piped Mode
