@@ -57,20 +57,27 @@ reference:
   - get_month_counts
 
 - title: Filesystem
-  desc: Functions for managing files and directories
+
+- subtitle: Setup
+  desc: Functions for setting up the filesystem
   contents:
   - create_filesystem
   - clear_old_reports
   - setup_filesystem
+
+- subtitle: Reading files
+  desc: Functions for reading configuration and data files
+  contents:
   - read_report_config
   - epitraxr_config
-  - write_report_csv
-  - write_report_xlsx
-  - write_grouped_report_pdf
-  - write_report_pdf
   - get_internal_disease_list
   - get_public_disease_list
   - get_report_disease_lists
+
+- subtitle: Export functions
+  desc: Functions to export reports
+  contents:
+  - starts_with("write_")
 
 - title: Validation
   desc: Functions for validating input data and configurations
