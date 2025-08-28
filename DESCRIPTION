@@ -1,6 +1,6 @@
 Package: epitraxr
 Title: Manipulate Epitrax Data And Generate Reports
-Version: 0.4.2
+Version: 0.4.3
 Authors@R: c(
     person("Andrew", "Pulsipher", , "pulsipher.a@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0773-3210")),
@@ -11,7 +11,9 @@ Authors@R: c(
 Description: Functions to manipulate datasets exported from Epitrax and
     generate reports.
 License: MIT + file LICENSE
-URL: https://epiforesite.github.io/epitraxr/, https://github.com/EpiForeSITE/epitraxr
+URL: https://epiforesite.github.io/epitraxr/,
+    https://github.com/EpiForeSITE/epitraxr
+BugReports: https://github.com/EpiForeSITE/epitraxr/issues
 Imports:
     lubridate,
     stats,
