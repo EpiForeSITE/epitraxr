@@ -11,7 +11,7 @@ Authors@R: c(
 Description: Functions to manipulate datasets exported from Epitrax and
     generate reports.
 License: MIT + file LICENSE
-URL: https://epiforesite.github.io/epitraxr/
+URL: https://epiforesite.github.io/epitraxr/, https://github.com/EpiForeSITE/epitraxr
 Imports:
     lubridate,
     stats,
