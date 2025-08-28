@@ -5,6 +5,15 @@ template:
 reference:
 - title: Piped mode functions
 
+- subtitle: Setup
+  desc: Functions to create the epitrax object and prepare it for report generation
+  contents:
+  - epitrax_set_config_from_file
+  - epitrax_set_config_from_list
+  - epitrax_add_report_diseases
+  - setup_epitrax
+  - get_epitrax
+
 - subtitle: Internal reports
   desc: Functions that generate exclusively internal reports
   contents:
@@ -20,6 +29,11 @@ reference:
   contents:
   - starts_with("epitrax_report_")
 
+- subtitle: Export
+  desc: Functions to export reports
+  contents:
+  - starts_with("epitrax_write_")
+
 - title: Standard mode functions
 
 - subtitle: Internal reports
@@ -31,3 +45,50 @@ reference:
   desc: Functions that generate reports intended for public use
   contents:
   - starts_with("create_public_report_")
+
+- title: Data processing
+  desc: Functions for importing and processing data
+  contents:
+  - read_epitrax_data
+  - format_week_num
+  - reshape_monthly_wide
+  - reshape_annual_wide
+  - standardize_report_diseases
+  - get_month_counts
+
+- title: Filesystem
+  desc: Functions for managing files and directories
+  contents:
+  - create_filesystem
+  - clear_old_reports
+  - setup_filesystem
+  - read_report_config
+  - epitraxr_config
+  - write_report_csv
+  - write_report_xlsx
+  - write_grouped_report_pdf
+  - write_report_pdf
+  - get_internal_disease_list
+  - get_public_disease_list
+  - get_report_disease_lists
+
+- title: Validation
+  desc: Functions for validating input data and configurations
+  contents:
+  - validate_epitrax
+  - validate_filesystem
+  - validate_config
+  - validate_data
+
+- title: Utilities
+  desc: Miscellaneous utility functions
+  contents:
+  - convert_counts_to_rate
+  - get_trend
+  - get_yrs
+  - set_na_0
+
+- title: Shiny app
+  desc: Functions related to the Shiny application
+  contents:
+  - run_app
