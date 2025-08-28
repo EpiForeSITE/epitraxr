@@ -4,12 +4,12 @@
 \alias{clear_old_reports}
 \title{Clear out old reports before generating new ones.}
 \usage{
-clear_old_reports(i_folder, p_folder)
+clear_old_reports(internal, public)
 }
 \arguments{
-\item{i_folder}{Filepath. Folder containing internal reports.}
+\item{internal}{Filepath. Folder for internal reports.}
 
-\item{p_folder}{Filepath. Folder containing public reports.}
+\item{public}{Filepath. Folder for public reports.}
 }
 \value{
 The list of old reports that were cleared.

@@ -7,7 +7,7 @@
 write_report_pdf(data, params, filename, folder, trend.only = FALSE)
 }
 \arguments{
-\item{data}{Dataframe. Report data containing disease statistics.}
+\item{data}{Dataframe. Report data.}
 
 \item{params}{List. Report parameters containing:
 \itemize{
@@ -17,9 +17,9 @@ write_report_pdf(data, params, filename, folder, trend.only = FALSE)
 \item trend_threshold: Threshold for trend calculations (defaults to 0.15)
 }}
 
-\item{filename}{String. Output filename for the rendered report.}
+\item{filename}{String. Report filename.}
 
-\item{folder}{Filepath. Output directory for the rendered report.}
+\item{folder}{Filepath. Report destination folder.}
 
 \item{trend.only}{Logical. Whether to show only trend in the PDF report.
 If TRUE, "trend_only_" will be prepended to the filename.}

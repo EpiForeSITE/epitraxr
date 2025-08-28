@@ -68,11 +68,7 @@ reference:
 - subtitle: Reading files
   desc: Functions for reading configuration and data files
   contents:
-  - read_report_config
-  - epitraxr_config
-  - get_internal_disease_list
-  - get_public_disease_list
-  - get_report_disease_lists
+  - starts_with("get_report_")
 
 - subtitle: Export functions
   desc: Functions to export reports
@@ -90,6 +86,7 @@ reference:
 - title: Utilities
   desc: Miscellaneous utility functions
   contents:
+  - epitraxr_config
   - convert_counts_to_rate
   - get_trend
   - get_yrs

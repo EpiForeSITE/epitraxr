@@ -28,16 +28,16 @@ fsys <- setup_filesystem(folders = fsys, clear.reports = TRUE)
 
 xl_files <- list() # Internal reports to combine into single .xlsx file
 
-report_config <- read_report_config(file.path(fsys$settings,
+report_config <- get_report_config(file.path(fsys$settings,
                                               "report_config.yaml"))
 
 # Read in EpiTrax data ---------------------------------------------------------
 epitrax <- get_epitrax()
 
-report_diseases <- get_report_disease_lists(
-  internal_list_fp = file.path(fsys$settings, "internal_report_diseases.csv"),
-  public_list_fp = file.path(fsys$settings, "public_report_diseases.csv"),
-  default_diseases = epitrax$diseases
+report_diseases <- get_report_diseases(
+  internal = file.path(fsys$settings, "internal_report_diseases.csv"),
+  public = file.path(fsys$settings, "public_report_diseases.csv"),
+  defaults = epitrax$diseases
 )
 
 # Annual counts for each disease -----------------------------------------------

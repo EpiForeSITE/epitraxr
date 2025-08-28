@@ -1,3 +1,39 @@
+# Test epitraxr_config() -------------------------------------------------------
+expected_config <- list(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
+)
+
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
+)
+
+expect_equal(epitraxr_config(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
+), expected_config)
+expect_equal(epitraxr_config(), default_config)
+expect_equal(do.call(epitraxr_config, list()), default_config)
+expect_warning(result_config <- epitraxr_config(
+  current_population = "not numeric",
+  avg_5yr_population = "not numeric",
+  rounding_decimals = "not numeric",
+  generate_csvs = "not logical",
+  trend_threshold = "not numeric"
+), "config fields are missing/invalid")
+expect_equal(result_config, default_config)
+
+
 # Test convert_counts_to_rate() ------------------------------------------------
 
 # Basic conversion

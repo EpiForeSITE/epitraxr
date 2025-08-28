@@ -6,7 +6,7 @@ epitrax <- structure(
 )
 expect_silent(epitrax <- epitrax_set_config_from_file(epitrax, config_file))
 expect_true(inherits(epitrax, "epitrax"))
-expect_equal(epitrax$config, read_report_config(config_file))
+expect_equal(epitrax$config, get_report_config(config_file))
 
 
 # Test epitrax_set_config_from_list() ------------------------------------------
@@ -78,7 +78,7 @@ expect_silent(epitrax_1 <- setup_epitrax(
 ))
 expect_true(inherits(epitrax, "epitrax"))
 expect_equal(epitrax_1$data, get_epitrax(data_file)$data)
-expect_equal(epitrax_1$config, read_report_config(config_file))
+expect_equal(epitrax_1$config, get_report_config(config_file))
 expect_equal(epitrax_1$report_diseases$internal, utils::read.csv(i_file))
 expect_equal(epitrax_1$report_diseases$public, utils::read.csv(p_file))
 

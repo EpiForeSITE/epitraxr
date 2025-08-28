@@ -21,7 +21,7 @@ epitrax_set_config_from_file <- function(epitrax, filepath) {
 
     validate_epitrax(epitrax, report.check = FALSE)
 
-    epitrax$config <- read_report_config(filepath)
+    epitrax$config <- get_report_config(filepath)
 
     epitrax
 }
@@ -100,10 +100,10 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
     validate_epitrax(epitrax, report.check = FALSE)
 
     # Get internal and public disease lists
-    diseases <- get_report_disease_lists(
-        internal_list_fp = disease_list_files$internal %||% "use_defaults",
-        public_list_fp = disease_list_files$public %||% "use_defaults",
-        default_diseases = epitrax$diseases
+    diseases <- get_report_diseases(
+        internal = disease_list_files$internal %||% "use_defaults",
+        public = disease_list_files$public %||% "use_defaults",
+        defaults = epitrax$diseases
     )
 
     # Add to epitrax object
@@ -1023,7 +1023,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = 
 
         report <- epitrax$internal_reports[[name]]
 
-        write_grouped_report_pdf(
+        write_report_pdf_grouped(
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),
@@ -1040,7 +1040,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = 
 
         report <- epitrax$public_reports[[name]]
 
-        write_grouped_report_pdf(
+        write_report_pdf_grouped(
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),

@@ -33,4 +33,8 @@ folders <- list(
   settings = file.path(tempdir(), "settings")
 )
 setup_filesystem(folders)
+unlink(unlist(folders, use.names = FALSE), recursive = TRUE)
+}
+\seealso{
+\code{\link[=create_filesystem]{create_filesystem()}}, \code{\link[=clear_old_reports]{clear_old_reports()}} which this function wraps.
 }

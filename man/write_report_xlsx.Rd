@@ -38,4 +38,5 @@ r_xl <- list(
 
 # Write to temporary directory
 write_report_xlsx(r_xl, "report.xlsx", tempdir())
+unlink(file.path(tempdir(), "report.xlsx"), recursive = TRUE)
 }

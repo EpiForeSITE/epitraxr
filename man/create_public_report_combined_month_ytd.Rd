@@ -39,6 +39,6 @@ diseases <- data.frame(
 )
 config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
                           package = "epitraxr")
-config <- read_report_config(config_file)
+config <- get_report_config(config_file)
 create_public_report_combined_month_ytd(data, diseases, 2024, 2, config)
 }

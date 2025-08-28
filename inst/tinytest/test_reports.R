@@ -121,7 +121,7 @@ expect_true(is.data.frame(result))
 expect_equivalent(result, expected_result)
 
 
-# Test create_report_monthly_avgs() ------------------------------------------
+# Test create_report_monthly_avgs() --------------------------------------------
 
 data <- data.frame(
   disease = c("A", "A", "B", "B", "C"),
@@ -160,7 +160,7 @@ result <- create_report_monthly_medians(data, disease_names)
 
 # With the fix, medians should be calculated across all years (2022-2024)
 # Disease A: Jan has [10,20,30] → median = 20
-# Disease B: Feb has [5,15,25] → median = 15, Jan has [0,0,0] → median = 0  
+# Disease B: Feb has [5,15,25] → median = 15, Jan has [0,0,0] → median = 0
 # Disease C: Jan has [8,0,0] → median = 0, Feb has [0,0,0] → median = 0
 # Disease D: all months have [0,0,0] → median = 0
 expected_result <- data.frame(
@@ -183,7 +183,7 @@ test_data <- data.frame(
 bug_result <- create_report_monthly_medians(test_data, c("A", "B"))
 
 # A: Jan should have [10,20,0] → median = 10
-# B: Jan should have [0,0,5] → median = 0  
+# B: Jan should have [0,0,5] → median = 0
 bug_expected <- data.frame(
   disease = c("A", "B"),
   Jan = c(10, 0),
@@ -241,7 +241,7 @@ result <- create_report_ytd_counts(
 expected_result <- data.frame(
   disease = disease_names,
   Current_YTD_Rate_per_100k = c(17.9, 26.8, 0.0, 0.0),
-  Avg_5yr_YTD_Rate_per_100k = c(19.4, 24.3, 7.8, 0.0) 
+  Avg_5yr_YTD_Rate_per_100k = c(19.4, 24.3, 7.8, 0.0)
 )
 
 expect_true(is.data.frame(result))
@@ -367,7 +367,7 @@ diseases <- data.frame(
 
 config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
                           package = "epitraxr")
-config <- read_report_config(config_file)
+config <- get_report_config(config_file)
 
 # Test with valid input for February 2024
 result <- create_public_report_combined_month_ytd(data, diseases, 2024, 2, config)
