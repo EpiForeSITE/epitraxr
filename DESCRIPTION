@@ -8,8 +8,7 @@ Authors@R: c(
     person("Centers for Disease Control and Prevention's Center for Forecasting and Outbreak Analytics", role = "fnd",
            comment = "Cooperative agreement CDC-RFA-FT-23-0069")
   )
-Description: Functions to manipulate datasets exported from Epitrax and
-    generate reports.
+Description: A fast, flexible tool for generating disease surveillance reports from data exported from EpiTrax, a central repository for epidemiological data used by public health officials. It provides functions to manipulate EpiTrax datasets, tailor reports to internal or public use, and export reports in CSV, Excel, or PDF formats.
 License: MIT + file LICENSE
 URL: https://epiforesite.github.io/epitraxr/,
     https://github.com/EpiForeSITE/epitraxr
