@@ -13,17 +13,20 @@ get_report_config(filepath)
 A named list with an attribute of 'keys' from the file.
 }
 \description{
-'get_report_config' reads in the config YAML file. The file can have the
-following fields:
+'get_report_config' reads in the config YAML file. Missing fields
+will be set to default values and a warning will be issued. The
+config file can have the following fields:
 \itemize{
 \item \code{current_population}: Integer. Current population size.
 \item \code{avg_5yr_population}: Integer. Average population over the last 5 years.
 \item \code{rounding_decimals}: Integer. Number of decimals to round report values to.
 \item \code{generate_csvs}: Logical. Whether to generate CSV files.
 \item \code{trend_threshold}: Numeric. Threshold for trend calculations.
-Missing fields will be set to default values. See the example config file
-here: \code{system.file("sample_data/sample_config.yml", package = "epitraxr")}.
 }
+}
+\details{
+See the example config file here:
+\code{system.file("sample_data/sample_config.yml", package = "epitraxr")}.
 }
 \examples{
 config_file <- system.file("sample_data/sample_config.yml",

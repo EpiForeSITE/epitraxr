@@ -14,7 +14,14 @@ The validated data with all unneeded columns removed.
 }
 \description{
 'validate_data' checks the data for expected columns and data types, removes
-unneeded columns, and returns the resulting data.
+unneeded columns, and returns the resulting data. Missing or NA values will be
+removed with a warning.
+Valid data must include the following columns (and types):
+\itemize{
+\item \code{patient_mmwr_year} (integer)
+\item \code{patient_mmwr_week} (integer)
+\item \code{patient_disease} (character)
+}
 }
 \examples{
 df <- data.frame(

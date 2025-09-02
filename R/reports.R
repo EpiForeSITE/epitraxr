@@ -81,7 +81,7 @@ create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
                                "sum")
 
   # - Add Trends column last
-  m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate,
+  m_report$Trend <- compute_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate,
                               threshold = config$trend_threshold)
 
   # - Name and return report
@@ -138,7 +138,7 @@ create_public_report_ytd <- function(ytd_rates, d_list, config) {
                                "sum")
 
   # - Add Trends column last
-  m_report$Trend <- get_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate,
+  m_report$Trend <- compute_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate,
                               threshold = config$trend_threshold)
 
   # - Name and return report
@@ -620,7 +620,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   grouped_r <- merge(grouped_r, y_ytd_medians, by = "disease", all.x = TRUE)
 
   # Get trend for YTD counts
-  grouped_r$y_ytd_trend <- get_trend(
+  grouped_r$y_ytd_trend <- compute_trend(
     col1 = grouped_r$y_YTD_count,
     col2 = grouped_r$hist_y_ytd_avg_count,
     threshold = config$trend_threshold

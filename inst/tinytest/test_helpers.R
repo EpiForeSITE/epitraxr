@@ -46,20 +46,20 @@ expect_equal(convert_counts_to_rate(0, 100000, 2), 0)
 expect_equal(convert_counts_to_rate(7, 30000, 3), 23.333)
 
 
-# Test get_trend() ------------------------------------------------------------
+# Test compute_trend() ---------------------------------------------------------
 
 # Up, down, same
-expect_equal(get_trend(c(5, 10, 10), c(3, 10, 12)),
+expect_equal(compute_trend(c(5, 10, 10), c(3, 10, 12)),
              c("Elevated", "Expected", "Less Than Expected"))
 # Vector recycling
-expect_equal(get_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))
+expect_equal(compute_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))
 
 # Test threshold
-expect_equal(get_trend(c(5, 10, 11, 10), c(3, 10, 10, 12), threshold = 0.15),
+expect_equal(compute_trend(c(5, 10, 11, 10), c(3, 10, 10, 12), threshold = 0.15),
              c("Elevated", "Expected", "Expected", "Less Than Expected"))
 # Test threshold boundaries
-expect_equal(get_trend(11.5, 10, threshold = 0.15), "Expected") # Just within threshold
-expect_equal(get_trend(11.6, 10, threshold = 0.15), "Elevated") # Just over threshold
+expect_equal(compute_trend(11.5, 10, threshold = 0.15), "Expected") # Just within threshold
+expect_equal(compute_trend(11.6, 10, threshold = 0.15), "Elevated") # Just over threshold
 
 
 # Test get_yrs() --------------------------------------------------------------

@@ -35,7 +35,7 @@ expect_true(all(c("Rate_per_100k", "Avg_5yr_Rate", "Trend") %in% colnames(report
 expect_equal(report[report$Disease == "Alpha", "Rate_per_100k"], 10)
 expect_equal(report[report$Disease == "Alpha", "Avg_5yr_Rate"], 5)
 expect_equal(report[report$Disease == "Alpha", "Trend"],
-             get_trend(10, 5, threshold = 0.15))
+             compute_trend(10, 5, threshold = 0.15))
 
 
 # Test create_public_report_ytd() ----------------------------------------------
@@ -71,7 +71,7 @@ expect_true(all(c("YTD_Rate_per_100k", "Avg_5yr_Rate", "Trend") %in% colnames(yt
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "YTD_Rate_per_100k"], 12)
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Avg_5yr_Rate"], 10)
 expect_equal(ytd_report[ytd_report$Disease == "Alpha", "Trend"],
-             get_trend(12, 10, threshold = 0.15))
+             compute_trend(12, 10, threshold = 0.15))
 
 
 # Test create_report_annual_counts() -------------------------------------------
@@ -316,7 +316,7 @@ expected_result <- data.frame(
   `2024 YTD` = c(0, 37, 9),
   `Historical 2024 YTD Avg` = c(20, 25, 14),
   `Historical 2024 YTD Median` = c(20, 25, 14),
-  `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14), threshold = 0.15),
+  `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14), threshold = 0.15),
   check.names = FALSE
 )
 

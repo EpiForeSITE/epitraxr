@@ -17,8 +17,8 @@ either file doesn't exist.}
 \value{
 A list with two elements:
 \itemize{
-\item internal: Dataframe with EpiTrax_name column
-\item public: Dataframe with EpiTrax_name and Public_name columns
+\item \code{internal}: Dataframe with EpiTrax_name column
+\item \code{public}: Dataframe with EpiTrax_name and Public_name columns
 }
 }
 \description{

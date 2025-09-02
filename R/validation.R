@@ -1,4 +1,4 @@
-#' Validate an EpiTrax object
+#' Validate EpiTrax object
 #'
 #' `validate_epitrax` checks that the EpiTrax object is valid.
 #'
@@ -28,13 +28,13 @@ validate_epitrax <- function(epitrax, report.check = TRUE) {
 }
 
 
-#' Validate the filesystem structure
+#' Validate filesystem structure
 #'
 #' `validate_filesystem` checks that the filesystem structure is valid.
 #'
 #' @param fsys List. Contains paths to report folders with elements:
-#'   - internal: Folder for internal reports
-#'   - public: Folder for public reports
+#'   - `internal`: Folder for internal reports
+#'   - `public`: Folder for public reports
 #'
 #' @returns NULL if valid, otherwise throws an error.
 #' @export
@@ -51,10 +51,11 @@ validate_filesystem <- function(fsys) {
 }
 
 
-#' Validate a config list
+#' Validate config
 #'
 #' `validate_config` checks the values of the given config list. If any values
-#' are missing or invalid, they are set to default values.
+#' are missing or invalid, they are set to default values and a warning is
+#' issued.
 #'
 #' @param config Named list.
 #'
@@ -112,7 +113,12 @@ validate_config <- function(config) {
 #' Validate input EpiTrax data
 #'
 #' 'validate_data' checks the data for expected columns and data types, removes
-#' unneeded columns, and returns the resulting data.
+#' unneeded columns, and returns the resulting data. Missing or NA values will be
+#' removed with a warning.
+#' Valid data must include the following columns (and types):
+#' - `patient_mmwr_year` (integer)
+#' - `patient_mmwr_week` (integer)
+#' - `patient_disease` (character)
 #'
 #' @param data Dataframe. EpiTrax data to validate.
 #'

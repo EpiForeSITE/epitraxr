@@ -21,10 +21,13 @@ and possibly the disease groupings.
 uses the default diseases, if the file doesn't exist.
 }
 \details{
-The provided internal disease list file must contain a column of EpiTrax
-disease names (EpiTrax_name) to include in internal reports. It can optionally
-contain a column for disease_groupings (Group_name) for reports that group
-diseases together. See the example file here:
+The provided internal disease list file must contain at least a column named
+\code{EpiTrax_name} which contains EpiTrax disease names to include in the report.
+The file can optionally contain a column named \code{Group_name}, which maps the
+diseases in \code{EpiTrax_name} to a disease group. This is only used for reports
+that include disease groupings.
+
+See the example file here:
 \code{system.file("sample_data/sample_disease_list.csv", package = "epitraxr")}
 }
 \examples{

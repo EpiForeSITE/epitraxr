@@ -19,5 +19,11 @@ The list of old reports that were cleared.
 the reports that were deleted.
 }
 \examples{
-clear_old_reports(tempdir(), tempdir())
+ireports_folder <- file.path(tempdir(), "internal")
+preports_folder <- file.path(tempdir(), "public")
+dir.create(ireports_folder)
+dir.create(preports_folder)
+
+clear_old_reports(ireports_folder, preports_folder)
+unlink(c(ireports_folder, preports_folder), recursive = TRUE)
 }

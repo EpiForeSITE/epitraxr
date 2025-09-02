@@ -11,10 +11,10 @@ write_report_pdf_grouped(data, params, filename, folder, trend.only = FALSE)
 
 \item{params}{List. Report parameters containing:
 \itemize{
-\item title: Report title (defaults to "Grouped Report")
-\item report_year: Report year (defaults to 2025)
-\item report_month: Report month (defaults to 1)
-\item trend_threshold: Threshold for trend calculations (defaults to 0.15)
+\item \code{title}: Report title (defaults to "Grouped Report")
+\item \code{report_year}: Report year (defaults to 2025)
+\item \code{report_month}: Report month (defaults to 1)
+\item \code{trend_threshold}: Threshold for trend calculations (defaults to 0.15)
 }}
 
 \item{filename}{String. Report filename.}
@@ -46,7 +46,7 @@ disease statistics organized by groups with current and historical data.
    `2024 YTD` = c(0, 37, 9),
    `Historical 2024 YTD Avg` = c(20, 25, 14),
    `Historical 2024 YTD Median` = c(20, 25, 14),
-   `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+   `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
    check.names = FALSE
  )
 

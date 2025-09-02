@@ -42,7 +42,13 @@ create_filesystem <- function(internal, public, settings) {
 #' @export
 #'
 #' @examples
-#' clear_old_reports(tempdir(), tempdir())
+#' ireports_folder <- file.path(tempdir(), "internal")
+#' preports_folder <- file.path(tempdir(), "public")
+#' dir.create(ireports_folder)
+#' dir.create(preports_folder)
+#'
+#' clear_old_reports(ireports_folder, preports_folder)
+#' unlink(c(ireports_folder, preports_folder), recursive = TRUE)
 clear_old_reports <- function(internal, public) {
   # - Remove old internal reports
   i_reports <- list(list.files(internal, full.names = TRUE))
@@ -63,9 +69,9 @@ clear_old_reports <- function(internal, public) {
 #' and `clear_old_reports`.
 #'
 #' @param folders List. Contains paths to report folders with elements:
-#'   - internal: Folder for internal reports
-#'   - public: Folder for public reports
-#'   - settings: Folder for settings files
+#'   - `internal`: Folder for internal reports
+#'   - `public`: Folder for public reports
+#'   - `settings`: Folder for settings files
 #' @param clear.reports Logical. Whether to clear old reports from the internal
 #'   and public folders. Defaults to FALSE.
 #'
@@ -101,15 +107,17 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 
 #' Read in the report config YAML file
 #'
-#' 'get_report_config' reads in the config YAML file. The file can have the
-#' following fields:
+#' 'get_report_config' reads in the config YAML file. Missing fields
+#' will be set to default values and a warning will be issued. The
+#' config file can have the following fields:
 #' - `current_population`: Integer. Current population size.
 #' - `avg_5yr_population`: Integer. Average population over the last 5 years.
 #' - `rounding_decimals`: Integer. Number of decimals to round report values to.
 #' - `generate_csvs`: Logical. Whether to generate CSV files.
 #' - `trend_threshold`: Numeric. Threshold for trend calculations.
-#' Missing fields will be set to default values. See the example config file
-#' here: `system.file("sample_data/sample_config.yml", package = "epitraxr")`.
+#'
+#' See the example config file here:
+#' `system.file("sample_data/sample_config.yml", package = "epitraxr")`.
 #'
 #' @param filepath Filepath. Path to report config file.
 #'
@@ -144,11 +152,15 @@ get_report_config <- function(filepath) {
 #' 'get_report_diseases_internal' reads the internal list from a given CSV file or
 #' uses the default diseases, if the file doesn't exist.
 #'
-#' The provided internal disease list file must contain a column of EpiTrax
-#' disease names (EpiTrax_name) to include in internal reports. It can optionally
-#' contain a column for disease_groupings (Group_name) for reports that group
-#' diseases together. See the example file here:
+#' The provided internal disease list file must contain at least a column named
+#' `EpiTrax_name` which contains EpiTrax disease names to include in the report.
+#' The file can optionally contain a column named `Group_name`, which maps the
+#' diseases in `EpiTrax_name` to a disease group. This is only used for reports
+#' that include disease groupings.
+#'
+#' See the example file here:
 #' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
+#'
 #' @param filepath Filepath. Internal disease list CSV file.
 #' @param defaults String vector. List of default diseases to use if the
 #' above file doesn't exist.
@@ -208,11 +220,16 @@ get_report_diseases_internal <- function(filepath, defaults) {
 #' 'get_report_diseases_public' reads the public list from a given CSV file or uses
 #' the default diseases if the file doesn't exist.
 #'
-#' The provided public disease list file must contain two columns that map the
-#' EpiTrax disease name (EpiTrax_name) to a public-facing name (Public_name)
-#' for the public report. It can optionally contain a column for disease_groupings
-#' (Group_name) for reports that group diseases together. See the example file here:
+#' The provided public disease list file must contain two columns named
+#' `EpiTrax_name` and `Public_name` which map EpiTrax disease names to
+#' a public-facing name for the public report. The file can optionally
+#' contain a column named `Group_name`, which maps the diseases in
+#' `EpiTrax_name` to a disease group. This is only used for reports that
+#' include disease groupings.
+#'
+#' See the example file here:
 #' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
+#'
 #' @param filepath Filepath. Public disease list CSV file.
 #' @param defaults String vector. List of default diseases to use if the
 #' above file doesn't exist.
@@ -281,8 +298,8 @@ get_report_diseases_public <- function(filepath, defaults) {
 #'   either file doesn't exist.
 #'
 #' @returns A list with two elements:
-#'   - internal: Dataframe with EpiTrax_name column
-#'   - public: Dataframe with EpiTrax_name and Public_name columns
+#'   - `internal`: Dataframe with EpiTrax_name column
+#'   - `public`: Dataframe with EpiTrax_name and Public_name columns
 #' @seealso [get_report_diseases_internal()], [get_report_diseases_public()] which this function wraps.
 #' @export
 #'
@@ -396,10 +413,10 @@ write_report_xlsx <- function(data, filename, folder) {
 #'
 #' @inheritParams write_report_csv
 #' @param params List. Report parameters containing:
-#'   - title: Report title (defaults to "Disease Report")
-#'   - report_year: Report year (defaults to 2025)
-#'   - report_month: Report month (defaults to 1)
-#'   - trend_threshold: Threshold for trend calculations (defaults to 0.15)
+#'   - `title`: Report title (defaults to "Disease Report")
+#'   - `report_year`: Report year (defaults to 2025)
+#'   - `report_month`: Report month (defaults to 1)
+#'   - `trend_threshold`: Threshold for trend calculations (defaults to 0.15)
 #' @param trend.only Logical. Whether to show only trend in the PDF report.
 #' If TRUE, "trend_only_" will be prepended to the filename.
 #'
@@ -414,7 +431,7 @@ write_report_xlsx <- function(data, filename, folder) {
 #'    Disease = c("COVID", "Flu", "Measles"),
 #'    `March 2024` = c(0, 25, 5),
 #'    `Historical March Avg` = c(0, 15, 8),
-#'    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+#'    `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
 #'    check.names = FALSE
 #'  )
 #'
@@ -486,10 +503,10 @@ write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE)
 #'
 #' @inheritParams write_report_pdf
 #' @param params List. Report parameters containing:
-#'   - title: Report title (defaults to "Grouped Report")
-#'   - report_year: Report year (defaults to 2025)
-#'   - report_month: Report month (defaults to 1)
-#'   - trend_threshold: Threshold for trend calculations (defaults to 0.15)
+#'   - `title`: Report title (defaults to "Grouped Report")
+#'   - `report_year`: Report year (defaults to 2025)
+#'   - `report_month`: Report month (defaults to 1)
+#'   - `trend_threshold`: Threshold for trend calculations (defaults to 0.15)
 #'
 #' @returns NULL (called for side effects - creates the report file).
 #' @export
@@ -508,7 +525,7 @@ write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE)
 #'    `2024 YTD` = c(0, 37, 9),
 #'    `Historical 2024 YTD Avg` = c(20, 25, 14),
 #'    `Historical 2024 YTD Median` = c(20, 25, 14),
-#'    `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+#'    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
 #'    check.names = FALSE
 #'  )
 #'

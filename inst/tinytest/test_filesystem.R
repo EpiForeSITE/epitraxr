@@ -154,7 +154,7 @@ if (at_home()) {
     `2024 YTD` = c(0, 37, 9),
     `Historical 2024 YTD Avg` = c(20, 25, 14),
     `Historical 2024 YTD Median` = c(20, 25, 14),
-    `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
     check.names = FALSE
   )
 
@@ -188,7 +188,7 @@ if (at_home()) {
     Disease = c("COVID", "Flu", "Measles"),
     `March 2024` = c(0, 25, 5),
     `Historical March Avg` = c(0, 15, 8),
-    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+    `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
     check.names = FALSE
   )
 

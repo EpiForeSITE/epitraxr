@@ -11,10 +11,10 @@ write_report_pdf(data, params, filename, folder, trend.only = FALSE)
 
 \item{params}{List. Report parameters containing:
 \itemize{
-\item title: Report title (defaults to "Disease Report")
-\item report_year: Report year (defaults to 2025)
-\item report_month: Report month (defaults to 1)
-\item trend_threshold: Threshold for trend calculations (defaults to 0.15)
+\item \code{title}: Report title (defaults to "Disease Report")
+\item \code{report_year}: Report year (defaults to 2025)
+\item \code{report_month}: Report month (defaults to 1)
+\item \code{trend_threshold}: Threshold for trend calculations (defaults to 0.15)
 }}
 
 \item{filename}{String. Report filename.}
@@ -40,7 +40,7 @@ types of report.
    Disease = c("COVID", "Flu", "Measles"),
    `March 2024` = c(0, 25, 5),
    `Historical March Avg` = c(0, 15, 8),
-   `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+   `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
    check.names = FALSE
  )
 

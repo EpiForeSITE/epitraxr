@@ -62,12 +62,13 @@ convert_counts_to_rate <- function(counts, pop, digits, rate_adj_pop = 100000) {
   round(counts / pop * rate_adj_pop, digits = digits)
 }
 
-#' Get Trend column of report
+#' Compute the report trend
 #'
-#' 'get_trend' compares values of two columns and produces a new column
-#' containing the trend result. The trend is represented by the strings:
-#' "Elevated" (increase), "Less Than Expected" (decrease), and
-#' "Expected" (no change).
+#' 'compute_trend' compares values of two columns and produces a new column
+#' containing the trend result. The trend is represented by one of three values:
+#' - "Elevated": increase from baseline
+#' - "Less Than Expected": decrease from baseline
+#' - "Expected": no change from baseline
 #'
 #' @param col1 List. Current data.
 #' @param col2 List. Historical comparison data.
@@ -80,11 +81,11 @@ convert_counts_to_rate <- function(counts, pop, digits, rate_adj_pop = 100000) {
 #'
 #' @examples
 #' # Without threshold - any difference triggers trend
-#' get_trend(c(5, 10, 10), c(3, 10, 11))
+#' compute_trend(c(5, 10, 10), c(3, 10, 11))
 #'
 #' # With 15% threshold - small changes are "Expected"
-#' get_trend(c(5, 10, 10), c(3, 10, 11), threshold = 0.15)
-get_trend <- function(col1, col2, threshold = 0.0) {
+#' compute_trend(c(5, 10, 10), c(3, 10, 11), threshold = 0.15)
+compute_trend <- function(col1, col2, threshold = 0.0) {
   mapply(function(x, y) {
     ifelse(x > y * (1 + threshold), "Elevated",
     ifelse(x < y * (1 - threshold), "Less Than Expected",

@@ -4,6 +4,7 @@
 * Add option to produce trend-only PDF reports
 * Update installation instructions in README
 * Increase file upload size limit in Shiny app
+* Significant overall of function APIs for consistency
 
 # epitraxr 0.4.0
 
