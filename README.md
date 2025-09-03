@@ -260,7 +260,7 @@ epitrax_data <- read_epitrax_data(data_file)
 
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = c("Chickenpox", "Measles", "Lyme disease")
+  diseases = c("Chickenpox", "Measles", "Lyme disease")
 )
 
 report

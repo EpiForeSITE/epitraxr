@@ -32,5 +32,5 @@ df <- data.frame(
 df <- format_epitrax_data(df)
 }
 \seealso{
-\code{mmwr_week_to_month()}
+\code{\link[=mmwr_week_to_month]{mmwr_week_to_month()}}
 }

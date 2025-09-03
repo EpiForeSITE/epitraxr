@@ -317,8 +317,8 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
     for (y in epitrax$yrs) {
         m_df <- create_report_monthly_counts(
             data = epitrax$data,
-            y = y,
-            disease_names = epitrax$report_diseases$internal$EpiTrax_name
+            diseases = epitrax$report_diseases$internal$EpiTrax_name,
+            y = y
         )
 
         # Add to internal reports
@@ -373,7 +373,7 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 
     monthly_avgs <- create_report_monthly_avgs(
         data = r_data,
-        disease_names = epitrax$report_diseases$internal$EpiTrax_name,
+        diseases = epitrax$report_diseases$internal$EpiTrax_name,
         config = epitrax$config
     )
 
@@ -422,7 +422,7 @@ epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
     # Create YTD counts
     ytd_counts <- create_report_ytd_counts(
         data = epitrax$data,
-        disease_names = epitrax$report_diseases$internal$EpiTrax_name,
+        diseases = epitrax$report_diseases$internal$EpiTrax_name,
         y = epitrax$report_year,
         m = epitrax$report_month,
         config = epitrax$config,
@@ -474,21 +474,11 @@ epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
 
     validate_epitrax(epitrax)
 
-    # Get needed statistics
-    month_counts <- get_month_counts(epitrax$data)
-    r_data <- epitrax$data[epitrax$data$year != epitrax$report_year,]
-    monthly_avgs <- create_report_monthly_avgs(
-        data = r_data,
-        disease_names = epitrax$report_diseases$public$EpiTrax_name,
-        config = epitrax$config
-    )
-
     # Create monthly cross-section reports
     for (offset in month_offsets) {
         r <- create_public_report_month(
-            cases = month_counts,
-            avgs = monthly_avgs,
-            d_list = epitrax$report_diseases$public,
+            data = epitrax$data,
+            diseases = epitrax$report_diseases$public,
             y = epitrax$report_year,
             m = epitrax$report_month - offset,
             config = epitrax$config
@@ -535,20 +525,12 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 
     validate_epitrax(epitrax)
 
-    # Create YTD report using public disease list
-    ytd_rates <- create_report_ytd_counts(
-        data = epitrax$data,
-        disease_names = epitrax$report_diseases$public$EpiTrax_name,
-        y = epitrax$report_year,
-        m = epitrax$report_month,
-        config = epitrax$config,
-        as.rates = TRUE
-    )
-
     # Create public report
     r <- create_public_report_ytd(
-        ytd_rates = ytd_rates,
-        d_list = epitrax$report_diseases$public,
+        data = epitrax$data,
+        diseases = epitrax$report_diseases$public,
+        y = epitrax$report_year,
+        m = epitrax$report_month,
         config = epitrax$config
     )
 
@@ -665,7 +647,7 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
     # Create monthly medians
     monthly_medians <- create_report_monthly_medians(
         data = r_data,
-        disease_names = report_diseases
+        diseases = report_diseases
     )
 
     # Add report to EpiTrax object
@@ -738,7 +720,7 @@ epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.repor
     # Create YTD medians
     ytd_medians <- create_report_ytd_medians(
         data = r_data,
-        disease_names = report_diseases,
+        diseases = report_diseases,
         m = epitrax$report_month
     )
 

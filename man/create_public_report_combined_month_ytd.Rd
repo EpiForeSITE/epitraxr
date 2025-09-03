@@ -7,16 +7,26 @@
 create_public_report_combined_month_ytd(data, diseases, y, m, config)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{diseases}{Dataframe. Disease configuration with columns: EpiTrax_name,
-Public_name. Used to define disease names and their public-facing versions.}
+\item{diseases}{Dataframe. Diseases to include in the report. Maps EpiTrax disease
+names to public-facing versions. Must have columns:
+\itemize{
+\item \code{EpiTrax_name} (character)
+\item \code{Public_name} (character)
+}}
 
-\item{y}{Integer. Current report year.}
+\item{y}{Integer. Report year}
 
-\item{m}{Integer. Current report month (1-12).}
+\item{m}{Integer. Report month (1-12)}
 
-\item{config}{List. Settings to use for report.}
+\item{config}{List. Report settings}
 }
 \value{
 List containing the report name and combined monthly/YTD report data
@@ -26,6 +36,15 @@ with columns for monthly cases/averages/trends and YTD statistics.
 'create_public_report_combined_month_ytd' creates a comprehensive public report
 that combines monthly case data with year-to-date statistics for the given month
 and year. This provides both current month context and cumulative year progress.
+}
+\details{
+Uses the following config options:
+\itemize{
+\item \code{current_population}
+\item \code{avg_5yr_population}
+\item \code{rounding_decimals}
+\item \code{trend_threshold}
+}
 }
 \examples{
 data_file <- system.file("sample_data/sample_epitrax_data.csv",
@@ -40,5 +59,15 @@ diseases <- data.frame(
 config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
                           package = "epitraxr")
 config <- get_report_config(config_file)
-create_public_report_combined_month_ytd(data, diseases, 2024, 2, config)
+create_public_report_combined_month_ytd(
+ data = data,
+ diseases = diseases,
+ y = 2024,
+ m = 2,
+ config = config
+)
+}
+\seealso{
+\code{\link[=create_public_report_month]{create_public_report_month()}}, \code{\link[=create_report_ytd_counts]{create_report_ytd_counts()}} which this
+function uses and \code{\link[=epitraxr_config]{epitraxr_config()}} for config options
 }

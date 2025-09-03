@@ -4,16 +4,29 @@
 \alias{create_public_report_ytd}
 \title{Create a YTD public report}
 \usage{
-create_public_report_ytd(ytd_rates, d_list, config)
+create_public_report_ytd(data, diseases, y, m, config)
 }
 \arguments{
-\item{ytd_rates}{Dataframe. YTD case rates per 100k. Must have columns:
-disease, Current_YTD_Rate_per_100k, Avg_5yr_YTD_Rate_per_100k.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{d_list}{Dataframe. List of diseases to use for the report. Must have
-columns: EpiTrax_name, Public_name.}
+\item{diseases}{Dataframe. Diseases to include in the report. Maps EpiTrax disease
+names to public-facing versions. Must have columns:
+\itemize{
+\item \code{EpiTrax_name} (character)
+\item \code{Public_name} (character)
+}}
 
-\item{config}{List. Settings to use for report.}
+\item{y}{Integer. Report year}
+
+\item{m}{Integer. Report month (1-12)}
+
+\item{config}{List. Report settings}
 }
 \value{
 List containing the report name and data.
@@ -21,16 +34,37 @@ List containing the report name and data.
 \description{
 'create_public_report_ytd' creates a public report for YTD rates.
 }
+\details{
+Uses the following config options:
+\itemize{
+\item \code{current_population}
+\item \code{avg_5yr_population}
+\item \code{rounding_decimals}
+\item \code{trend_threshold}
+}
+}
 \examples{
-ytd_rates <- data.frame(
-  disease = c("A","B"),
-  Current_YTD_Rate_per_100k = c(12, 34),
-  Avg_5yr_YTD_Rate_per_100k = c(10, 30)
+data_file <- system.file("sample_data/sample_epitrax_data.csv",
+                         package = "epitraxr")
+# Read in EpiTrax data
+data <- read_epitrax_data(data_file)
+
+diseases <- data.frame(
+  EpiTrax_name = c("Influenza", "COVID-19", "Measles", "Syphilis"),
+  Public_name = c("Influenza", "COVID-19", "Measles", "Syphilis")
 )
-d_list <- data.frame(
-  EpiTrax_name = c("A","B"),
-  Public_name = c("Alpha","Beta")
+config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+                          package = "epitraxr")
+config <- get_report_config(config_file)
+create_public_report_ytd(
+ data = data,
+ diseases = diseases,
+ y = 2024,
+ m = 1,
+ config = config
 )
-config <- list(generate_csvs = TRUE, trend_threshold = 0.15)
-create_public_report_ytd(ytd_rates, d_list, config)
+}
+\seealso{
+\code{\link[=create_report_ytd_counts]{create_report_ytd_counts()}} which this function uses
+and \code{\link[=epitraxr_config]{epitraxr_config()}} for config options
 }

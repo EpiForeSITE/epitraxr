@@ -184,14 +184,14 @@ get_report_diseases_internal <- function(filepath, defaults) {
 
   if (file.exists(filepath)) {
 
-    d_list <- utils::read.csv(filepath, header = TRUE)
+    diseases <- utils::read.csv(filepath, header = TRUE)
 
     # Validate file
-    if (is.null(d_list$EpiTrax_name)) {
+    if (is.null(diseases$EpiTrax_name)) {
       stop("File '", filepath, "' missing required column 'EpiTrax_name'.")
     }
 
-    d_list
+    diseases
 
   } else {
     # If the file doesn't exist, use the default list of diseases provided
@@ -206,11 +206,11 @@ get_report_diseases_internal <- function(filepath, defaults) {
 
     defaults <- sort(defaults)
 
-    d_list <- data.frame(
+    diseases <- data.frame(
       EpiTrax_name = defaults
     )
 
-    d_list
+    diseases
   }
 }
 
@@ -254,15 +254,15 @@ get_report_diseases_public <- function(filepath, defaults) {
 
   if (file.exists(filepath)) {
 
-    d_list <- utils::read.csv(filepath, header = TRUE)
+    diseases <- utils::read.csv(filepath, header = TRUE)
 
     # Validate file
-    if (is.null(d_list$EpiTrax_name) || is.null(d_list$Public_name)) {
+    if (is.null(diseases$EpiTrax_name) || is.null(diseases$Public_name)) {
       stop("File '", filepath, "' is incorrectly formatted. Please use the ",
            "column names: 'EpiTrax_name' and 'Public_name'.")
     }
 
-    d_list
+    diseases
 
   } else {
     # If the file doesn't exist, use the default list of diseases provided
@@ -277,12 +277,12 @@ get_report_diseases_public <- function(filepath, defaults) {
 
     defaults <- sort(defaults)
 
-    d_list <- data.frame(
+    diseases <- data.frame(
       EpiTrax_name = defaults,
       Public_name = defaults
     )
 
-    d_list
+    diseases
   }
 }
 

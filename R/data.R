@@ -110,7 +110,7 @@ mmwr_week_to_month <- function(data) {
 #' - `month` (integer, converted from `patient_mmwr_week` by `mmwr_week_to_month()`)
 #'
 #' @returns A standardized data frame with columns "disease", "month", "year", and "counts".
-#' @seealso `mmwr_week_to_month()`
+#' @seealso [mmwr_week_to_month()]
 #' @export
 #'
 #' @examples
@@ -225,7 +225,7 @@ reshape_annual_wide <- function(data) {
 #' Added rows are filled with 0s.
 #'
 #' @param data Dataframe. Current report data.
-#' @param diseases String vector. Diseases to include in the report.
+#' @param diseases Character vector. Diseases to include in the report.
 #'
 #' @returns Report data with rows for all diseases to report.
 #' @export

@@ -75,7 +75,7 @@ We can now call the report generation functions, such as `create_report_annual_c
 ```{r annual-report-1}
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = internal_diseases$EpiTrax_name
+  diseases = internal_diseases$EpiTrax_name
 )
 
 head(report)
@@ -88,7 +88,7 @@ Let's call the report function again, but this time give it the public disease l
 ```{r annual-report}
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = public_diseases$EpiTrax_name
+  diseases = public_diseases$EpiTrax_name
 )
 
 head(report)

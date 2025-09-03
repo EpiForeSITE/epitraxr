@@ -219,20 +219,20 @@ list_file <- "test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
 # Test with valid list file
-expect_silent(d_list <- get_report_diseases_internal(list_file, default_list))
+expect_silent(diseases <- get_report_diseases_internal(list_file, default_list))
 file_data <- utils::read.csv(list_file)
-expect_equal(file_data, d_list)
+expect_equal(file_data, diseases)
 
 # Test with no list file
-expect_warning(d_list <- get_report_diseases_internal("", default_list),
+expect_warning(diseases <- get_report_diseases_internal("", default_list),
                "You have not provided a disease list for internal reports.")
-expect_equal(sort(default_list), d_list$EpiTrax_name)
+expect_equal(sort(default_list), diseases$EpiTrax_name)
 # - Group_name is not provided by default
-expect_true(is.null(d_list$Group_name))
+expect_true(is.null(diseases$Group_name))
 
 # Test with invalid list file
 list_file <-"test_files/disease_lists/invalid_list.csv"
-expect_error(d_list <- get_report_diseases_internal(list_file, default_list),
+expect_error(diseases <- get_report_diseases_internal(list_file, default_list),
              "missing required column")
 
 
@@ -241,21 +241,21 @@ list_file <-"test_files/disease_lists/public_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
 # Test with valid list file
-expect_silent(d_list <- get_report_diseases_public(list_file, default_list))
+expect_silent(diseases <- get_report_diseases_public(list_file, default_list))
 file_data <- utils::read.csv(list_file)
-expect_equal(file_data, d_list)
+expect_equal(file_data, diseases)
 
 # Test with no list file
-expect_warning(d_list <- get_report_diseases_public("", default_list),
+expect_warning(diseases <- get_report_diseases_public("", default_list),
                "You have not provided a disease list for public reports.")
-expect_equal(sort(default_list), d_list$EpiTrax_name)
-expect_equal(sort(default_list), d_list$Public_name)
+expect_equal(sort(default_list), diseases$EpiTrax_name)
+expect_equal(sort(default_list), diseases$Public_name)
 # - Group_name is not provided by default
-expect_true(is.null(d_list$Group_name))
+expect_true(is.null(diseases$Group_name))
 
 # Test with invalid list file
 list_file <-"test_files/disease_lists/invalid_list.csv"
-expect_error(d_list <- get_report_diseases_public(list_file, default_list),
+expect_error(diseases <- get_report_diseases_public(list_file, default_list),
              "is incorrectly formatted")
 
 

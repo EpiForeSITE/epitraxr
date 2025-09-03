@@ -4,31 +4,43 @@
 \alias{create_report_ytd_counts}
 \title{Create year-to-date (YTD) counts report}
 \usage{
-create_report_ytd_counts(data, disease_names, y, m, config, as.rates = FALSE)
+create_report_ytd_counts(data, diseases, y, m, config, as.rates = FALSE)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{disease_names}{Character vector. List of diseases to include in the
-report.}
+\item{diseases}{Character vector. Diseases to include in the report}
 
-\item{y}{Integer. Current report year.}
+\item{y}{Integer. Report year}
 
-\item{m}{Integer. Current report month (1-12).}
+\item{m}{Integer. Report month (1-12)}
 
-\item{config}{List. Configuration with current_population, avg_5yr_population,
-and rounding_decimals settings.}
+\item{config}{List. Report settings}
 
-\item{as.rates}{Logical. If TRUE, returns rates per 100k instead of raw counts.}
+\item{as.rates}{Logical. If TRUE, returns rates per 100k instead of raw counts}
 }
 \value{
 Dataframe with one row per disease and columns for current YTD and
-average YTD values (either counts or rates per 100k).
+average YTD values (either counts or rates per 100k)
 }
 \description{
 'create_report_ytd_counts' generates a data frame of year-to-date counts
 for each disease up to the given month, comparing the given year to the
 average of other years.
+}
+\details{
+Uses the following config options:
+\itemize{
+\item \code{current_population}
+\item \code{avg_5yr_population}
+\item \code{rounding_decimals}
+}
 }
 \examples{
 data <- data.frame(
@@ -43,4 +55,7 @@ config <- list(
   rounding_decimals = 1
 )
 create_report_ytd_counts(data, c("A", "B", "C"), 2024, 2, config)
+}
+\seealso{
+\code{\link[=epitraxr_config]{epitraxr_config()}} for config options
 }

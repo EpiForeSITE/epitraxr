@@ -4,23 +4,29 @@
 \alias{create_public_report_month}
 \title{Create a monthly cross-section public report}
 \usage{
-create_public_report_month(cases, avgs, d_list, m, y, config)
+create_public_report_month(data, diseases, y, m, config)
 }
 \arguments{
-\item{cases}{Dataframe. Disease case counts for each month and year. Must
-have columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{avgs}{Dataframe. Disease case count averages for each month. Must
-have columns: disease, Jan, Feb, ...}
+\item{diseases}{Dataframe. Diseases to include in the report. Maps EpiTrax disease
+names to public-facing versions. Must have columns:
+\itemize{
+\item \code{EpiTrax_name} (character)
+\item \code{Public_name} (character)
+}}
 
-\item{d_list}{Dataframe. List of diseases to use for the report. Must have
-columns: EpiTrax_name, Public_name.}
+\item{y}{Integer. Report year}
 
-\item{m}{Integer. The report month (1-12).}
+\item{m}{Integer. Report month (1-12)}
 
-\item{y}{Integer. The report year.}
-
-\item{config}{List. Settings to use for report.}
+\item{config}{List. Report settings}
 }
 \value{
 List containing the report name and data.
@@ -28,24 +34,38 @@ List containing the report name and data.
 \description{
 'create_public_report_month' creates a public report for the given month.
 }
+\details{
+Uses the following config options:
+\itemize{
+\item \code{current_population}
+\item \code{avg_5yr_population}
+\item \code{rounding_decimals}
+\item \code{trend_threshold}
+}
+}
 \examples{
-cases <- data.frame(
-  disease = c("A","B"),
-  year = 2024,
-  month = 1,
-  counts = c(10,20)
-)
-avgs <- data.frame(disease = c("A","B"), Jan = c(5,15))
-d_list <- data.frame(
-  EpiTrax_name = c("A","B"),
-  Public_name = c("Alpha","Beta")
-)
-config <- list(
-  current_population = 100000,
-  avg_5yr_population = 100000,
-  rounding_decimals = 1,
-  trend_threshold = 0.15
-)
+data_file <- system.file("sample_data/sample_epitrax_data.csv",
+                         package = "epitraxr")
+# Read in EpiTrax data
+data <- read_epitrax_data(data_file)
 
-create_public_report_month(cases, avgs, d_list, 1, 2024, config)
+diseases <- data.frame(
+  EpiTrax_name = c("Influenza", "COVID-19", "Measles", "Syphilis"),
+  Public_name = c("Influenza", "COVID-19", "Measles", "Syphilis")
+)
+config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+                          package = "epitraxr")
+config <- get_report_config(config_file)
+
+create_public_report_month(
+ data = data,
+ diseases = diseases,
+ y = 2024,
+ m = 1,
+ config = config
+)
+}
+\seealso{
+\code{\link[=get_month_counts]{get_month_counts()}}, \code{\link[=create_report_monthly_avgs]{create_report_monthly_avgs()}} which
+this function uses and \code{\link[=epitraxr_config]{epitraxr_config()}} for config options
 }

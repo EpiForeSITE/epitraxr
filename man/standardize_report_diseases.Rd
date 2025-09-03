@@ -9,7 +9,7 @@ standardize_report_diseases(data, diseases)
 \arguments{
 \item{data}{Dataframe. Current report data.}
 
-\item{diseases}{String vector. Diseases to include in the report.}
+\item{diseases}{Character vector. Diseases to include in the report.}
 }
 \value{
 Report data with rows for all diseases to report.
