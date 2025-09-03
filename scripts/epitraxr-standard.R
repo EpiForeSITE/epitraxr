@@ -32,7 +32,7 @@ report_config <- get_report_config(file.path(fsys$settings,
                                               "report_config.yaml"))
 
 # Read in EpiTrax data ---------------------------------------------------------
-epitrax <- get_epitrax()
+epitrax <- create_epitrax_from_file()
 
 report_diseases <- get_report_diseases(
   internal = file.path(fsys$settings, "internal_report_diseases.csv"),

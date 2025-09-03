@@ -11,7 +11,7 @@ epitrax_write_pdf_grouped_stats(epitrax, params, fsys, trend.only = FALSE)
 
 \item{params}{List. Report parameters containing:
 \itemize{
-\item title: Report title (defaults to "Grouped Report")
+\item \code{title}: Report title (defaults to "Grouped Report")
 }}
 
 \item{fsys}{Filesystem list containing paths for internal and public reports.}
@@ -50,11 +50,14 @@ internal and public grouped statistics reports.
  )
 
  epitrax <- setup_epitrax(
-   epitrax_file = data_file,
+   filepath = data_file,
    config_file = config_file,
    disease_list_files = disease_lists
  ) |>
   epitrax_report_grouped_stats() |>
   epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
+
+ # Cleanup
+ unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 }
 }

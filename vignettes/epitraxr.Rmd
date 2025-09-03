@@ -110,9 +110,9 @@ disease_lists <- list(
 )
 
 # Run pipe
-epitrax <- get_epitrax(data_file) |>
+epitrax <- create_epitrax_from_file(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(disease_lists) |>
+  epitrax_set_report_diseases(disease_lists) |>
   epitrax_ireport_annual_counts()
 
 # View report
@@ -121,9 +121,9 @@ head(epitrax$internal_reports$annual_counts)
 Piped mode really shines when we're creating multiple reports all at once.
 
 ```{r many-reports-piping}
-epitrax <- get_epitrax(data_file) |>
+epitrax <- create_epitrax_from_file(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(disease_lists) |>
+  epitrax_set_report_diseases(disease_lists) |>
   epitrax_ireport_annual_counts() |>
   epitrax_ireport_monthly_avgs() |>
   epitrax_ireport_ytd_counts_for_month()

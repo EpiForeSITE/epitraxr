@@ -8,11 +8,9 @@ reference:
 - subtitle: Setup
   desc: Functions to create the epitrax object and prepare it for report generation
   contents:
-  - get_epitrax
-  - epitrax_set_config_from_file
-  - epitrax_set_config_from_list
-  - epitrax_add_report_diseases
   - setup_epitrax
+  - create_epitrax_from_file
+  - starts_with("epitrax_set_")
 
 - subtitle: Internal reports
   desc: Functions that generate exclusively internal reports

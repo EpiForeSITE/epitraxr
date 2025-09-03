@@ -203,9 +203,9 @@ disease_list_file <- system.file(
   package = "epitraxr"
 )
 
-epitrax <- get_epitrax(data_file) |>
+epitrax <- create_epitrax_from_file(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(list(
+  epitrax_set_report_diseases(list(
     internal = disease_list_file,
     public = disease_list_file
   )) |>
@@ -217,9 +217,9 @@ epitrax$internal_reports$annual_counts
 Piped mode makes it super simple to add additional reports.
 
 ```{r usage-piped-expanded}
-epitrax <- get_epitrax(data_file) |>
+epitrax <- create_epitrax_from_file(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(list(
+  epitrax_set_report_diseases(list(
     internal = disease_list_file,
     public = disease_list_file
   )) |>

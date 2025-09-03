@@ -30,7 +30,7 @@ disease_lists <- list(
 )
 
 epitrax <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_file = config_file,
   disease_list_files = disease_lists
 ) |>

@@ -18,7 +18,7 @@ the public disease list. If FALSE (default), generates an internal report using
 the internal disease list.}
 
 \item{exclude.report.year}{Logical indicating whether to exclude the current
-report year from the medians calculation. Defaults to FALSE.}
+report year from the report. Defaults to FALSE.}
 }
 \value{
 Updated EpiTrax object with YTD medians report added to either
@@ -42,7 +42,7 @@ disease_lists <- list(
 )
 
 epitrax <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_file = config_file,
   disease_list_files = disease_lists
 ) |>

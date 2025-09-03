@@ -27,3 +27,7 @@ epitrax <- structure(
 )
 epitrax <- epitrax_set_config_from_file(epitrax, config_file)
 }
+\seealso{
+\code{\link[=epitrax_set_config_from_list]{epitrax_set_config_from_list()}} and the convenience function
+\code{\link[=setup_epitrax]{setup_epitrax()}} which wraps this function
+}

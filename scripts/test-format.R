@@ -29,7 +29,7 @@ fsys <- setup_filesystem(folders = fsys, clear.reports = TRUE)
 message("Generating reports...")
 
 epitrax <- setup_epitrax(
-  epitrax_file = "scripts/test_format_files/tricounty-data.csv",
+  filepath = "scripts/test_format_files/tricounty-data.csv",
   config_file = file.path(fsys$settings, "report_config.yaml"),
   disease_list_files = list(
     internal = file.path(fsys$settings, "grouped_internal_report_diseases.csv"),
