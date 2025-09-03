@@ -1,4 +1,4 @@
-# epitraxr (development version)
+# epitraxr 0.5.0
 
 * Add formatted PDF reports
 * Add option to produce trend-only PDF reports
