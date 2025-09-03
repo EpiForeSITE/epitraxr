@@ -11,7 +11,7 @@ and year. This provides both current month context and cumulative year progress.
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ and year. This provides both current month context and cumulative year progress.
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +38,7 @@ and year. This provides both current month context and cumulative year progress.
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create combined monthly and year-to-date public report</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/R/reports.R" class="external-link"><code>R/reports.R</code></a></small>
       <div class="d-none name"><code>create_public_report_combined_month_ytd.Rd</code></div>
     </div>
 
@@ -57,30 +58,48 @@ and year. This provides both current month context and cumulative year progress.
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>Dataframe. Input data with columns: disease, year, month, counts.</p></dd>
+<dd><p>Dataframe. Input data with columns:</p><ul><li><p><code>disease</code> (character)</p></li>
+<li><p><code>year</code> (integer)</p></li>
+<li><p><code>month</code> (integer)</p></li>
+<li><p><code>counts</code> (integer)</p></li>
+</ul></dd>
 
 
 <dt id="arg-diseases">diseases<a class="anchor" aria-label="anchor" href="#arg-diseases"></a></dt>
-<dd><p>Dataframe. Disease configuration with columns: EpiTrax_name,
-Public_name. Used to define disease names and their public-facing versions.</p></dd>
+<dd><p>Dataframe. Diseases to include in the report. Maps EpiTrax disease
+names to public-facing versions. Must have columns:</p><ul><li><p><code>EpiTrax_name</code> (character)</p></li>
+<li><p><code>Public_name</code> (character)</p></li>
+</ul></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Integer. Current report year.</p></dd>
+<dd><p>Integer. Report year</p></dd>
 
 
 <dt id="arg-m">m<a class="anchor" aria-label="anchor" href="#arg-m"></a></dt>
-<dd><p>Integer. Current report month (1-12).</p></dd>
+<dd><p>Integer. Report month (1-12)</p></dd>
 
 
 <dt id="arg-config">config<a class="anchor" aria-label="anchor" href="#arg-config"></a></dt>
-<dd><p>List. Settings to use for report.</p></dd>
+<dd><p>List. Report settings</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>List containing the report name and combined monthly/YTD report data
 with columns for monthly cases/averages/trends and YTD statistics.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Uses the following config options:</p><ul><li><p><code>current_population</code></p></li>
+<li><p><code>avg_5yr_population</code></p></li>
+<li><p><code>rounding_decimals</code></p></li>
+<li><p><code>trend_threshold</code></p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="create_public_report_month.html">create_public_report_month()</a></code>, <code><a href="create_report_ytd_counts.html">create_report_ytd_counts()</a></code> which this
+function uses and <code><a href="epitraxr_config.html">epitraxr_config()</a></code> for config options</p></div>
     </div>
 
     <div class="section level2">
@@ -96,8 +115,14 @@ with columns for monthly cases/averages/trends and YTD statistics.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">config_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"tinytest/test_files/configs/good_config.yaml"</span>,</span></span>
 <span class="r-in"><span>                          package <span class="op">=</span> <span class="st">"epitraxr"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_report_config.html">read_report_config</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">create_public_report_combined_month_ytd</span><span class="op">(</span><span class="va">data</span>, <span class="va">diseases</span>, <span class="fl">2024</span>, <span class="fl">2</span>, <span class="va">config</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_report_config.html">get_report_config</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">create_public_report_combined_month_ytd</span><span class="op">(</span></span></span>
+<span class="r-in"><span> data <span class="op">=</span> <span class="va">data</span>,</span></span>
+<span class="r-in"><span> diseases <span class="op">=</span> <span class="va">diseases</span>,</span></span>
+<span class="r-in"><span> y <span class="op">=</span> <span class="fl">2024</span>,</span></span>
+<span class="r-in"><span> m <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span> config <span class="op">=</span> <span class="va">config</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "public_report_combined_Feb2024"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

@@ -11,7 +11,7 @@ and clear_old_reports."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ and clear_old_reports."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +38,7 @@ and clear_old_reports."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Setup the report filesystem</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/R/filesystem.R" class="external-link"><code>R/filesystem.R</code></a></small>
       <div class="d-none name"><code>setup_filesystem.Rd</code></div>
     </div>
 
@@ -57,9 +58,9 @@ and <code>clear_old_reports</code>.</p>
 
 
 <dl><dt id="arg-folders">folders<a class="anchor" aria-label="anchor" href="#arg-folders"></a></dt>
-<dd><p>List. Contains paths to report folders with elements:</p><ul><li><p>internal: Folder for internal reports</p></li>
-<li><p>public: Folder for public reports</p></li>
-<li><p>settings: Folder for settings files</p></li>
+<dd><p>List. Contains paths to report folders with elements:</p><ul><li><p><code>internal</code>: Folder for internal reports</p></li>
+<li><p><code>public</code>: Folder for public reports</p></li>
+<li><p><code>settings</code>: Folder for settings files</p></li>
 </ul></dd>
 
 
@@ -72,6 +73,10 @@ and public folders. Defaults to FALSE.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>The input folders list, unchanged.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="create_filesystem.html">create_filesystem()</a></code>, <code><a href="clear_old_reports.html">clear_old_reports()</a></code> which this function wraps.</p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -83,14 +88,15 @@ and public folders. Defaults to FALSE.</p></dd>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">setup_filesystem</span><span class="op">(</span><span class="va">folders</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $internal</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpHBiUdg/internal"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpn9pvS4/internal"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $public</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpHBiUdg/public"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpn9pvS4/public"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $settings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpHBiUdg/settings"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpn9pvS4/settings"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">folders</span>, use.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

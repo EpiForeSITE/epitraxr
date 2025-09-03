@@ -11,7 +11,7 @@ monthly averages for the same month across previous years."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ monthly averages for the same month across previous years."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +38,7 @@ monthly averages for the same month across previous years."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create monthly cross-section reports from an EpiTrax object</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/R/epitrax.R" class="external-link"><code>R/epitrax.R</code></a></small>
       <div class="d-none name"><code>epitrax_preport_month_crosssections.Rd</code></div>
     </div>
 
@@ -84,7 +85,7 @@ the <code>public_reports</code> field.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="setup_epitrax.html">setup_epitrax</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  epitrax_file <span class="op">=</span> <span class="va">data_file</span>,</span></span>
+<span class="r-in"><span>  filepath <span class="op">=</span> <span class="va">data_file</span>,</span></span>
 <span class="r-in"><span>  config_file <span class="op">=</span> <span class="va">config_file</span>,</span></span>
 <span class="r-in"><span>  disease_list_files <span class="op">=</span> <span class="va">disease_lists</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="op">|&gt;</span></span></span>

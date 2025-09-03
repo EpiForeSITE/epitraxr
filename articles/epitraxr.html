@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -59,7 +60,7 @@
       <h1>epitraxr</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/vignettes/epitraxr.Rmd" class="external-link"><code>vignettes/epitraxr.Rmd</code></a></small>
       <div class="d-none name"><code>epitraxr.Rmd</code></div>
     </div>
 
@@ -129,11 +130,11 @@ data while generating reports.</p>
 <p>Before you can generate reports from the data, epitraxr needs a list
 of diseases to include in the report. Often, you’ll have two lists, one
 for internal reports and one for public reports. Read these files in
-using the functions <code><a href="../reference/get_internal_disease_list.html">get_internal_disease_list()</a></code> and
-<code><a href="../reference/get_public_disease_list.html">get_public_disease_list()</a></code>.</p>
+using the functions <code><a href="../reference/get_report_diseases_internal.html">get_report_diseases_internal()</a></code> and
+<code><a href="../reference/get_report_diseases_public.html">get_report_diseases_public()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">internal_disease_list</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/ireport_diseases.csv"</span></span>
-<span><span class="va">internal_diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_internal_disease_list.html">get_internal_disease_list</a></span><span class="op">(</span><span class="va">internal_disease_list</span><span class="op">)</span></span>
+<span><span class="va">internal_diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_report_diseases_internal.html">get_report_diseases_internal</a></span><span class="op">(</span><span class="va">internal_disease_list</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">internal_diseases</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                      EpiTrax_name                      Group_name</span></span>
 <span><span class="co">#&gt; 1                         Anthrax                Zoonotic Disease</span></span>
@@ -151,7 +152,7 @@ grouped reports, you don’t need <code>Group_name</code> in your internal
 disease list.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">public_disease_list</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/preport_diseases.csv"</span></span>
-<span><span class="va">public_diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_public_disease_list.html">get_public_disease_list</a></span><span class="op">(</span><span class="va">public_disease_list</span><span class="op">)</span></span>
+<span><span class="va">public_diseases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_report_diseases_public.html">get_report_diseases_public</a></span><span class="op">(</span><span class="va">public_disease_list</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">public_diseases</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           EpiTrax_name                       Public_name</span></span>
 <span><span class="co">#&gt; 1               Chickenpox (Varicella)                        Chickenpox</span></span>
@@ -180,7 +181,7 @@ diseases we want to include in our report.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_report_annual_counts.html">create_report_annual_counts</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
-<span>  disease_names <span class="op">=</span> <span class="va">internal_diseases</span><span class="op">$</span><span class="va">EpiTrax_name</span></span>
+<span>  diseases <span class="op">=</span> <span class="va">internal_diseases</span><span class="op">$</span><span class="va">EpiTrax_name</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">report</span><span class="op">)</span></span>
@@ -199,7 +200,7 @@ public disease list.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_report_annual_counts.html">create_report_annual_counts</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">epitrax_data</span>,</span>
-<span>  disease_names <span class="op">=</span> <span class="va">public_diseases</span><span class="op">$</span><span class="va">EpiTrax_name</span></span>
+<span>  diseases <span class="op">=</span> <span class="va">public_diseases</span><span class="op">$</span><span class="va">EpiTrax_name</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">report</span><span class="op">)</span></span>
@@ -231,9 +232,9 @@ generation would work in piped mode.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Run pipe</span></span>
-<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="va">disease_lists</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/epitrax_set_report_diseases.html">epitrax_set_report_diseases</a></span><span class="op">(</span><span class="va">disease_lists</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View report</span></span>
@@ -248,9 +249,9 @@ generation would work in piped mode.</p>
 <p>Piped mode really shines when we’re creating multiple reports all at
 once.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file</a></span><span class="op">(</span><span class="va">data_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_set_config_from_file.html">epitrax_set_config_from_file</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="va">disease_lists</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/epitrax_set_report_diseases.html">epitrax_set_report_diseases</a></span><span class="op">(</span><span class="va">disease_lists</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_monthly_avgs.html">epitrax_ireport_monthly_avgs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/epitrax_ireport_ytd_counts_for_month.html">epitrax_ireport_ytd_counts_for_month</a></span><span class="op">(</span><span class="op">)</span></span>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -33,7 +34,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-
+      <small>Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -42,6 +43,34 @@
 <li>Add option to produce trend-only PDF reports</li>
 <li>Update installation instructions in README</li>
 <li>Increase file upload size limit in Shiny app</li>
+<li>Significant overall of function APIs for consistency, including renaming several functions:
+<ul><li>
+<code>get_trend()</code> -&gt; <code><a href="../reference/compute_trend.html">compute_trend()</a></code>
+</li>
+<li>
+<code>get_epitrax()</code> -&gt; <code><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file()</a></code>
+</li>
+<li>
+<code>epitrax_add_report_diseases()</code> -&gt; <code><a href="../reference/epitrax_set_report_diseases.html">epitrax_set_report_diseases()</a></code>
+</li>
+<li>
+<code>read_report_config()</code> -&gt; <code><a href="../reference/get_report_config.html">get_report_config()</a></code>
+</li>
+<li>
+<code>get_report_disease_lists()</code> -&gt; <code><a href="../reference/get_report_diseases.html">get_report_diseases()</a></code>
+</li>
+<li>
+<code>get_internal_disease_list()</code> -&gt; <code><a href="../reference/get_report_diseases_internal.html">get_report_diseases_internal()</a></code>
+</li>
+<li>
+<code>get_public_disease_list()</code> -&gt; <code><a href="../reference/get_report_diseases_public.html">get_report_diseases_public()</a></code>
+</li>
+<li>
+<code>format_week_num()</code> -&gt; <code><a href="../reference/mmwr_week_to_month.html">mmwr_week_to_month()</a></code> and <code><a href="../reference/format_epitrax_data.html">format_epitrax_data()</a></code> (separated different functionality into two functions)</li>
+<li>
+<code>write_grouped_report_pdf()</code> -&gt; <code><a href="../reference/write_report_pdf_grouped.html">write_report_pdf_grouped()</a></code>
+</li>
+</ul></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="epitraxr-040">epitraxr 0.4.0<a class="anchor" aria-label="anchor" href="#epitraxr-040"></a></h2>
@@ -67,7 +96,7 @@
 <h2 class="pkg-version" data-toc-text="0.3.2" id="epitraxr-032">epitraxr 0.3.2<a class="anchor" aria-label="anchor" href="#epitraxr-032"></a></h2>
 <ul><li>Create grouped reports</li>
 <li>Enable PDF output for some reports</li>
-<li>Add threshold parameter to <code><a href="../reference/get_trend.html">get_trend()</a></code>
+<li>Add threshold parameter to <code>get_trend()</code>
 </li>
 <li>Add new report combining monthly and YTD stats</li>
 <li>Complete R package checklist</li>

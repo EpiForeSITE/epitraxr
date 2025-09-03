@@ -11,7 +11,7 @@ monthly counts/rates, year-to-date counts, and trend analysis."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ monthly counts/rates, year-to-date counts, and trend analysis."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +38,7 @@ monthly counts/rates, year-to-date counts, and trend analysis."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create grouped disease statistics report</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/R/reports.R" class="external-link"><code>R/reports.R</code></a></small>
       <div class="d-none name"><code>create_report_grouped_stats.Rd</code></div>
     </div>
 
@@ -57,25 +58,30 @@ monthly counts/rates, year-to-date counts, and trend analysis.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>Dataframe. Input data with columns: disease, year, month, counts.</p></dd>
+<dd><p>Dataframe. Input data with columns:</p><ul><li><p><code>disease</code> (character)</p></li>
+<li><p><code>year</code> (integer)</p></li>
+<li><p><code>month</code> (integer)</p></li>
+<li><p><code>counts</code> (integer)</p></li>
+</ul></dd>
 
 
 <dt id="arg-diseases">diseases<a class="anchor" aria-label="anchor" href="#arg-diseases"></a></dt>
-<dd><p>Dataframe. Disease configuration with columns: EpiTrax_name,
-Group_name. Used to define disease names and their groupings. If Group_name
-is missing, diseases will be grouped under "Uncategorized".</p></dd>
+<dd><p>Dataframe. Diseases to include in the report. Must have column
+<code>EpiTrax_name</code> (character) with diseases to include. Optionally may have column
+<code>Group_name</code> (character) to define disease groupings. If <code>Group_name</code> is
+missing, all diseases will be grouped under "Uncategorized".</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Integer. Current report year.</p></dd>
+<dd><p>Integer. Report year</p></dd>
 
 
 <dt id="arg-m">m<a class="anchor" aria-label="anchor" href="#arg-m"></a></dt>
-<dd><p>Integer. Current report month (1-12).</p></dd>
+<dd><p>Integer. Report month (1-12)</p></dd>
 
 
 <dt id="arg-config">config<a class="anchor" aria-label="anchor" href="#arg-config"></a></dt>
-<dd><p>List. Settings to use for report.</p></dd>
+<dd><p>List. Report settings</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -87,6 +93,20 @@ is missing, diseases will be grouped under "Uncategorized".</p></dd>
 <li><p>Year-to-date counts and historical averages and medians</p></li>
 <li><p>YTD trend indicators</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Uses the following config options:</p><ul><li><p><code>current_population</code></p></li>
+<li><p><code>avg_5yr_population</code></p></li>
+<li><p><code>rounding_decimals</code></p></li>
+<li><p><code>trend_threshold</code></p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="create_report_monthly_counts.html">create_report_monthly_counts()</a></code>, <code><a href="create_report_monthly_avgs.html">create_report_monthly_avgs()</a></code>,
+<code><a href="create_report_monthly_medians.html">create_report_monthly_medians()</a></code>, <code><a href="create_report_ytd_counts.html">create_report_ytd_counts()</a></code>,
+<code><a href="create_report_ytd_medians.html">create_report_ytd_medians()</a></code> which this function uses and <code><a href="epitraxr_config.html">epitraxr_config()</a></code>
+for config options</p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

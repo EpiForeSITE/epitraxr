@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -36,9 +37,15 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="piped-mode-functions">Piped mode functions<a class="anchor" aria-label="anchor" href="#piped-mode-functions"></a></h2>
 
 
+
+
+    </div><div class="section level2">
+
+      <h3 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a></h3>
+      <div class="section-desc"><p>Functions to create the epitrax object and prepare it for report generation</p></div>
 
 
     </div><div class="section level2">
@@ -48,41 +55,180 @@
 
       <dl><dt>
 
-          <code><a href="clear_old_reports.html">clear_old_reports()</a></code>
+          <code><a href="setup_epitrax.html">setup_epitrax()</a></code>
 
         </dt>
-        <dd>Clear out old reports before generating new ones.</dd>
+        <dd>Setup EpiTrax object with configuration and disease lists</dd>
       </dl><dl><dt>
 
-          <code><a href="convert_counts_to_rate.html">convert_counts_to_rate()</a></code>
+          <code><a href="create_epitrax_from_file.html">create_epitrax_from_file()</a></code>
 
         </dt>
-        <dd>Convert case counts to rate</dd>
+        <dd>Create an EpiTrax object from data file</dd>
       </dl><dl><dt>
 
-          <code><a href="create_filesystem.html">create_filesystem()</a></code>
+          <code><a href="epitrax_set_config_from_file.html">epitrax_set_config_from_file()</a></code>
 
         </dt>
-        <dd>Create filesystem</dd>
+        <dd>Set report configuration of EpiTrax object from config file</dd>
       </dl><dl><dt>
 
-          <code><a href="create_public_report_combined_month_ytd.html">create_public_report_combined_month_ytd()</a></code>
+          <code><a href="epitrax_set_config_from_list.html">epitrax_set_config_from_list()</a></code>
 
         </dt>
-        <dd>Create combined monthly and year-to-date public report</dd>
+        <dd>Set report configuration of EpiTrax object from list</dd>
       </dl><dl><dt>
 
-          <code><a href="create_public_report_month.html">create_public_report_month()</a></code>
+          <code><a href="epitrax_set_report_diseases.html">epitrax_set_report_diseases()</a></code>
 
         </dt>
-        <dd>Create a monthly cross-section public report</dd>
-      </dl><dl><dt>
+        <dd>Set report diseases in EpiTrax object</dd>
+      </dl></div><div class="section level2">
 
-          <code><a href="create_public_report_ytd.html">create_public_report_ytd()</a></code>
+      <h3 id="internal-reports">Internal reports<a class="anchor" aria-label="anchor" href="#internal-reports"></a></h3>
+      <div class="section-desc"><p>Functions that generate exclusively internal reports</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts()</a></code>
 
         </dt>
-        <dd>Create a YTD public report</dd>
+        <dd>Create annual counts internal report from an EpiTrax object</dd>
       </dl><dl><dt>
+
+          <code><a href="epitrax_ireport_monthly_avgs.html">epitrax_ireport_monthly_avgs()</a></code>
+
+        </dt>
+        <dd>Create monthly averages internal report from an EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_ireport_monthly_counts_all_yrs.html">epitrax_ireport_monthly_counts_all_yrs()</a></code>
+
+        </dt>
+        <dd>Create monthly counts internal report for all years from an EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_ireport_ytd_counts_for_month.html">epitrax_ireport_ytd_counts_for_month()</a></code>
+
+        </dt>
+        <dd>Create year-to-date (YTD) counts internal report for a given month from an EpiTrax object</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="public-reports">Public reports<a class="anchor" aria-label="anchor" href="#public-reports"></a></h3>
+      <div class="section-desc"><p>Functions that generate exclusively public reports</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="epitrax_preport_combined_month_ytd.html">epitrax_preport_combined_month_ytd()</a></code>
+
+        </dt>
+        <dd>Create combined monthly/YTD stats public report from an EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_preport_month_crosssections.html">epitrax_preport_month_crosssections()</a></code>
+
+        </dt>
+        <dd>Create monthly cross-section reports from an EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_preport_ytd_rates.html">epitrax_preport_ytd_rates()</a></code>
+
+        </dt>
+        <dd>Create year-to-date (YTD) rates public report from an EpiTrax object</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="other-reports">Other reports<a class="anchor" aria-label="anchor" href="#other-reports"></a></h3>
+      <div class="section-desc"><p>Functions that generate both internal and public reports</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="epitrax_report_grouped_stats.html">epitrax_report_grouped_stats()</a></code>
+
+        </dt>
+        <dd>Create grouped disease statistics report from an EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_report_monthly_medians.html">epitrax_report_monthly_medians()</a></code>
+
+        </dt>
+        <dd>Create monthly medians report from an EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_report_ytd_medians.html">epitrax_report_ytd_medians()</a></code>
+
+        </dt>
+        <dd>Create year-to-date (YTD) medians report from an EpiTrax object</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h3>
+      <div class="section-desc"><p>Functions to export reports</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="epitrax_write_csvs.html">epitrax_write_csvs()</a></code>
+
+        </dt>
+        <dd>Write reports from EpiTrax object to CSV files</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_write_pdf_grouped_stats.html">epitrax_write_pdf_grouped_stats()</a></code>
+
+        </dt>
+        <dd>Write grouped statistics reports from EpiTrax object to PDF files</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_write_pdf_public_reports.html">epitrax_write_pdf_public_reports()</a></code>
+
+        </dt>
+        <dd>Create formatted PDF report of monthly cross-section reports</dd>
+      </dl><dl><dt>
+
+          <code><a href="epitrax_write_xlsxs.html">epitrax_write_xlsxs()</a></code>
+
+        </dt>
+        <dd>Write reports from EpiTrax object to Excel files</dd>
+      </dl></div><div class="section level2">
+      <h2 id="standard-mode-functions">Standard mode functions<a class="anchor" aria-label="anchor" href="#standard-mode-functions"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+      <h3 id="internal-reports-1">Internal reports<a class="anchor" aria-label="anchor" href="#internal-reports-1"></a></h3>
+      <div class="section-desc"><p>Functions that generate reports intended for internal use</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="create_report_annual_counts.html">create_report_annual_counts()</a></code>
 
@@ -124,247 +270,176 @@
 
         </dt>
         <dd>Create year-to-date (YTD) medians report</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
 
-          <code><a href="epitrax_add_report_diseases.html">epitrax_add_report_diseases()</a></code>
+      <h3 id="public-reports-1">Public reports<a class="anchor" aria-label="anchor" href="#public-reports-1"></a></h3>
+      <div class="section-desc"><p>Functions that generate reports intended for public use</p></div>
 
-        </dt>
-        <dd>Add report diseases to EpiTrax object</dd>
-      </dl><dl><dt>
 
-          <code><a href="epitrax_ireport_annual_counts.html">epitrax_ireport_annual_counts()</a></code>
+    </div><div class="section level2">
 
-        </dt>
-        <dd>Create annual counts internal report from an EpiTrax object</dd>
-      </dl><dl><dt>
 
-          <code><a href="epitrax_ireport_monthly_avgs.html">epitrax_ireport_monthly_avgs()</a></code>
 
-        </dt>
-        <dd>Create monthly averages internal report from an EpiTrax object</dd>
-      </dl><dl><dt>
 
-          <code><a href="epitrax_ireport_monthly_counts_all_yrs.html">epitrax_ireport_monthly_counts_all_yrs()</a></code>
+      <dl><dt>
+
+          <code><a href="create_public_report_combined_month_ytd.html">create_public_report_combined_month_ytd()</a></code>
 
         </dt>
-        <dd>Create monthly counts internal report for all years from an EpiTrax object</dd>
+        <dd>Create combined monthly and year-to-date public report</dd>
       </dl><dl><dt>
 
-          <code><a href="epitrax_ireport_ytd_counts_for_month.html">epitrax_ireport_ytd_counts_for_month()</a></code>
+          <code><a href="create_public_report_month.html">create_public_report_month()</a></code>
 
         </dt>
-        <dd>Create year-to-date (YTD) counts internal report for a given month from an EpiTrax object</dd>
+        <dd>Create a monthly cross-section public report</dd>
       </dl><dl><dt>
 
-          <code><a href="epitrax_preport_combined_month_ytd.html">epitrax_preport_combined_month_ytd()</a></code>
+          <code><a href="create_public_report_ytd.html">create_public_report_ytd()</a></code>
 
         </dt>
-        <dd>Create combined monthly/YTD stats public report from an EpiTrax object</dd>
-      </dl><dl><dt>
+        <dd>Create a YTD public report</dd>
+      </dl></div><div class="section level2">
+      <h2 id="data-processing">Data processing<a class="anchor" aria-label="anchor" href="#data-processing"></a></h2>
 
-          <code><a href="epitrax_preport_month_crosssections.html">epitrax_preport_month_crosssections()</a></code>
+      <div class="section-desc"><p>Functions for importing and processing data</p></div>
 
-        </dt>
-        <dd>Create monthly cross-section reports from an EpiTrax object</dd>
-      </dl><dl><dt>
 
-          <code><a href="epitrax_preport_ytd_rates.html">epitrax_preport_ytd_rates()</a></code>
+    </div><div class="section level2">
 
-        </dt>
-        <dd>Create year-to-date (YTD) rates public report from an EpiTrax object</dd>
-      </dl><dl><dt>
 
-          <code><a href="epitrax_report_grouped_stats.html">epitrax_report_grouped_stats()</a></code>
 
-        </dt>
-        <dd>Create grouped disease statistics report from an EpiTrax object</dd>
-      </dl><dl><dt>
 
-          <code><a href="epitrax_report_monthly_medians.html">epitrax_report_monthly_medians()</a></code>
-
-        </dt>
-        <dd>Create monthly medians report from an EpiTrax object</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_report_ytd_medians.html">epitrax_report_ytd_medians()</a></code>
-
-        </dt>
-        <dd>Create year-to-date (YTD) medians report from an EpiTrax object</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_set_config_from_file.html">epitrax_set_config_from_file()</a></code>
-
-        </dt>
-        <dd>Set report configuration of EpiTrax object from config file</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_set_config_from_list.html">epitrax_set_config_from_list()</a></code>
-
-        </dt>
-        <dd>Set report configuration of EpiTrax object from list</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_write_csvs.html">epitrax_write_csvs()</a></code>
-
-        </dt>
-        <dd>Write reports from EpiTrax object to CSV files</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_write_pdf_grouped_stats.html">epitrax_write_pdf_grouped_stats()</a></code>
-
-        </dt>
-        <dd>Write grouped statistics reports from EpiTrax object to PDF files</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_write_pdf_public_reports.html">epitrax_write_pdf_public_reports()</a></code>
-
-        </dt>
-        <dd>Create formatted PDF report of monthly cross-section reports</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitrax_write_xlsxs.html">epitrax_write_xlsxs()</a></code>
-
-        </dt>
-        <dd>Write reports from EpiTrax object to Excel files</dd>
-      </dl><dl><dt>
-
-          <code><a href="epitraxr_config.html">epitraxr_config()</a></code>
-
-        </dt>
-        <dd>Create epitraxr config object</dd>
-      </dl><dl><dt>
-
-          <code><a href="format_week_num.html">format_week_num()</a></code>
-
-        </dt>
-        <dd>Format input EpiTrax data</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_epitrax.html">get_epitrax()</a></code>
-
-        </dt>
-        <dd>Create an EpiTrax object from data file</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_internal_disease_list.html">get_internal_disease_list()</a></code>
-
-        </dt>
-        <dd>Get the internal disease list</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_month_counts.html">get_month_counts()</a></code>
-
-        </dt>
-        <dd>Calculate monthly counts by disease</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_public_disease_list.html">get_public_disease_list()</a></code>
-
-        </dt>
-        <dd>Get the public disease list</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_report_disease_lists.html">get_report_disease_lists()</a></code>
-
-        </dt>
-        <dd>Get both internal and public disease lists</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_trend.html">get_trend()</a></code>
-
-        </dt>
-        <dd>Get Trend column of report</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_yrs.html">get_yrs()</a></code>
-
-        </dt>
-        <dd>Get unique years from a data frame</dd>
-      </dl><dl><dt>
+      <dl><dt>
 
           <code><a href="read_epitrax_data.html">read_epitrax_data()</a></code>
 
         </dt>
-        <dd>Read in input EpiTrax data</dd>
+        <dd>Read in EpiTrax data</dd>
       </dl><dl><dt>
 
-          <code><a href="read_report_config.html">read_report_config()</a></code>
+          <code><a href="mmwr_week_to_month.html">mmwr_week_to_month()</a></code>
 
         </dt>
-        <dd>Read in the report config YAML file</dd>
+        <dd>Convert MMWR week to calendar month</dd>
       </dl><dl><dt>
 
-          <code><a href="reshape_annual_wide.html">reshape_annual_wide()</a></code>
+          <code><a href="format_epitrax_data.html">format_epitrax_data()</a></code>
 
         </dt>
-        <dd>Reshape data frame with each year as a separate column</dd>
+        <dd>Format EpiTrax data for report generation</dd>
       </dl><dl><dt>
 
           <code><a href="reshape_monthly_wide.html">reshape_monthly_wide()</a></code>
 
         </dt>
-        <dd>Reshape data frame with each month as a separate column</dd>
+        <dd>Reshape data with each month as a separate column</dd>
       </dl><dl><dt>
 
-          <code><a href="run_app.html">run_app()</a></code>
+          <code><a href="reshape_annual_wide.html">reshape_annual_wide()</a></code>
 
         </dt>
-        <dd>Launch the epitraxr Shiny Application</dd>
+        <dd>Reshape data with each year as a separate column</dd>
       </dl><dl><dt>
 
-          <code><a href="set_na_0.html">set_na_0()</a></code>
+          <code><a href="standardize_report_diseases.html">standardize_report_diseases()</a></code>
 
         </dt>
-        <dd>Set NA values to 0</dd>
+        <dd>Standardize diseases for report</dd>
       </dl><dl><dt>
 
-          <code><a href="setup_epitrax.html">setup_epitrax()</a></code>
+          <code><a href="get_yrs.html">get_yrs()</a></code>
 
         </dt>
-        <dd>Setup EpiTrax object with configuration and disease lists</dd>
+        <dd>Get unique years from the data</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_month_counts.html">get_month_counts()</a></code>
+
+        </dt>
+        <dd>Get monthly counts for each disease</dd>
+      </dl></div><div class="section level2">
+      <h2 id="filesystem">Filesystem<a class="anchor" aria-label="anchor" href="#filesystem"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+      <h3 id="setup-1">Setup<a class="anchor" aria-label="anchor" href="#setup-1"></a></h3>
+      <div class="section-desc"><p>Functions for setting up the filesystem</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="create_filesystem.html">create_filesystem()</a></code>
+
+        </dt>
+        <dd>Create filesystem</dd>
+      </dl><dl><dt>
+
+          <code><a href="clear_old_reports.html">clear_old_reports()</a></code>
+
+        </dt>
+        <dd>Clear out old reports before generating new ones.</dd>
       </dl><dl><dt>
 
           <code><a href="setup_filesystem.html">setup_filesystem()</a></code>
 
         </dt>
         <dd>Setup the report filesystem</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
 
-          <code><a href="standardize_report_diseases.html">standardize_report_diseases()</a></code>
+      <h3 id="reading-files">Reading files<a class="anchor" aria-label="anchor" href="#reading-files"></a></h3>
+      <div class="section-desc"><p>Functions for reading configuration and data files</p></div>
 
-        </dt>
-        <dd>Prepare data for report</dd>
-      </dl><dl><dt>
 
-          <code><a href="validate_config.html">validate_config()</a></code>
+    </div><div class="section level2">
 
-        </dt>
-        <dd>Validate a config list</dd>
-      </dl><dl><dt>
 
-          <code><a href="validate_data.html">validate_data()</a></code>
 
-        </dt>
-        <dd>Validate input EpiTrax data</dd>
-      </dl><dl><dt>
 
-          <code><a href="validate_epitrax.html">validate_epitrax()</a></code>
+      <dl><dt>
+
+          <code><a href="get_report_config.html">get_report_config()</a></code>
 
         </dt>
-        <dd>Validate an EpiTrax object</dd>
+        <dd>Read in the report config YAML file</dd>
       </dl><dl><dt>
 
-          <code><a href="validate_filesystem.html">validate_filesystem()</a></code>
+          <code><a href="get_report_diseases.html">get_report_diseases()</a></code>
 
         </dt>
-        <dd>Validate the filesystem structure</dd>
+        <dd>Get both internal and public disease lists</dd>
       </dl><dl><dt>
 
-          <code><a href="write_grouped_report_pdf.html">write_grouped_report_pdf()</a></code>
+          <code><a href="get_report_diseases_internal.html">get_report_diseases_internal()</a></code>
 
         </dt>
-        <dd>Write PDF grouped report from R Markdown template</dd>
+        <dd>Get the internal disease list</dd>
       </dl><dl><dt>
+
+          <code><a href="get_report_diseases_public.html">get_report_diseases_public()</a></code>
+
+        </dt>
+        <dd>Get the public disease list</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="export-functions">Export functions<a class="anchor" aria-label="anchor" href="#export-functions"></a></h3>
+      <div class="section-desc"><p>Functions to export reports</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="write_report_csv.html">write_report_csv()</a></code>
 
@@ -378,12 +453,106 @@
         <dd>Write general PDF report of disease stats from R Markdown template</dd>
       </dl><dl><dt>
 
+          <code><a href="write_report_pdf_grouped.html">write_report_pdf_grouped()</a></code>
+
+        </dt>
+        <dd>Write PDF grouped report from R Markdown template</dd>
+      </dl><dl><dt>
+
           <code><a href="write_report_xlsx.html">write_report_xlsx()</a></code>
 
         </dt>
         <dd>Write report Excel files</dd>
+      </dl></div><div class="section level2">
+      <h2 id="validation">Validation<a class="anchor" aria-label="anchor" href="#validation"></a></h2>
+
+      <div class="section-desc"><p>Functions for validating input data and configurations</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="validate_epitrax.html">validate_epitrax()</a></code>
+
+        </dt>
+        <dd>Validate EpiTrax object</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_filesystem.html">validate_filesystem()</a></code>
+
+        </dt>
+        <dd>Validate filesystem structure</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_config.html">validate_config()</a></code>
+
+        </dt>
+        <dd>Validate config</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_data.html">validate_data()</a></code>
+
+        </dt>
+        <dd>Validate input EpiTrax data</dd>
+      </dl></div><div class="section level2">
+      <h2 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a></h2>
+
+      <div class="section-desc"><p>Miscellaneous utility functions</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="epitraxr_config.html">epitraxr_config()</a></code>
+
+        </dt>
+        <dd>Create epitraxr config object</dd>
+      </dl><dl><dt>
+
+          <code><a href="convert_counts_to_rate.html">convert_counts_to_rate()</a></code>
+
+        </dt>
+        <dd>Convert case counts to rate</dd>
+      </dl><dl><dt>
+
+          <code><a href="compute_trend.html">compute_trend()</a></code>
+
+        </dt>
+        <dd>Compute the report trend</dd>
+      </dl><dl><dt>
+
+          <code><a href="set_na_0.html">set_na_0()</a></code>
+
+        </dt>
+        <dd>Set NA values to 0</dd>
+      </dl></div><div class="section level2">
+      <h2 id="shiny-app">Shiny app<a class="anchor" aria-label="anchor" href="#shiny-app"></a></h2>
+
+      <div class="section-desc"><p>Functions related to the Shiny application</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="run_app.html">run_app()</a></code>
+
+        </dt>
+        <dd>Launch the epitraxr Shiny Application</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

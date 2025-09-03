@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -59,7 +60,7 @@
       <h1>Piped Mode</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/vignettes/piped-mode.Rmd" class="external-link"><code>vignettes/piped-mode.Rmd</code></a></small>
       <div class="d-none name"><code>piped-mode.Rmd</code></div>
     </div>
 
@@ -96,26 +97,27 @@ then show the completed pipe running from end to end.</p>
 <h4 id="create-an-epitrax-object">Create an <code>epitrax</code> object<a class="anchor" aria-label="anchor" href="#create-an-epitrax-object"></a>
 </h4>
 <p>The first step in piped mode is always to create an
-<code>epitrax</code> object with the <code><a href="../reference/get_epitrax.html">get_epitrax()</a></code>
-function. This object will contain the data, configuration options, and
-report settings needed for all reports in the pipe. The
-<code>epitrax</code> object is passed through each function in the pipe.
-When a report is generated, it is appended to the appropriate list
-(public or internal) in the <code>epitrax</code> object before the
-object is passed to the next function in the pipe.</p>
+<code>epitrax</code> object with the
+<code><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file()</a></code> function. This object will
+contain the data, configuration options, and report settings needed for
+all reports in the pipe. The <code>epitrax</code> object is passed
+through each function in the pipe. When a report is generated, it is
+appended to the appropriate list (public or internal) in the
+<code>epitrax</code> object before the object is passed to the next
+function in the pipe.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_fp</span> <span class="op">&lt;-</span> <span class="st">"vignette-data/epitrax_data.csv"</span></span>
 <span></span>
-<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epitrax.html">get_epitrax</a></span><span class="op">(</span>data_file <span class="op">=</span> <span class="va">data_fp</span><span class="op">)</span></span>
+<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file</a></span><span class="op">(</span>filepath <span class="op">=</span> <span class="va">data_fp</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">epitrax</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "data"             "diseases"         "yrs"              "report_year"     </span></span>
 <span><span class="co">#&gt; [5] "report_month"     "internal_reports" "public_reports"</span></span></code></pre></div>
-<p>The <code><a href="../reference/get_epitrax.html">get_epitrax()</a></code> function reads the data in the
-provided data file, validates, and formats it. It then adds the data to
-the <code>epitrax</code> object as <code>epitrax$data</code>. The
-function also extracts key information and summary statistics from the
-data and adds those to the epitrax object as well: -
+<p>The <code><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file()</a></code> function reads the data
+in the provided data file, validates, and formats it. It then adds the
+data to the <code>epitrax</code> object as <code>epitrax$data</code>.
+The function also extracts key information and summary statistics from
+the data and adds those to the epitrax object as well: -
 <code>epitrax$diseases</code>: All diseases found in the data -
 <code>epitrax$yrs</code>: Years included in the data -
 <code>epitrax$report_year</code> and <code>epitrax$report_month</code>:
@@ -126,7 +128,7 @@ the latest year/month in the data. -
 Initially empty.</p>
 <p><strong>Note:</strong> All further functions in the pipe will expect
 an object of class <code>epitrax</code> as their first argument. Thus,
-<code><a href="../reference/get_epitrax.html">get_epitrax()</a></code> is the start of the pipe.</p>
+<code><a href="../reference/create_epitrax_from_file.html">create_epitrax_from_file()</a></code> is the start of the pipe.</p>
 </div>
 <div class="section level4">
 <h4 id="add-disease-lists">Add Disease Lists<a class="anchor" aria-label="anchor" href="#add-disease-lists"></a>
@@ -139,14 +141,14 @@ reports. The epitraxr package uses two lists because public reports
 typically include a subset of diseases, while internal reports typically
 include all tracked diseases. Add the disease lists to the
 <code>epitrax</code> object using the
-<code><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases()</a></code> function.</p>
+<code><a href="../reference/epitrax_set_report_diseases.html">epitrax_set_report_diseases()</a></code> function.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">disease_lists</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  internal <span class="op">=</span> <span class="st">"vignette-data/ireport_diseases.csv"</span>,</span>
 <span>  public <span class="op">=</span> <span class="st">"vignette-data/preport_diseases.csv"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epitrax_add_report_diseases.html">epitrax_add_report_diseases</a></span><span class="op">(</span><span class="va">epitrax</span>, disease_list_files <span class="op">=</span> <span class="va">disease_lists</span><span class="op">)</span></span>
+<span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epitrax_set_report_diseases.html">epitrax_set_report_diseases</a></span><span class="op">(</span><span class="va">epitrax</span>, disease_list_files <span class="op">=</span> <span class="va">disease_lists</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">epitrax</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "data"             "diseases"         "yrs"              "report_year"     </span></span>
@@ -201,7 +203,7 @@ generators can be run, epitraxr has the convenience function
 <code><a href="../reference/setup_epitrax.html">setup_epitrax()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_epitrax.html">setup_epitrax</a></span><span class="op">(</span></span>
-<span>  epitrax_file <span class="op">=</span> <span class="va">data_fp</span>,</span>
+<span>  filepath <span class="op">=</span> <span class="va">data_fp</span>,</span>
 <span>  config_file <span class="op">=</span> <span class="va">config_file</span>,</span>
 <span>  disease_list_files <span class="op">=</span> <span class="va">disease_lists</span></span>
 <span><span class="op">)</span></span>
@@ -322,7 +324,7 @@ object, you can safely insert these functions anywhere in the pipe.</p>
 <span></span>
 <span><span class="co"># Run report generation pipe</span></span>
 <span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_epitrax.html">setup_epitrax</a></span><span class="op">(</span></span>
-<span>    epitrax_file <span class="op">=</span> <span class="va">data_fp</span>,</span>
+<span>    filepath <span class="op">=</span> <span class="va">data_fp</span>,</span>
 <span>    config_file <span class="op">=</span> <span class="va">config_file</span>,</span>
 <span>    disease_list_files <span class="op">=</span> <span class="va">disease_lists</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>

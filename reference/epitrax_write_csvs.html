@@ -11,7 +11,7 @@ the EpiTrax config setting generate_csvs is set to false."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epitraxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ the EpiTrax config setting generate_csvs is set to false."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EpiForeSITE/epitraxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +38,7 @@ the EpiTrax config setting generate_csvs is set to false."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Write reports from EpiTrax object to CSV files</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EpiForeSITE/epitraxr/blob/main/R/epitrax.R" class="external-link"><code>R/epitrax.R</code></a></small>
       <div class="d-none name"><code>epitrax_write_csvs.Rd</code></div>
     </div>
 
@@ -86,7 +87,7 @@ the EpiTrax config setting <code>generate_csvs</code> is set to false.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">epitrax</span> <span class="op">&lt;-</span> <span class="fu"><a href="setup_epitrax.html">setup_epitrax</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  epitrax_file <span class="op">=</span> <span class="va">data_file</span>,</span></span>
+<span class="r-in"><span>  filepath <span class="op">=</span> <span class="va">data_file</span>,</span></span>
 <span class="r-in"><span>  config_file <span class="op">=</span> <span class="va">config_file</span>,</span></span>
 <span class="r-in"><span>  disease_list_files <span class="op">=</span> <span class="va">disease_lists</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
@@ -102,6 +103,9 @@ the EpiTrax config setting <code>generate_csvs</code> is set to false.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>  - If you would like to use a different list, please include a file with columns named</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> 	'EpiTrax_name' and 'Public_name'</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Cleanup</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">fsys</span>, use.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
