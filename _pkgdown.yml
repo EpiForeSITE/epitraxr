@@ -8,11 +8,11 @@ reference:
 - subtitle: Setup
   desc: Functions to create the epitrax object and prepare it for report generation
   contents:
+  - get_epitrax
   - epitrax_set_config_from_file
   - epitrax_set_config_from_list
   - epitrax_add_report_diseases
   - setup_epitrax
-  - get_epitrax
 
 - subtitle: Internal reports
   desc: Functions that generate exclusively internal reports
@@ -50,10 +50,12 @@ reference:
   desc: Functions for importing and processing data
   contents:
   - read_epitrax_data
-  - format_week_num
+  - mmwr_week_to_month
+  - format_epitrax_data
   - reshape_monthly_wide
   - reshape_annual_wide
   - standardize_report_diseases
+  - get_yrs
   - get_month_counts
 
 - title: Filesystem
@@ -89,7 +91,6 @@ reference:
   - epitraxr_config
   - convert_counts_to_rate
   - compute_trend
-  - get_yrs
   - set_na_0
 
 - title: Shiny app

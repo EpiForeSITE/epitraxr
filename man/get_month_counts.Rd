@@ -2,17 +2,17 @@
 % Please edit documentation in R/data.R
 \name{get_month_counts}
 \alias{get_month_counts}
-\title{Calculate monthly counts by disease}
+\title{Get monthly counts for each disease}
 \usage{
 get_month_counts(data)
 }
 \arguments{
 \item{data}{Dataframe. Must contain columns:
 \itemize{
-\item disease: The disease name
-\item year: The year of the counts
-\item month: The month of the counts (1-12)
-\item counts: The number of cases
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
 }}
 }
 \value{

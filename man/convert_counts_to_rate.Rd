@@ -14,7 +14,7 @@ convert_counts_to_rate(counts, pop, digits, rate_adj_pop = 1e+05)
 \item{digits}{Integer. Number of decimals to round to.}
 
 \item{rate_adj_pop}{Integer. Optional target population to use for rate.
-Defaults to 100k.}
+Defaults to 100k for rate per 100k.}
 }
 \value{
 The count(s) as rates per rate_adj_pop.

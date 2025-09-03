@@ -1,3 +1,38 @@
+# Test get_epitrax() -----------------------------------------------------------
+
+# Test with valid data file
+test_file <- "test_files/data/test_epitrax_data.csv"
+expect_silent(epitrax <- get_epitrax(test_file))
+
+# Check object class
+expect_true(inherits(epitrax, "epitrax"))
+
+# Check structure
+expected_names <- c("data", "diseases", "yrs", "report_year",
+                   "report_month", "internal_reports", "public_reports")
+expect_true(all(expected_names %in% names(epitrax)))
+
+# Check data component
+expect_true(is.data.frame(epitrax$data))
+expect_equal(colnames(epitrax$data),
+            c("disease", "month", "year", "counts"))
+
+# Check computed values
+expect_equal(epitrax$diseases, unique(epitrax$data$disease))
+expect_equal(epitrax$yrs, get_yrs(epitrax$data))
+expect_equal(epitrax$report_year, max(epitrax$data$year))
+expect_equal(epitrax$report_month,
+            max(epitrax$data[epitrax$data$year == epitrax$report_year,]$month))
+
+# Check report lists are empty
+expect_equal(length(epitrax$internal_reports), 0)
+expect_equal(length(epitrax$public_reports), 0)
+
+# Test with invalid file
+expect_error(get_epitrax("nonexistent.csv"),
+            "Please select an EpiTrax data file")
+
+
 # Test epitrax_set_config_from_file() ------------------------------------------
 config_file <- "test_files/configs/good_config.yaml"
 epitrax <- structure(

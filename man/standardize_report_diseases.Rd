@@ -2,7 +2,7 @@
 % Please edit documentation in R/data.R
 \name{standardize_report_diseases}
 \alias{standardize_report_diseases}
-\title{Prepare data for report}
+\title{Standardize diseases for report}
 \usage{
 standardize_report_diseases(data, diseases)
 }

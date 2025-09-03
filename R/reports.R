@@ -621,8 +621,8 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
   # Get trend for YTD counts
   grouped_r$y_ytd_trend <- compute_trend(
-    col1 = grouped_r$y_YTD_count,
-    col2 = grouped_r$hist_y_ytd_avg_count,
+    current = grouped_r$y_YTD_count,
+    historical = grouped_r$hist_y_ytd_avg_count,
     threshold = config$trend_threshold
   )
 

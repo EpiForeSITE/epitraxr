@@ -62,16 +62,6 @@ expect_equal(compute_trend(11.5, 10, threshold = 0.15), "Expected") # Just withi
 expect_equal(compute_trend(11.6, 10, threshold = 0.15), "Elevated") # Just over threshold
 
 
-# Test get_yrs() --------------------------------------------------------------
-
-df <- data.frame(year = c(2020, 2021, 2020, 2022, 2021))
-expect_equal(get_yrs(df), c(2020, 2021, 2022))
-
-# Works with only one year
-single <- data.frame(year = 2023)
-expect_equal(get_yrs(single), 2023)
-
-
 # Test set_na_0() -------------------------------------------------------------
 
 # Test with mixed NA and non-NA values

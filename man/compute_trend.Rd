@@ -4,12 +4,12 @@
 \alias{compute_trend}
 \title{Compute the report trend}
 \usage{
-compute_trend(col1, col2, threshold = 0)
+compute_trend(current, historical, threshold = 0)
 }
 \arguments{
-\item{col1}{List. Current data.}
+\item{current}{List. Current data.}
 
-\item{col2}{List. Historical comparison data.}
+\item{historical}{List. Historical comparison data.}
 
 \item{threshold}{Numeric. Percentage threshold (as decimal) for determining
 trend significance. Values within this percentage of the historical value

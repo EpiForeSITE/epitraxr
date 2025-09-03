@@ -1,15 +1,29 @@
-# Test format_week_num() -------------------------------------------------------
+# Test mmwr_week_to_month() ----------------------------------------------------
 
-# Test with data simulating 7 years (old years should be filtered out)
 input <- data.frame(
   patient_mmwr_year = c(2017L, 2018L, 2019L, 2020L, 2021L, 2022L, 2023L),
   patient_mmwr_week = rep(1, 7),
   patient_disease = rep("A", 7)
 )
 
+expected_cols <- c("patient_mmwr_year", "patient_disease", "month")
+
+res <- mmwr_week_to_month(input)
+
+expect_equal(colnames(res), expected_cols)
+
+
+# Test format_epitrax_data() ---------------------------------------------------
+
+input <- data.frame(
+  patient_mmwr_year = c(2017L, 2018L, 2019L, 2020L, 2021L, 2022L, 2023L),
+  month = rep(1, 7),
+  patient_disease = rep("A", 7)
+)
+
 expected_cols <- c("disease", "month", "year", "counts")
 
-res <- format_week_num(input)
+res <- format_epitrax_data(input)
 
 expect_equal(colnames(res), expected_cols)
 expect_true(all(res$counts == 1))
@@ -58,41 +72,6 @@ expect_error(read_epitrax_data(test_file, num_yrs = "not a number"),
              "'num_yrs' must be an integer >= 0")
 expect_error(read_epitrax_data(test_file, num_yrs = NULL),
              "'num_yrs' must be an integer >= 0")
-
-
-# Test get_epitrax() ---------------------------------------------------------
-
-# Test with valid data file
-test_file <- "test_files/data/test_epitrax_data.csv"
-expect_silent(epitrax <- get_epitrax(test_file))
-
-# Check object class
-expect_true(inherits(epitrax, "epitrax"))
-
-# Check structure
-expected_names <- c("data", "diseases", "yrs", "report_year",
-                   "report_month", "internal_reports", "public_reports")
-expect_true(all(expected_names %in% names(epitrax)))
-
-# Check data component
-expect_true(is.data.frame(epitrax$data))
-expect_equal(colnames(epitrax$data),
-            c("disease", "month", "year", "counts"))
-
-# Check computed values
-expect_equal(epitrax$diseases, unique(epitrax$data$disease))
-expect_equal(epitrax$yrs, get_yrs(epitrax$data))
-expect_equal(epitrax$report_year, max(epitrax$data$year))
-expect_equal(epitrax$report_month,
-            max(epitrax$data[epitrax$data$year == epitrax$report_year,]$month))
-
-# Check report lists are empty
-expect_equal(length(epitrax$internal_reports), 0)
-expect_equal(length(epitrax$public_reports), 0)
-
-# Test with invalid file
-expect_error(get_epitrax("nonexistent.csv"),
-            "Please select an EpiTrax data file")
 
 
 # Test reshape_monthly_wide() --------------------------------------------------
@@ -144,10 +123,10 @@ expect_equal(result$`2020`, expected_df$`2020`)
 expect_equal(result$`2021`, expected_df$`2021`)
 
 
-# Test standardize_report_diseases() ------------------------------------------------------
+# Test standardize_report_diseases() -------------------------------------------
 
-df <- data.frame(disease=c("A","B","D"), Jan=c(5,7,8), Feb=c(6,8,9))
-report_diseases <- c("A","C")
+df <- data.frame(disease = c("A", "B", "D"), Jan = c(5, 7, 8), Feb = c(6, 8, 9))
+report_diseases <- c("A", "C")
 
 res <- standardize_report_diseases(df, report_diseases)
 
@@ -156,3 +135,35 @@ expect_equal(report_diseases, res$disease)
 # Check that disease "C" is added with 0s for Jan and Feb
 expect_true(all(res[res$disease == "C", c("Jan", "Feb")] == 0))
 expect_equal(res[res$disease == "A", "Jan"], 5)
+
+
+# Test get_yrs() ---------------------------------------------------------------
+
+df <- data.frame(year = c(2020, 2021, 2020, 2022, 2021))
+expect_equal(get_yrs(df), c(2020, 2021, 2022))
+
+# Works with only one year
+single <- data.frame(year = 2023)
+expect_equal(get_yrs(single), 2023)
+
+
+# Test get_month_counts() ------------------------------------------------------
+
+df <- data.frame(
+  disease = c("Flu", "Flu", "Measles"),
+  year = c(2020, 2020, 2020),
+  month = c(1, 1, 2),
+  counts = c(5, 3, 2)
+)
+
+expected_result <- data.frame(
+  disease = c("Flu", "Measles"),
+  year = c(2020, 2020),
+  month = c(1, 2),
+  counts = c(8, 2)
+)
+
+result <- get_month_counts(df)
+
+expect_equal(result, expected_result)
+
