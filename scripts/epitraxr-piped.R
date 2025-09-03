@@ -55,3 +55,6 @@ epitrax <- setup_epitrax(
   )
 
 message(".......Done.")
+
+# Clean up script
+rm(fsys, epitrax)

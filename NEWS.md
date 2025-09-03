@@ -4,6 +4,16 @@
 * Add option to produce trend-only PDF reports
 * Update installation instructions in README
 * Increase file upload size limit in Shiny app
+* Significant overall of function APIs for consistency, including renaming several functions:
+    * `get_trend()` -> `compute_trend()`
+    * `get_epitrax()` -> `create_epitrax_from_file()`
+    * `epitrax_add_report_diseases()` -> `epitrax_set_report_diseases()`
+    * `read_report_config()` -> `get_report_config()`
+    * `get_report_disease_lists()` -> `get_report_diseases()`
+    * `get_internal_disease_list()` -> `get_report_diseases_internal()`
+    * `get_public_disease_list()` -> `get_report_diseases_public()`
+    * `format_week_num()` -> `mmwr_week_to_month()` and `format_epitrax_data()` (separated different functionality into two functions)
+    * `write_grouped_report_pdf()` -> `write_report_pdf_grouped()`
 
 # epitraxr 0.4.0
 

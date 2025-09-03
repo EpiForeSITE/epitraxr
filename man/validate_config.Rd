@@ -2,7 +2,7 @@
 % Please edit documentation in R/validation.R
 \name{validate_config}
 \alias{validate_config}
-\title{Validate a config list}
+\title{Validate config}
 \usage{
 validate_config(config)
 }
@@ -14,7 +14,8 @@ A named list with 'keys' corresponding to config options.
 }
 \description{
 \code{validate_config} checks the values of the given config list. If any values
-are missing or invalid, they are set to default values.
+are missing or invalid, they are set to default values and a warning is
+issued.
 }
 \examples{
 validate_config(config = list())

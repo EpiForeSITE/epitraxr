@@ -1,3 +1,65 @@
+#' Create an EpiTrax object from data file
+#'
+#' `create_epitrax_from_file` reads an EpiTrax data file and creates a structured object
+#' containing the data along with commonly used metadata and empty report lists.
+#'
+#' @inheritParams setup_epitrax
+#'
+#' @returns An object of class `epitrax` containing:
+#'   - `data`: The validated and formatted EpiTrax data
+#'   - `diseases`: Vector of unique diseases in the dataset
+#'   - `yrs`: Vector of years in the dataset
+#'   - `report_year`: Most recent year in the dataset
+#'   - `report_month`: Most recent month in report_year
+#'   - `internal_reports`: Empty list to store internal reports
+#'   - `public_reports`: Empty list to store public reports
+#' @seealso [`read_epitrax_data()`] which this function wraps and
+#' [`setup_epitrax()`] which wraps this function
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Interactive file chooser:
+#' create_epitrax_from_file()
+#' }
+#'
+#' # Using sample data included with package
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' epitrax <- create_epitrax_from_file(data_file)
+#'
+#' # Access components
+#' head(epitrax$data)
+#' epitrax$diseases
+#' epitrax$report_year
+create_epitrax_from_file <- function(filepath = NULL, num_yrs = 5) {
+  # Read in EpiTrax data
+  data <- read_epitrax_data(filepath, num_yrs = num_yrs)
+
+  # Compute common summary statistics and metadata
+  data_diseases <- unique(data$disease)
+  data_yrs <- get_yrs(data)
+  r_year <- max(data_yrs)
+  r_month <- max(data[data$year == r_year,]$month)
+
+  # Return list of EpiTrax data and metadata
+  epitrax_obj <- structure(
+    list(
+      data = data,
+      diseases = data_diseases,
+      yrs = data_yrs,
+      report_year = r_year,
+      report_month = r_month,
+      internal_reports = list(),
+      public_reports = list()
+    ),
+    class = "epitrax"
+  )
+
+  epitrax_obj
+}
+
+
 #' Set report configuration of EpiTrax object from config file
 #'
 #' `epitrax_set_config_from_file` reads a report configuration file and adds it to the
@@ -7,6 +69,8 @@
 #' @param filepath Path to the report configuration file.
 #'
 #' @returns Updated EpiTrax object with `config` field set.
+#' @seealso [`epitrax_set_config_from_list()`] and the convenience function
+#' [`setup_epitrax()`] which wraps this function
 #' @export
 #'
 #' @examples
@@ -21,7 +85,7 @@ epitrax_set_config_from_file <- function(epitrax, filepath) {
 
     validate_epitrax(epitrax, report.check = FALSE)
 
-    epitrax$config <- read_report_config(filepath)
+    epitrax$config <- get_report_config(filepath)
 
     epitrax
 }
@@ -35,6 +99,8 @@ epitrax_set_config_from_file <- function(epitrax, filepath) {
 #' @param config Optional list of config parameters. If omitted, default values will be used.
 #'
 #' @returns Updated EpiTrax object with `config` field set.
+#' @seealso [`epitrax_set_config_from_file()`] and the convenience function
+#' [`setup_epitrax()`] which wraps this function
 #' @export
 #'
 #' @examples
@@ -65,16 +131,16 @@ epitrax_set_config_from_list <- function(epitrax, config = NULL) {
 }
 
 
-#' Add report diseases to EpiTrax object
+#' Set report diseases in EpiTrax object
 #'
-#' `epitrax_add_report_diseases` reads internal and public disease lists and
+#' `epitrax_set_report_diseases` reads internal and public disease lists and
 #' adds them to the EpiTrax object.
 #'
 #' @param epitrax Object of class `epitrax`.
-#' @param disease_list_files Optional list containing filepaths to internal and public
-#'  disease lists. If omitted, the default lists will be used and a warning will be thrown.
+#' @inheritParams setup_epitrax
 #'
 #' @returns Updated EpiTrax object with `report_diseases` field set.
+#' @seealso [`setup_epitrax()`] the convenience function which wraps this function
 #' @export
 #'
 #' @examples
@@ -88,22 +154,22 @@ epitrax_set_config_from_list <- function(epitrax, config = NULL) {
 #'   class = "epitrax"
 #' )
 #'
-#' epitrax <- epitrax_add_report_diseases(
+#' epitrax <- epitrax_set_report_diseases(
 #'   epitrax,
 #'   disease_list_files = list(
 #'     internal = i_file,
 #'     public = p_file
 #'   )
 #' )
-epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
+epitrax_set_report_diseases <- function(epitrax, disease_list_files = NULL) {
 
     validate_epitrax(epitrax, report.check = FALSE)
 
     # Get internal and public disease lists
-    diseases <- get_report_disease_lists(
-        internal_list_fp = disease_list_files$internal %||% "use_defaults",
-        public_list_fp = disease_list_files$public %||% "use_defaults",
-        default_diseases = epitrax$diseases
+    diseases <- get_report_diseases(
+        internal = disease_list_files$internal %||% "use_defaults",
+        public = disease_list_files$public %||% "use_defaults",
+        defaults = epitrax$diseases
     )
 
     # Add to epitrax object
@@ -119,21 +185,24 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
 #' Setup EpiTrax object with configuration and disease lists
 #'
 #' `setup_epitrax` initializes an EpiTrax object with configuration and report
-#' disease lists. It is a convenience function that combines `get_epitrax`,
-#' `epitrax_set_config_from_file`, and `epitrax_add_report_diseases`.
+#' disease lists. It is a convenience function that combines `create_epitrax_from_file()`,
+#' `epitrax_set_config_from_file()`, and `epitrax_set_report_diseases()`.
 #'
-#' @param epitrax_file Optional path to the EpiTrax data file. Data file should
-#' be a CSV. If omitted, the user will be prompted to choose a file interactively.
+#' @param filepath Optional filepath. EpiTrax data file should be a CSV. If this parameter
+#'   is NULL, the user will be prompted to choose a file interactively.
 #' @param num_yrs Integer. Number of years of data to keep. Defaults to 5.
 #' @param disease_list_files Optional list containing filepaths to internal and
 #' public report disease lists. If omitted, the default lists will be used and
-#' a warning will be thrown.
+#' a warning will be given.
 #' @param config_list,config_file Configuration options may be specified as a
 #' list or as a path to a YAML config file, respectively. Only one can be
 #' specified at a time. If both are specified, the function will return an
 #' error. If both are omitted, the default config values will be used.
 #'
 #' @returns An EpiTrax object with configuration and report diseases set.
+#' @seealso [`create_epitrax_from_file()`], [`epitrax_set_config_from_file()`],
+#' [`epitrax_set_config_from_list()`], and [`epitrax_set_report_diseases()`]
+#' which this function wraps.
 #' @export
 #'
 #' @examples
@@ -147,10 +216,15 @@ epitrax_add_report_diseases <- function(epitrax, disease_list_files = NULL) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   disease_list_files = disease_lists
 #' )
-setup_epitrax <- function(epitrax_file = NULL, num_yrs = 5, disease_list_files = NULL, config_list = NULL, config_file = NULL) {
+setup_epitrax <- function(
+    filepath = NULL,
+    num_yrs = 5,
+    disease_list_files = NULL,
+    config_list = NULL,
+    config_file = NULL) {
 
     if (!is.null(config_list) && !is.null(config_file)) {
         stop(
@@ -159,8 +233,8 @@ setup_epitrax <- function(epitrax_file = NULL, num_yrs = 5, disease_list_files =
         )
     }
 
-    epitrax <- get_epitrax(epitrax_file, num_yrs = num_yrs) |>
-        epitrax_add_report_diseases(disease_list_files)
+    epitrax <- create_epitrax_from_file(filepath, num_yrs = num_yrs) |>
+        epitrax_set_report_diseases(disease_list_files)
 
     if (!is.null(config_file)) {
         epitrax <- epitrax_set_config_from_file(epitrax, filepath = config_file)
@@ -177,7 +251,7 @@ setup_epitrax <- function(epitrax_file = NULL, num_yrs = 5, disease_list_files =
 #' `epitrax_ireport_annual_counts` generates an internal report of annual
 #' counts for each disease in the EpiTrax object data.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with `annual_counts` added to the
 #' `internal_reports` field.
@@ -194,7 +268,7 @@ setup_epitrax <- function(epitrax_file = NULL, num_yrs = 5, disease_list_files =
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -223,7 +297,7 @@ epitrax_ireport_annual_counts <- function(epitrax) {
 #' `epitrax_ireport_monthly_counts_all_yrs` generates internal reports of
 #' monthly counts for each year in the EpiTrax object data.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with monthly counts reports for each year
 #' added to the `internal_reports` field.
@@ -240,7 +314,7 @@ epitrax_ireport_annual_counts <- function(epitrax) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -255,8 +329,8 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
     for (y in epitrax$yrs) {
         m_df <- create_report_monthly_counts(
             data = epitrax$data,
-            y = y,
-            disease_names = epitrax$report_diseases$internal$EpiTrax_name
+            diseases = epitrax$report_diseases$internal$EpiTrax_name,
+            y = y
         )
 
         # Add to internal reports
@@ -273,9 +347,7 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
 #' averages for all years in the EpiTrax object data, with the option to exclude
 #' the current report year.
 #'
-#' @param epitrax Object of class `epitrax`.
-#' @param exclude.report.year Logical indicating whether to exclude the current
-#' report year from the averages. Defaults to FALSE.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with monthly averages report added to the
 #' `internal_reports` field.
@@ -292,7 +364,7 @@ epitrax_ireport_monthly_counts_all_yrs <- function(epitrax) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -311,7 +383,7 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 
     monthly_avgs <- create_report_monthly_avgs(
         data = r_data,
-        disease_names = epitrax$report_diseases$internal$EpiTrax_name,
+        diseases = epitrax$report_diseases$internal$EpiTrax_name,
         config = epitrax$config
     )
 
@@ -329,7 +401,7 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 #' `epitrax_ireport_ytd_counts_for_month` generates an internal report of
 #' year-to-date counts up to a specific month in the EpiTrax object data.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #' @param as.rates Logical. If TRUE, returns rates per 100k instead of raw counts.
 #'
 #' @returns Updated EpiTrax object with report added to the `internal_reports` field.
@@ -346,7 +418,7 @@ epitrax_ireport_monthly_avgs <- function(epitrax, exclude.report.year = FALSE) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -360,7 +432,7 @@ epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
     # Create YTD counts
     ytd_counts <- create_report_ytd_counts(
         data = epitrax$data,
-        disease_names = epitrax$report_diseases$internal$EpiTrax_name,
+        diseases = epitrax$report_diseases$internal$EpiTrax_name,
         y = epitrax$report_year,
         m = epitrax$report_month,
         config = epitrax$config,
@@ -381,7 +453,7 @@ epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
 #' reports. These compare the counts for a given month against the
 #' monthly averages for the same month across previous years.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #' @param month_offsets Numeric vector of month offsets to create reports for.
 #' Defaults to 0:3, which generates reports for the current month and the three
 #' previous months.
@@ -401,7 +473,7 @@ epitrax_ireport_ytd_counts_for_month <- function(epitrax, as.rates = FALSE) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -412,21 +484,11 @@ epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
 
     validate_epitrax(epitrax)
 
-    # Get needed statistics
-    month_counts <- get_month_counts(epitrax$data)
-    r_data <- epitrax$data[epitrax$data$year != epitrax$report_year,]
-    monthly_avgs <- create_report_monthly_avgs(
-        data = r_data,
-        disease_names = epitrax$report_diseases$public$EpiTrax_name,
-        config = epitrax$config
-    )
-
     # Create monthly cross-section reports
     for (offset in month_offsets) {
         r <- create_public_report_month(
-            cases = month_counts,
-            avgs = monthly_avgs,
-            d_list = epitrax$report_diseases$public,
+            data = epitrax$data,
+            diseases = epitrax$report_diseases$public,
             y = epitrax$report_year,
             m = epitrax$report_month - offset,
             config = epitrax$config
@@ -445,7 +507,7 @@ epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
 #' `epitrax_preport_ytd_rates` generates a public report of year-to-date
 #' rates for the current month in the EpiTrax object data.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with YTD rates report added to the
 #' `public_reports` field.
@@ -462,7 +524,7 @@ epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -473,20 +535,12 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 
     validate_epitrax(epitrax)
 
-    # Create YTD report using public disease list
-    ytd_rates <- create_report_ytd_counts(
-        data = epitrax$data,
-        disease_names = epitrax$report_diseases$public$EpiTrax_name,
-        y = epitrax$report_year,
-        m = epitrax$report_month,
-        config = epitrax$config,
-        as.rates = TRUE
-    )
-
     # Create public report
     r <- create_public_report_ytd(
-        ytd_rates = ytd_rates,
-        d_list = epitrax$report_diseases$public,
+        data = epitrax$data,
+        diseases = epitrax$report_diseases$public,
+        y = epitrax$report_year,
+        m = epitrax$report_month,
         config = epitrax$config
     )
 
@@ -503,7 +557,7 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 #' monthly and year-to-date (YTD) disease statistics for the report month
 #' in the EpiTrax object data.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with YTD rates report added to the
 #' `public_reports` field.
@@ -520,7 +574,7 @@ epitrax_preport_ytd_rates <- function(epitrax) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -553,12 +607,7 @@ epitrax_preport_combined_month_ytd <- function(epitrax) {
 #' in the EpiTrax object data, with the option to exclude the current report year.
 #' It can be run for either internal or public reports.
 #'
-#' @param epitrax Object of class `epitrax`.
-#' @param is.public Logical indicating whether to generate a public report using
-#' the public disease list. If FALSE (default), generates an internal report using
-#' the internal disease list.
-#' @param exclude.report.year Logical indicating whether to exclude the current
-#' report year from the medians calculation. Defaults to FALSE.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with monthly medians report added to either
 #' the `internal_reports` or `public_reports` field, depending on the `is.public`
@@ -576,7 +625,7 @@ epitrax_preport_combined_month_ytd <- function(epitrax) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -603,7 +652,7 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
     # Create monthly medians
     monthly_medians <- create_report_monthly_medians(
         data = r_data,
-        disease_names = report_diseases
+        diseases = report_diseases
     )
 
     # Add report to EpiTrax object
@@ -631,7 +680,7 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
 #' the public disease list. If FALSE (default), generates an internal report using
 #' the internal disease list.
 #' @param exclude.report.year Logical indicating whether to exclude the current
-#' report year from the medians calculation. Defaults to FALSE.
+#' report year from the report. Defaults to FALSE.
 #'
 #' @returns Updated EpiTrax object with YTD medians report added to either
 #' the `internal_reports` or `public_reports` field, depending on the `is.public`
@@ -649,7 +698,7 @@ epitrax_report_monthly_medians <- function(epitrax, is.public = FALSE, exclude.r
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -676,7 +725,7 @@ epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.repor
     # Create YTD medians
     ytd_medians <- create_report_ytd_medians(
         data = r_data,
-        disease_names = report_diseases,
+        diseases = report_diseases,
         m = epitrax$report_month
     )
 
@@ -699,10 +748,7 @@ epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.repor
 #' monthly counts/rates, historical averages and medians, year-to-date counts, and
 #' trend analysis. It can be run for either internal or public reports.
 #'
-#' @param epitrax Object of class `epitrax`.
-#' @param is.public Logical indicating whether to generate a public report using
-#' the public disease list. If FALSE (default), generates an internal report using
-#' the internal disease list.
+#' @inheritParams epitrax_report_ytd_medians
 #'
 #' @returns Updated EpiTrax object with grouped statistics report added to either
 #' the `internal_reports` or `public_reports` field, depending on the `is.public`
@@ -720,7 +766,7 @@ epitrax_report_ytd_medians <- function(epitrax, is.public = FALSE, exclude.repor
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
@@ -765,8 +811,7 @@ epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
 #' object to CSV files in the specified filesystem. Doesn't write files if
 #' the EpiTrax config setting `generate_csvs` is set to false.
 #'
-#' @param epitrax Object of class `epitrax`.
-#' @param fsys Filesystem list containing paths for internal and public reports.
+#' @inheritParams epitrax_write_pdf_grouped_stats
 #'
 #' @returns The original EpiTrax object, unchanged.
 #' @export
@@ -787,12 +832,15 @@ epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
 #'  epitrax_preport_ytd_rates() |>
 #'  epitrax_write_csvs(fsys = fsys)
+#'
+#' # Cleanup
+#' unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 epitrax_write_csvs <- function(epitrax, fsys) {
 
     validate_epitrax(epitrax)
@@ -830,8 +878,7 @@ epitrax_write_csvs <- function(epitrax, fsys) {
 #' into one Excel file with separate sheets for each report. Likewise with public
 #' reports.
 #'
-#' @param epitrax Object of class `epitrax`.
-#' @param fsys Filesystem list containing paths for internal and public reports.
+#' @inheritParams epitrax_write_pdf_grouped_stats
 #'
 #' @returns The original EpiTrax object, unchanged.
 #' @export
@@ -854,12 +901,15 @@ epitrax_write_csvs <- function(epitrax, fsys) {
 #' )
 #'
 #' epitrax <- setup_epitrax(
-#'   epitrax_file = data_file,
+#'   filepath = data_file,
 #'   config_file = config_file,
 #'   disease_list_files = disease_lists
 #' ) |>
 #'  epitrax_preport_ytd_rates() |>
 #'  epitrax_write_xlsxs(fsys = fsys)
+#'
+#' # Cleanup
+#' unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 epitrax_write_xlsxs <- function(epitrax, fsys) {
 
     validate_epitrax(epitrax)
@@ -894,9 +944,7 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #' `epitrax_write_pdf_grouped_stats`). The PDF uses pretty formatting and adds
 #' a header and footer.
 #'
-#' @param epitrax Object of class `epitrax`.
-#' @param fsys Filesystem list containing path for public reports.
-#' @param trend.only Logical. Whether to show only trend in the PDF report.
+#' @inheritParams epitrax_write_pdf_grouped_stats
 #'
 #' @returns The original EpiTrax object, unchanged.
 #' @export
@@ -920,12 +968,15 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #'  )
 #'
 #'  epitrax <- setup_epitrax(
-#'    epitrax_file = data_file,
+#'    filepath = data_file,
 #'    config_file = config_file,
 #'    disease_list_files = disease_lists
 #'  ) |>
 #'   epitrax_preport_month_crosssections(month_offsets = 0) |>
 #'   epitrax_write_pdf_public_reports(fsys = fsys)
+#'
+#'  # Cleanup
+#'  unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 #' }
 epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) {
 
@@ -966,9 +1017,9 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) 
 #' an EpiTrax object to PDF files using a formatted template. It processes both
 #' internal and public grouped statistics reports.
 #'
-#' @param epitrax Object of class `epitrax`.
+#' @inheritParams epitrax_report_ytd_medians
 #' @param params List. Report parameters containing:
-#'   - title: Report title (defaults to "Grouped Report")
+#'   - `title`: Report title (defaults to "Grouped Report")
 #' @param fsys Filesystem list containing paths for internal and public reports.
 #' @param trend.only Logical. Whether to show only trend in the PDF report.
 #'
@@ -999,12 +1050,15 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) 
 #'  )
 #'
 #'  epitrax <- setup_epitrax(
-#'    epitrax_file = data_file,
+#'    filepath = data_file,
 #'    config_file = config_file,
 #'    disease_list_files = disease_lists
 #'  ) |>
 #'   epitrax_report_grouped_stats() |>
 #'   epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
+#'
+#'  # Cleanup
+#'  unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 #' }
 epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = FALSE) {
 
@@ -1023,7 +1077,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = 
 
         report <- epitrax$internal_reports[[name]]
 
-        write_grouped_report_pdf(
+        write_report_pdf_grouped(
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),
@@ -1040,7 +1094,7 @@ epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = 
 
         report <- epitrax$public_reports[[name]]
 
-        write_grouped_report_pdf(
+        write_report_pdf_grouped(
             data = report,
             params = params,
             filename = paste0(name, ".pdf"),

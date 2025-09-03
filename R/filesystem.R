@@ -2,9 +2,9 @@
 #'
 #' `create_filesystem` creates the given folders if they don't already exist.
 #'
-#' @param internal Filepath. Folder to hold internal reports.
-#' @param public Filepath. Folder to hold public reports.
-#' @param settings Filepath. Folder to hold report settings.
+#' @param internal Filepath. Folder for internal reports.
+#' @param public Filepath. Folder for public reports.
+#' @param settings Filepath. Folder for report settings.
 #'
 #' @returns NULL.
 #' @export
@@ -19,6 +19,8 @@
 #'    public = public_folder,
 #'    settings = settings_folder
 #'  )
+#'
+#' unlink(c(internal_folder, public_folder, settings_folder), recursive = TRUE)
 create_filesystem <- function(internal, public, settings) {
   # - Create folders if needed
   for (f in c(internal, public, settings)) {
@@ -34,18 +36,23 @@ create_filesystem <- function(internal, public, settings) {
 #' `clear_old_reports` deletes reports from previous runs and returns a list of
 #' the reports that were deleted.
 #'
-#' @param i_folder Filepath. Folder containing internal reports.
-#' @param p_folder Filepath. Folder containing public reports.
+#' @inheritParams create_filesystem
 #'
 #' @returns The list of old reports that were cleared.
 #' @export
 #'
 #' @examples
-#' clear_old_reports(tempdir(), tempdir())
-clear_old_reports <- function(i_folder, p_folder) {
+#' ireports_folder <- file.path(tempdir(), "internal")
+#' preports_folder <- file.path(tempdir(), "public")
+#' dir.create(ireports_folder)
+#' dir.create(preports_folder)
+#'
+#' clear_old_reports(ireports_folder, preports_folder)
+#' unlink(c(ireports_folder, preports_folder), recursive = TRUE)
+clear_old_reports <- function(internal, public) {
   # - Remove old internal reports
-  i_reports <- list(list.files(i_folder, full.names = TRUE))
-  p_reports <- list(list.files(p_folder, full.names = TRUE))
+  i_reports <- list(list.files(internal, full.names = TRUE))
+  p_reports <- list(list.files(public, full.names = TRUE))
 
   old_reports <- c(i_reports, p_reports)
 
@@ -62,13 +69,14 @@ clear_old_reports <- function(i_folder, p_folder) {
 #' and `clear_old_reports`.
 #'
 #' @param folders List. Contains paths to report folders with elements:
-#'   - internal: Folder for internal reports
-#'   - public: Folder for public reports
-#'   - settings: Folder for settings files
+#'   - `internal`: Folder for internal reports
+#'   - `public`: Folder for public reports
+#'   - `settings`: Folder for settings files
 #' @param clear.reports Logical. Whether to clear old reports from the internal
 #'   and public folders. Defaults to FALSE.
 #'
 #' @returns The input folders list, unchanged.
+#' @seealso [create_filesystem()], [clear_old_reports()] which this function wraps.
 #' @export
 #'
 #' @examples
@@ -79,6 +87,7 @@ clear_old_reports <- function(i_folder, p_folder) {
 #'   settings = file.path(tempdir(), "settings")
 #' )
 #' setup_filesystem(folders)
+#' unlink(unlist(folders, use.names = FALSE), recursive = TRUE)
 setup_filesystem <- function(folders, clear.reports = FALSE) {
   # Create the filesystem if it doesn't exist
   create_filesystem(
@@ -98,17 +107,19 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 
 #' Read in the report config YAML file
 #'
-#' 'read_report_config' reads in the config YAML file. The file can have the
-#' following fields:
+#' 'get_report_config' reads in the config YAML file. Missing fields
+#' will be set to default values and a warning will be issued. The
+#' config file can have the following fields:
 #' - `current_population`: Integer. Current population size.
 #' - `avg_5yr_population`: Integer. Average population over the last 5 years.
 #' - `rounding_decimals`: Integer. Number of decimals to round report values to.
 #' - `generate_csvs`: Logical. Whether to generate CSV files.
 #' - `trend_threshold`: Numeric. Threshold for trend calculations.
-#' Missing fields will be set to default values. See the example config file
-#' here: `system.file("sample_data/sample_config.yml", package = "epitraxr")`.
 #'
-#' @param config_filepath Filepath. Path to report config file.
+#' See the example config file here:
+#' `system.file("sample_data/sample_config.yml", package = "epitraxr")`.
+#'
+#' @param filepath Filepath. Path to report config file.
 #'
 #' @returns A named list with an attribute of 'keys' from the file.
 #' @export
@@ -118,11 +129,11 @@ setup_filesystem <- function(folders, clear.reports = FALSE) {
 #' @examples
 #' config_file <- system.file("sample_data/sample_config.yml",
 #'                           package = "epitraxr")
-#' report_config <- read_report_config(config_file)
-read_report_config <- function(config_filepath) {
+#' report_config <- get_report_config(config_file)
+get_report_config <- function(filepath) {
 
-  if (file.exists(config_filepath)) {
-    config <- yaml::read_yaml(config_filepath)
+  if (file.exists(filepath)) {
+    config <- yaml::read_yaml(filepath)
 
     config <- validate_config(config)
 
@@ -136,46 +147,195 @@ read_report_config <- function(config_filepath) {
 }
 
 
-#' Create epitraxr config object
+#' Get the internal disease list
 #'
-#' `epitraxr_config` creates a list of configuration options used for generating
-#' reports.
+#' 'get_report_diseases_internal' reads the internal list from a given CSV file or
+#' uses the default diseases, if the file doesn't exist.
 #'
-#' @param current_population Integer. Defaults to 100,000.
-#' @param avg_5yr_population Integer. Defaults to 100,000.
-#' @param rounding_decimals Integer. Defaults to 2.
-#' @param generate_csvs Logical. Defaults to TRUE.
-#' @param trend_threshold Numeric. Defaults to 0.15.
+#' The provided internal disease list file must contain at least a column named
+#' `EpiTrax_name` which contains EpiTrax disease names to include in the report.
+#' The file can optionally contain a column named `Group_name`, which maps the
+#' diseases in `EpiTrax_name` to a disease group. This is only used for reports
+#' that include disease groupings.
 #'
-#' @returns A named list with 'keys' corresponding to config options.
+#' See the example file here:
+#' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
+#'
+#' @param filepath Filepath. Internal disease list CSV file.
+#' @param defaults String vector. List of default diseases to use if the
+#' above file doesn't exist.
+#'
+#' @returns A dataframe containing the diseases to include in the internal report
+#' and possibly the disease groupings.
+#' @export
+#'
+#' @importFrom utils read.csv
+#'
+#' @examples
+#' # Using default list (when file doesn't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_list <- get_report_diseases_internal("", default_list)
+#'
+#' # Using a disease list file
+#' list_file <- system.file("sample_data/sample_disease_list.csv",
+#'                         package = "epitraxr")
+#' disease_list <- get_report_diseases_internal(list_file, default_list)
+get_report_diseases_internal <- function(filepath, defaults) {
+
+  if (file.exists(filepath)) {
+
+    diseases <- utils::read.csv(filepath, header = TRUE)
+
+    # Validate file
+    if (is.null(diseases$EpiTrax_name)) {
+      stop("File '", filepath, "' missing required column 'EpiTrax_name'.")
+    }
+
+    diseases
+
+  } else {
+    # If the file doesn't exist, use the default list of diseases provided
+    warning(
+      "You have not provided a disease list for internal reports.",
+      "\n - The program will default to using only the diseases ",
+      "found in the input dataset.",
+      "\n - If you would like to use a different list, ",
+      "please include a file with a column named",
+      "\n\n\t'EpiTrax_name'\n"
+    )
+
+    defaults <- sort(defaults)
+
+    diseases <- data.frame(
+      EpiTrax_name = defaults
+    )
+
+    diseases
+  }
+}
+
+
+#' Get the public disease list
+#'
+#' 'get_report_diseases_public' reads the public list from a given CSV file or uses
+#' the default diseases if the file doesn't exist.
+#'
+#' The provided public disease list file must contain two columns named
+#' `EpiTrax_name` and `Public_name` which map EpiTrax disease names to
+#' a public-facing name for the public report. The file can optionally
+#' contain a column named `Group_name`, which maps the diseases in
+#' `EpiTrax_name` to a disease group. This is only used for reports that
+#' include disease groupings.
+#'
+#' See the example file here:
+#' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
+#'
+#' @param filepath Filepath. Public disease list CSV file.
+#' @param defaults String vector. List of default diseases to use if the
+#' above file doesn't exist.
+#'
+#' @returns A dataframe containing the diseases to include in the public report
+#' and the name to use for each disease in the public report. It may also contain
+#' the disease groupings.
+#' @export
+#'
+#' @importFrom utils read.csv
+#'
+#' @examples
+#' # Using default list (when file doesn't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_list <- get_report_diseases_public("", default_list)
+#'
+#' # Using a disease list file
+#' list_file <- system.file("sample_data/sample_disease_list.csv",
+#'                         package = "epitraxr")
+#' disease_list <- get_report_diseases_public(list_file, default_list)
+get_report_diseases_public <- function(filepath, defaults) {
+
+  if (file.exists(filepath)) {
+
+    diseases <- utils::read.csv(filepath, header = TRUE)
+
+    # Validate file
+    if (is.null(diseases$EpiTrax_name) || is.null(diseases$Public_name)) {
+      stop("File '", filepath, "' is incorrectly formatted. Please use the ",
+           "column names: 'EpiTrax_name' and 'Public_name'.")
+    }
+
+    diseases
+
+  } else {
+    # If the file doesn't exist, use the default list of diseases provided
+    warning(
+      "You have not provided a disease list for public reports.",
+      "\n - The program will default to using only the diseases ",
+      "found in the input dataset.",
+      "\n - If you would like to use a different list, ",
+      "please include a file with columns named",
+      "\n\n\t'EpiTrax_name' and 'Public_name'\n"
+    )
+
+    defaults <- sort(defaults)
+
+    diseases <- data.frame(
+      EpiTrax_name = defaults,
+      Public_name = defaults
+    )
+
+    diseases
+  }
+}
+
+
+#' Get both internal and public disease lists
+#'
+#' `get_report_diseases` is a convenience function that combines
+#' `get_report_diseases_internal` and `get_report_diseases_public`.
+#'
+#' @param internal Filepath. Path to internal disease list CSV file.
+#' @param public Filepath. Path to public disease list CSV file.
+#' @param defaults String vector. List of default diseases to use if
+#'   either file doesn't exist.
+#'
+#' @returns A list with two elements:
+#'   - `internal`: Dataframe with EpiTrax_name column
+#'   - `public`: Dataframe with EpiTrax_name and Public_name columns
+#' @seealso [get_report_diseases_internal()], [get_report_diseases_public()] which this function wraps.
 #' @export
 #'
 #' @examples
-#' epitraxr_config(
-#'   current_population = 56000,
-#'   avg_5yr_population = 57000,
-#'   rounding_decimals = 3,
-#'   generate_csvs = FALSE,
-#'   trend_threshold = 0.2
+#' # Using default lists (when files don't exist)
+#' default_list <- c("Measles", "Chickenpox")
+#' disease_lists <- get_report_diseases("", "", default_list)
+#'
+#' # Using disease list files
+#' i_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
+#'                        package = "epitraxr")
+#' p_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
+#'                        package = "epitraxr")
+#' disease_lists <- get_report_diseases(
+#'   internal = i_file,
+#'   public = p_file,
+#'   defaults = default_list
 #' )
-epitraxr_config <- function(
-    current_population = 100000,
-    avg_5yr_population = 100000,
-    rounding_decimals = 2,
-    generate_csvs = TRUE,
-    trend_threshold = 0.15) {
-
-  config <- list(
-    current_population = current_population,
-    avg_5yr_population = avg_5yr_population,
-    rounding_decimals = rounding_decimals,
-    generate_csvs = generate_csvs,
-    trend_threshold = trend_threshold
+get_report_diseases <- function(internal, public, defaults) {
+  # Get internal disease list
+  internal_diseases <- get_report_diseases_internal(
+    filepath = internal,
+    defaults = defaults
   )
 
-  config <- validate_config(config)
+  # Get public disease list
+  public_diseases <- get_report_diseases_public(
+    filepath = public,
+    defaults = defaults
+  )
 
-  config
+  # Return both lists
+  list(
+    internal = internal_diseases,
+    public = public_diseases
+  )
 }
 
 
@@ -202,6 +362,7 @@ epitraxr_config <- function(
 #'
 #' # Write to temporary directory
 #' write_report_csv(r_data, "report.csv", tempdir())
+#' unlink(file.path(tempdir(), "report.csv"), recursive = TRUE)
 write_report_csv <- function(data, filename, folder) {
   utils::write.csv(data, file.path(folder, filename), row.names = FALSE)
 }
@@ -214,8 +375,7 @@ write_report_csv <- function(data, filename, folder) {
 #'
 #' @param data List. Named list of dataframes. The name will be used as the
 #' sheet name.
-#' @param filename String. Report filename.
-#' @param folder Filepath. Report destination folder.
+#' @inheritParams write_report_csv
 #'
 #' @returns NULL.
 #' @export
@@ -239,106 +399,9 @@ write_report_csv <- function(data, filename, folder) {
 #'
 #' # Write to temporary directory
 #' write_report_xlsx(r_xl, "report.xlsx", tempdir())
+#' unlink(file.path(tempdir(), "report.xlsx"), recursive = TRUE)
 write_report_xlsx <- function(data, filename, folder) {
   writexl::write_xlsx(data, file.path(folder, filename))
-}
-
-
-#' Write PDF grouped report from R Markdown template
-#'
-#' `write_grouped_report_pdf` renders a grouped disease statistics report
-#' as a PDF using a R Markdown template. The report includes comprehensive
-#' disease statistics organized by groups with current and historical data.
-#'
-#' @param data Dataframe. Report data containing grouped disease statistics.
-#' @param params List. Report parameters containing:
-#'   - title: Report title (defaults to "Grouped Report")
-#'   - report_year: Report year (defaults to 2025)
-#'   - report_month: Report month (defaults to 1)
-#'   - trend_threshold: Threshold for trend calculations (defaults to 0.15)
-#' @param filename String. Output filename for the rendered report.
-#' @param folder Filepath. Output directory for the rendered report.
-#' @param trend.only Logical. Whether to show only trend in the PDF report.
-#' If TRUE, "trend_only_" will be prepended to the filename.
-#'
-#' @returns NULL (called for side effects - creates the report file).
-#' @export
-#'
-#' @examples
-#' # Don't run PDF examples in case missing LaTeX
-#' \dontrun{
-#'  # Create sample grouped report data
-#'  r_data <- data.frame(
-#'    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
-#'    Disease = c("COVID", "Flu", "Measles"),
-#'    `March 2024` = c(0, 25, 5),
-#'    `March 2024 Rate` = c(0, 25, 5),
-#'    `Historical March Avg` = c(0, 15, 8),
-#'    `Historical March Median` = c(0, 15, 8),
-#'    `2024 YTD` = c(0, 37, 9),
-#'    `Historical 2024 YTD Avg` = c(20, 25, 14),
-#'    `Historical 2024 YTD Median` = c(20, 25, 14),
-#'    `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
-#'    check.names = FALSE
-#'  )
-#'
-#'  # Set report parameters
-#'  params <- list(
-#'    title = "Grouped Disease Surveillance Report",
-#'    report_year = 2024,
-#'    report_month = 3,
-#'    trend_threshold = 0.20
-#'  )
-#'
-#'  # Write to temporary directory
-#'  write_grouped_report_pdf(
-#'    data = r_data,
-#'    params = params,
-#'    filename = "grouped_disease_report.pdf",
-#'    folder = tempdir()
-#'  )
-#' }
-write_grouped_report_pdf <- function(data, params, filename, folder, trend.only = FALSE) {
-  # Check if rmarkdown is available
-  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
-    stop(
-      "Package 'rmarkdown' is required to run 'write_grouped_report_pdf()',",
-      "but is not available"
-    )
-  }
-
-  # Get template path
-  template_path <- system.file(
-    "report_formats/grouped_report.Rmd",
-    package = "epitraxr"
-  )
-
-  # Check if output directory exists, create if not
-  if (!dir.exists(folder)) {
-    dir.create(folder, recursive = TRUE)
-  }
-
-  # Correct filename if trend.only is TRUE
-  corrected_filename <- ifelse(trend.only,
-                              paste0("trend_only_", filename),
-                              filename)
-
-  # Render the report
-  rmarkdown::render(
-    input = template_path,
-    params = list(
-      title = params$title %||% "Grouped Report",
-      report_year = params$report_year %||% 2025,
-      report_month = params$report_month %||% 1,
-      trend_threshold = params$trend_threshold %||% 0.15,
-      report_data = data,
-      trend_only = trend.only
-    ),
-    output_file = corrected_filename,
-    output_dir = folder,
-    quiet = TRUE,
-    envir = new.env(parent = globalenv())
-  )
 }
 
 
@@ -348,14 +411,12 @@ write_grouped_report_pdf <- function(data, params, filename, folder, trend.only 
 #' template. It is relatively flexible and can be used for various
 #' types of report.
 #'
-#' @param data Dataframe. Report data containing disease statistics.
+#' @inheritParams write_report_csv
 #' @param params List. Report parameters containing:
-#'   - title: Report title (defaults to "Disease Report")
-#'   - report_year: Report year (defaults to 2025)
-#'   - report_month: Report month (defaults to 1)
-#'   - trend_threshold: Threshold for trend calculations (defaults to 0.15)
-#' @param filename String. Output filename for the rendered report.
-#' @param folder Filepath. Output directory for the rendered report.
+#'   - `title`: Report title (defaults to "Disease Report")
+#'   - `report_year`: Report year (defaults to 2025)
+#'   - `report_month`: Report month (defaults to 1)
+#'   - `trend_threshold`: Threshold for trend calculations (defaults to 0.15)
 #' @param trend.only Logical. Whether to show only trend in the PDF report.
 #' If TRUE, "trend_only_" will be prepended to the filename.
 #'
@@ -370,7 +431,7 @@ write_grouped_report_pdf <- function(data, params, filename, folder, trend.only 
 #'    Disease = c("COVID", "Flu", "Measles"),
 #'    `March 2024` = c(0, 25, 5),
 #'    `Historical March Avg` = c(0, 15, 8),
-#'    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+#'    `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
 #'    check.names = FALSE
 #'  )
 #'
@@ -434,183 +495,95 @@ write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE)
 }
 
 
-#' Get the internal disease list
+#' Write PDF grouped report from R Markdown template
 #'
-#' 'get_internal_disease_list' reads the internal list from a given CSV file or
-#' uses the default diseases, if the file doesn't exist.
+#' `write_report_pdf_grouped` renders a grouped disease statistics report
+#' as a PDF using a R Markdown template. The report includes comprehensive
+#' disease statistics organized by groups with current and historical data.
 #'
-#' The provided internal disease list file must contain a column of EpiTrax
-#' disease names (EpiTrax_name) to include in internal reports. It can optionally
-#' contain a column for disease_groupings (Group_name) for reports that group
-#' diseases together. See the example file here:
-#' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
-#' @param filepath Filepath. Internal disease list CSV file.
-#' @param default_diseases String vector. List of default diseases to use if the
-#' above file doesn't exist.
+#' @inheritParams write_report_pdf
+#' @param params List. Report parameters containing:
+#'   - `title`: Report title (defaults to "Grouped Report")
+#'   - `report_year`: Report year (defaults to 2025)
+#'   - `report_month`: Report month (defaults to 1)
+#'   - `trend_threshold`: Threshold for trend calculations (defaults to 0.15)
 #'
-#' @returns A dataframe containing the diseases to include in the internal report
-#' and possibly the disease groupings.
+#' @returns NULL (called for side effects - creates the report file).
 #' @export
 #'
-#' @importFrom utils read.csv
-#'
 #' @examples
-#' # Using default list (when file doesn't exist)
-#' default_list <- c("Measles", "Chickenpox")
-#' disease_list <- get_internal_disease_list("", default_list)
+#' # Don't run PDF examples in case missing LaTeX
+#' \dontrun{
+#'  # Create sample grouped report data
+#'  r_data <- data.frame(
+#'    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+#'    Disease = c("COVID", "Flu", "Measles"),
+#'    `March 2024` = c(0, 25, 5),
+#'    `March 2024 Rate` = c(0, 25, 5),
+#'    `Historical March Avg` = c(0, 15, 8),
+#'    `Historical March Median` = c(0, 15, 8),
+#'    `2024 YTD` = c(0, 37, 9),
+#'    `Historical 2024 YTD Avg` = c(20, 25, 14),
+#'    `Historical 2024 YTD Median` = c(20, 25, 14),
+#'    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
+#'    check.names = FALSE
+#'  )
 #'
-#' # Using a disease list file
-#' list_file <- system.file("sample_data/sample_disease_list.csv",
-#'                         package = "epitraxr")
-#' disease_list <- get_internal_disease_list(list_file, default_list)
-get_internal_disease_list <- function(filepath, default_diseases) {
-
-  if (file.exists(filepath)) {
-
-    d_list <- utils::read.csv(filepath, header = TRUE)
-
-    # Validate file
-    if (is.null(d_list$EpiTrax_name)) {
-      stop("File '", filepath, "' missing required column 'EpiTrax_name'.")
-    }
-
-    d_list
-
-  } else {
-    # If the file doesn't exist, use the default list of diseases provided
-    warning(
-      "You have not provided a disease list for internal reports.",
-      "\n - The program will default to using only the diseases ",
-      "found in the input dataset.",
-      "\n - If you would like to use a different list, ",
-      "please include a file with a column named",
-      "\n\n\t'EpiTrax_name'\n"
+#'  # Set report parameters
+#'  params <- list(
+#'    title = "Grouped Disease Surveillance Report",
+#'    report_year = 2024,
+#'    report_month = 3,
+#'    trend_threshold = 0.20
+#'  )
+#'
+#'  # Write to temporary directory
+#'  write_report_pdf_grouped(
+#'    data = r_data,
+#'    params = params,
+#'    filename = "grouped_disease_report.pdf",
+#'    folder = tempdir()
+#'  )
+#' }
+write_report_pdf_grouped <- function(data, params, filename, folder, trend.only = FALSE) {
+  # Check if rmarkdown is available
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop(
+      "Package 'rmarkdown' is required to run 'write_report_pdf_grouped()',",
+      "but is not available"
     )
-
-    default_diseases <- sort(default_diseases)
-
-    d_list <- data.frame(
-      EpiTrax_name = default_diseases
-    )
-
-    d_list
   }
-}
 
-
-#' Get the public disease list
-#'
-#' 'get_public_disease_list' reads the public list from a given CSV file or uses
-#' the default diseases if the file doesn't exist.
-#'
-#' The provided public disease list file must contain two columns that map the
-#' EpiTrax disease name (EpiTrax_name) to a public-facing name (Public_name)
-#' for the public report. It can optionally contain a column for disease_groupings
-#' (Group_name) for reports that group diseases together. See the example file here:
-#' `system.file("sample_data/sample_disease_list.csv", package = "epitraxr")`
-#' @param filepath Filepath. Public disease list CSV file.
-#' @param default_diseases String vector. List of default diseases to use if the
-#' above file doesn't exist.
-#'
-#' @returns A dataframe containing the diseases to include in the public report
-#' and the name to use for each disease in the public report. It may also contain
-#' the disease groupings.
-#' @export
-#'
-#' @importFrom utils read.csv
-#'
-#' @examples
-#' # Using default list (when file doesn't exist)
-#' default_list <- c("Measles", "Chickenpox")
-#' disease_list <- get_public_disease_list("", default_list)
-#'
-#' # Using a disease list file
-#' list_file <- system.file("sample_data/sample_disease_list.csv",
-#'                         package = "epitraxr")
-#' disease_list <- get_public_disease_list(list_file, default_list)
-get_public_disease_list <- function(filepath, default_diseases) {
-
-  if (file.exists(filepath)) {
-
-    d_list <- utils::read.csv(filepath, header = TRUE)
-
-    # Validate file
-    if (is.null(d_list$EpiTrax_name) || is.null(d_list$Public_name)) {
-      stop("File '", filepath, "' is incorrectly formatted. Please use the ",
-           "column names: 'EpiTrax_name' and 'Public_name'.")
-    }
-
-    d_list
-
-  } else {
-    # If the file doesn't exist, use the default list of diseases provided
-    warning(
-      "You have not provided a disease list for public reports.",
-      "\n - The program will default to using only the diseases ",
-      "found in the input dataset.",
-      "\n - If you would like to use a different list, ",
-      "please include a file with columns named",
-      "\n\n\t'EpiTrax_name' and 'Public_name'\n"
-    )
-
-    default_diseases <- sort(default_diseases)
-
-    d_list <- data.frame(
-      EpiTrax_name = default_diseases,
-      Public_name = default_diseases
-    )
-
-    d_list
-  }
-}
-
-
-#' Get both internal and public disease lists
-#'
-#' `get_report_disease_lists` is a convenience function that combines
-#' `get_internal_disease_list` and `get_public_disease_list`.
-#'
-#' @param internal_list_fp Filepath. Path to internal disease list CSV file.
-#' @param public_list_fp Filepath. Path to public disease list CSV file.
-#' @param default_diseases String vector. List of default diseases to use if
-#'   either file doesn't exist.
-#'
-#' @returns A list with two elements:
-#'   - internal: Dataframe with EpiTrax_name column
-#'   - public: Dataframe with EpiTrax_name and Public_name columns
-#' @export
-#'
-#' @examples
-#' # Using default lists (when files don't exist)
-#' default_list <- c("Measles", "Chickenpox")
-#' disease_lists <- get_report_disease_lists("", "", default_list)
-#'
-#' # Using disease list files
-#' i_file <- system.file("tinytest/test_files/disease_lists/internal_list.csv",
-#'                        package = "epitraxr")
-#' p_file <- system.file("tinytest/test_files/disease_lists/public_list.csv",
-#'                        package = "epitraxr")
-#' disease_lists <- get_report_disease_lists(
-#'   internal_list_fp = i_file,
-#'   public_list_fp = p_file,
-#'   default_diseases = default_list
-#' )
-get_report_disease_lists <- function(internal_list_fp, public_list_fp, default_diseases) {
-  # Get internal disease list
-  internal_diseases <- get_internal_disease_list(
-    filepath = internal_list_fp,
-    default_diseases = default_diseases
+  # Get template path
+  template_path <- system.file(
+    "report_formats/grouped_report.Rmd",
+    package = "epitraxr"
   )
 
-  # Get public disease list
-  public_diseases <- get_public_disease_list(
-    filepath = public_list_fp,
-    default_diseases = default_diseases
-  )
+  # Check if output directory exists, create if not
+  if (!dir.exists(folder)) {
+    dir.create(folder, recursive = TRUE)
+  }
 
-  # Return both lists
-  list(
-    internal = internal_diseases,
-    public = public_diseases
+  # Correct filename if trend.only is TRUE
+  corrected_filename <- ifelse(trend.only,
+                              paste0("trend_only_", filename),
+                              filename)
+
+  # Render the report
+  rmarkdown::render(
+    input = template_path,
+    params = list(
+      title = params$title %||% "Grouped Report",
+      report_year = params$report_year %||% 2025,
+      report_month = params$report_month %||% 1,
+      trend_threshold = params$trend_threshold %||% 0.15,
+      report_data = data,
+      trend_only = trend.only
+    ),
+    output_file = corrected_filename,
+    output_dir = folder,
+    quiet = TRUE,
+    envir = new.env(parent = globalenv())
   )
 }

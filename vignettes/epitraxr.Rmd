@@ -52,18 +52,18 @@ This validates the input data and converts the week number to a month number (1-
 
 ## Disease Lists
 
-Before you can generate reports from the data, epitraxr needs a list of diseases to include in the report. Often, you'll have two lists, one for internal reports and one for public reports. Read these files in using the functions `get_internal_disease_list()` and `get_public_disease_list()`.
+Before you can generate reports from the data, epitraxr needs a list of diseases to include in the report. Often, you'll have two lists, one for internal reports and one for public reports. Read these files in using the functions `get_report_diseases_internal()` and `get_report_diseases_public()`.
 
 ```{r get-ilist}
 internal_disease_list <- "vignette-data/ireport_diseases.csv"
-internal_diseases <- get_internal_disease_list(internal_disease_list)
+internal_diseases <- get_report_diseases_internal(internal_disease_list)
 head(internal_diseases)
 ```
 `internal_diseases` has two columns. `EpiTrax_name` is the disease name *as reported by EpiTrax*. All internal reports need the values in this column. `Group_name` is for grouping diseases, which is only used by `create_report_grouped_stats()`. If you aren't creating grouped reports, you don't need `Group_name` in your internal disease list.
 
 ```{r get-plist}
 public_disease_list <- "vignette-data/preport_diseases.csv"
-public_diseases <- get_public_disease_list(public_disease_list)
+public_diseases <- get_report_diseases_public(public_disease_list)
 head(public_diseases)
 ```
 `public_diseases` also has two columns. Like `internal_diseases`, `EpiTrax_name` is the disease name *as reported by EpiTrax*. All public reports need the values in this column to properly compute statistics from the data. `Public_name` is used by certain functions (prefixed with `create_public_report_`) to translate the EpiTrax disease name to something more accessible to the public. `Public_name` is also used to combine related diseases in the final report (e.g., "Syphilis, primary" and "Syphilis, secondary" publicly reported by the collected statistic of "Syphilis").
@@ -75,7 +75,7 @@ We can now call the report generation functions, such as `create_report_annual_c
 ```{r annual-report-1}
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = internal_diseases$EpiTrax_name
+  diseases = internal_diseases$EpiTrax_name
 )
 
 head(report)
@@ -88,7 +88,7 @@ Let's call the report function again, but this time give it the public disease l
 ```{r annual-report}
 report <- create_report_annual_counts(
   data = epitrax_data,
-  disease_names = public_diseases$EpiTrax_name
+  diseases = public_diseases$EpiTrax_name
 )
 
 head(report)
@@ -110,9 +110,9 @@ disease_lists <- list(
 )
 
 # Run pipe
-epitrax <- get_epitrax(data_file) |>
+epitrax <- create_epitrax_from_file(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(disease_lists) |>
+  epitrax_set_report_diseases(disease_lists) |>
   epitrax_ireport_annual_counts()
 
 # View report
@@ -121,9 +121,9 @@ head(epitrax$internal_reports$annual_counts)
 Piped mode really shines when we're creating multiple reports all at once.
 
 ```{r many-reports-piping}
-epitrax <- get_epitrax(data_file) |>
+epitrax <- create_epitrax_from_file(data_file) |>
   epitrax_set_config_from_file(config_file) |>
-  epitrax_add_report_diseases(disease_lists) |>
+  epitrax_set_report_diseases(disease_lists) |>
   epitrax_ireport_annual_counts() |>
   epitrax_ireport_monthly_avgs() |>
   epitrax_ireport_ytd_counts_for_month()

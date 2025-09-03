@@ -5,7 +5,7 @@
 \title{Setup EpiTrax object with configuration and disease lists}
 \usage{
 setup_epitrax(
-  epitrax_file = NULL,
+  filepath = NULL,
   num_yrs = 5,
   disease_list_files = NULL,
   config_list = NULL,
@@ -13,14 +13,14 @@ setup_epitrax(
 )
 }
 \arguments{
-\item{epitrax_file}{Optional path to the EpiTrax data file. Data file should
-be a CSV. If omitted, the user will be prompted to choose a file interactively.}
+\item{filepath}{Optional filepath. EpiTrax data file should be a CSV. If this parameter
+is NULL, the user will be prompted to choose a file interactively.}
 
 \item{num_yrs}{Integer. Number of years of data to keep. Defaults to 5.}
 
 \item{disease_list_files}{Optional list containing filepaths to internal and
 public report disease lists. If omitted, the default lists will be used and
-a warning will be thrown.}
+a warning will be given.}
 
 \item{config_list, config_file}{Configuration options may be specified as a
 list or as a path to a YAML config file, respectively. Only one can be
@@ -32,8 +32,8 @@ An EpiTrax object with configuration and report diseases set.
 }
 \description{
 \code{setup_epitrax} initializes an EpiTrax object with configuration and report
-disease lists. It is a convenience function that combines \code{get_epitrax},
-\code{epitrax_set_config_from_file}, and \code{epitrax_add_report_diseases}.
+disease lists. It is a convenience function that combines \code{create_epitrax_from_file()},
+\code{epitrax_set_config_from_file()}, and \code{epitrax_set_report_diseases()}.
 }
 \examples{
 data_file <- system.file("sample_data/sample_epitrax_data.csv",
@@ -46,7 +46,12 @@ disease_lists <- list(
 )
 
 epitrax <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   disease_list_files = disease_lists
 )
+}
+\seealso{
+\code{\link[=create_epitrax_from_file]{create_epitrax_from_file()}}, \code{\link[=epitrax_set_config_from_file]{epitrax_set_config_from_file()}},
+\code{\link[=epitrax_set_config_from_list]{epitrax_set_config_from_list()}}, and \code{\link[=epitrax_set_report_diseases]{epitrax_set_report_diseases()}}
+which this function wraps.
 }

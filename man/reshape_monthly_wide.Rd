@@ -2,12 +2,17 @@
 % Please edit documentation in R/data.R
 \name{reshape_monthly_wide}
 \alias{reshape_monthly_wide}
-\title{Reshape data frame with each month as a separate column}
+\title{Reshape data with each month as a separate column}
 \usage{
-reshape_monthly_wide(df)
+reshape_monthly_wide(data)
 }
 \arguments{
-\item{df}{Dataframe. Data to reshape with months as columns.}
+\item{data}{Dataframe. Must contain columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 }
 \value{
 The reshaped data frame.
@@ -17,6 +22,10 @@ The reshaped data frame.
 months for columns.
 }
 \examples{
-df <- data.frame(disease=c("A","B"), month=c(1,2), counts=c(5,6))
+df <- data.frame(
+ disease = c("A", "B"),
+ month = c(1, 2),
+ counts = c(5, 6)
+)
 reshape_monthly_wide(df)
 }

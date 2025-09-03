@@ -1,46 +1,16 @@
-#' Format input EpiTrax data
-#'
-#' 'format_week_num' formats the input EpiTrax dataset with month numbers
-#' using the field 'patient_mmwr_week'.
-#'
-#' @param data Dataframe. Data to format.
-#'
-#' @returns The formatted data with columns "disease", "month", "year",
-#' and "counts".
-#' @export
-#'
-#' @importFrom lubridate month ymd
-#'
-#' @examples
-#' df <- data.frame(patient_mmwr_year=2020L, patient_mmwr_week=1L, patient_disease="A")
-#' format_week_num(df)
-format_week_num <- function(data) {
-  # Format data
-  data$month <- with(data, lubridate::month(
-    lubridate::ymd(patient_mmwr_year * 10000 + 0101) +
-      patient_mmwr_week * 7
-  ))
-  data$patient_mmwr_week <- NULL
-  data$counts <- 1 # Makes easier to use aggregate()
-  colnames(data) <- c("year", "disease", "month", "counts")
-  # - Rearrange columns for easier debugging
-  data <- data[c("disease", "month", "year", "counts")]
-
-  data
-}
-
-#' Read in input EpiTrax data
+#' Read in EpiTrax data
 #'
 #' 'read_epitrax_data' reads EpiTrax data from a CSV, validates, and formats it.
 #' It also filters rows older than given number of years. The input file must
 #' contain the columns:
-#' - patient_mmwr_year: The year of the MMWR week
-#' - patient_mmwr_week: The MMWR week number
-#' - patient_disease: The disease name
+#' - `patient_mmwr_year` (integer)
+#' - `patient_mmwr_week` (integer)
+#' - `patient_disease` (character)
+#'
 #' See the example file here:
 #' `system.file("sample_data/sample_epitrax_data.csv", package = "epitraxr")`
 #'
-#' @param data_file Optional filepath. Data file should be a CSV. If this parameter
+#' @param filepath Optional filepath. Data file should be a CSV. If this parameter
 #' is NULL, the user will be prompted to choose a file interactively.
 #' @param num_yrs Integer. Number of years of data to keep. Defaults to 5.
 #'
@@ -56,19 +26,20 @@ format_week_num <- function(data) {
 #' }
 #'
 #' # Using a file path:
-#' read_epitrax_data(
-#'  data_file = system.file("sample_data/sample_epitrax_data.csv",
+#' data <- read_epitrax_data(
+#'  filepath = system.file("sample_data/sample_epitrax_data.csv",
 #'                          package = "epitraxr"),
 #'  num_yrs = 3
 #' )
-read_epitrax_data <- function(data_file = NULL, num_yrs = 5) {
+#' head(data)
+read_epitrax_data <- function(filepath = NULL, num_yrs = 5) {
 
   if (is.null(num_yrs) || !is.numeric(num_yrs) || num_yrs < 0) {
     stop("In 'read_epitrax_data', 'num_yrs' must be an integer >= 0.")
   }
 
-  # If data_file is provided, use it; otherwise, prompt user to choose a file
-  fpath <- data_file %||% file.choose()
+  # If filepath is provided, use it; otherwise, prompt user to choose a file
+  fpath <- filepath %||% file.choose()
 
   if (!file.exists(fpath) || !grepl("\\.csv$", fpath)) {
     stop("Please select an EpiTrax data file (.csv).")
@@ -79,7 +50,8 @@ read_epitrax_data <- function(data_file = NULL, num_yrs = 5) {
 
   # Validate and format data
   data <- validate_data(data)
-  data <- format_week_num(data)
+  data <- mmwr_week_to_month(data)
+  data <- format_epitrax_data(data)
 
   # Extract last x years of data
   data <- with(data, data[year >= (max(year) - num_yrs), ])
@@ -89,84 +61,101 @@ read_epitrax_data <- function(data_file = NULL, num_yrs = 5) {
 }
 
 
-#' Create an EpiTrax object from data file
+#' Convert MMWR week to calendar month
 #'
-#' `get_epitrax` reads an EpiTrax data file and creates a structured object
-#' containing the data along with commonly used metadata and empty report lists.
+#' `mmwr_week_to_month` calculates the calendar month from the
+#' `patient_mmwr_week` and `patient_mmwr_year` fields of the EpiTrax data.
+#' The result is stored in the `month` column and the `patient_mmwr_week`
+#' column is removed.
 #'
-#' @param data_file Optional filepath. Data file should be a CSV. If this parameter
-#'   is NULL, the user will be prompted to choose a file interactively.
-#' @param num_yrs Integer. Number of years of data to keep. Defaults to 5.
+#' @param data Dataframe. Must contain columns:
+#' - `patient_mmwr_year` (integer)
+#' - `patient_mmwr_week` (integer)
 #'
-#' @returns An object of class "epitrax" containing:
-#'   - data: The validated and formatted EpiTrax data
-#'   - diseases: Vector of unique diseases in the dataset
-#'   - yrs: Vector of years in the dataset
-#'   - report_year: Most recent year in the dataset
-#'   - report_month: Most recent month in report_year
-#'   - internal_reports: Empty list to store internal reports
-#'   - public_reports: Empty list to store public reports
+#' @returns The input data frame with an added "month" column (integer 1-12) and
+#' removed `patient_mmwr_week` column.
+#' @export
+#'
+#' @importFrom lubridate month ymd
+#'
+#' @examples
+#' df <- data.frame(
+#'  patient_mmwr_year = 2020L,
+#'  patient_mmwr_week = 1L,
+#'  patient_disease = "A"
+#' )
+#' mmwr_week_to_month(df)
+mmwr_week_to_month <- function(data) {
+  # Format data
+  data$month <- with(data, lubridate::month(
+    lubridate::ymd(patient_mmwr_year * 10000 + 0101) +
+      patient_mmwr_week * 7
+  ))
+  data$patient_mmwr_week <- NULL
+
+  data
+}
+
+
+#' Format EpiTrax data for report generation
+#'
+#' `format_epitrax_data` prepares the input EpiTrax data for use by report generation
+#' functions in the package. It adds the `counts` column, renames columns to
+#' standard names used by the package ("disease", "month", "year", "counts"),
+#' and rearranges columns for consistency.
+#'
+#' @param data Dataframe. Must contain columns:
+#' - `patient_disease` (character, unchanged from EpiTrax export)
+#' - `patient_mmwr_year` (integer, unchanged from EpiTrax export)
+#' - `month` (integer, converted from `patient_mmwr_week` by `mmwr_week_to_month()`)
+#'
+#' @returns A standardized data frame with columns "disease", "month", "year", and "counts".
+#' @seealso [mmwr_week_to_month()]
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Interactive file chooser:
-#' get_epitrax()
-#' }
-#'
-#' # Using sample data included with package
-#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
-#'                          package = "epitraxr")
-#' epitrax <- get_epitrax(data_file)
-#'
-#' # Access components
-#' head(epitrax$data)
-#' epitrax$diseases
-#' epitrax$report_year
-get_epitrax <- function(data_file = NULL, num_yrs = 5) {
-  # Read in EpiTrax data
-  epitrax_data <- read_epitrax_data(data_file, num_yrs = num_yrs)
+#' df <- data.frame(
+#'   patient_mmwr_year = c(2020L, 2020L),
+#'   month = c(1, 2),
+#'   patient_disease = c("A", "B")
+#' )
+#' df <- format_epitrax_data(df)
+format_epitrax_data <- function(data) {
+  # Add counts column to make it easier to use aggregate()
+  data$counts <- 1
 
-  # Compute common summary statistics and metadata
-  data_diseases <- unique(epitrax_data$disease)
-  data_yrs <- get_yrs(epitrax_data)
-  r_year <- max(data_yrs)
-  r_month <- max(epitrax_data[epitrax_data$year == r_year,]$month)
+  # Rename columns to standard names and rearrange for better debugging
+  data <- data[c("patient_disease", "month", "patient_mmwr_year", "counts")]
+  colnames(data) <- c("disease", "month", "year", "counts")
 
-  # Return list of EpiTrax data and metadata
-  epitrax_obj <- structure(
-    list(
-      data = epitrax_data,
-      diseases = data_diseases,
-      yrs = data_yrs,
-      report_year = r_year,
-      report_month = r_month,
-      internal_reports = list(),
-      public_reports = list()
-    ),
-    class = "epitrax"
-  )
-
-  epitrax_obj
+  data
 }
 
-#' Reshape data frame with each month as a separate column
+
+#' Reshape data with each month as a separate column
 #'
 #' 'reshape_monthly_wide' reshapes a given data frame with diseases for rows and
 #' months for columns.
 #'
-#' @param df Dataframe. Data to reshape with months as columns.
+#' @param data Dataframe. Must contain columns:
+#' - `disease` (character)
+#' - `month` (integer)
+#' - `counts` (integer)
 #'
 #' @returns The reshaped data frame.
 #' @export
 #'
 #' @examples
-#' df <- data.frame(disease=c("A","B"), month=c(1,2), counts=c(5,6))
+#' df <- data.frame(
+#'  disease = c("A", "B"),
+#'  month = c(1, 2),
+#'  counts = c(5, 6)
+#' )
 #' reshape_monthly_wide(df)
-reshape_monthly_wide <- function(df) {
-  m_df <- with(df, stats::reshape(
+reshape_monthly_wide <- function(data) {
+  m_df <- with(data, stats::reshape(
     merge(
-      df,
+      data,
       expand.grid(
         disease = unique(disease),
         month = unique(month)
@@ -186,13 +175,15 @@ reshape_monthly_wide <- function(df) {
 }
 
 
-#' Reshape data frame with each year as a separate column
+#' Reshape data with each year as a separate column
 #'
 #' 'reshape_annual_wide' reshapes a given data frame with diseases for rows and
 #' years for columns.
 #'
-#' @param df Dataframe. Data to reshape with years as columns. Must have
-#' columns: disease, year, and counts.
+#' @param data Dataframe. Must have columns:
+#' - `disease` (character)
+#' - `year` (integer)
+#' - `counts` (integer)
 #'
 #' @returns The reshaped data frame.
 #' @export
@@ -204,10 +195,10 @@ reshape_monthly_wide <- function(df) {
 #'   counts = c(5, 7, 8)
 #' )
 #' reshape_annual_wide(df)
-reshape_annual_wide <- function(df) {
-  a_df <- with(df, stats::reshape(
+reshape_annual_wide <- function(data) {
+  a_df <- with(data, stats::reshape(
     merge(
-      df,
+      data,
       expand.grid(
         disease = unique(disease),
         year = unique(year)
@@ -221,12 +212,12 @@ reshape_annual_wide <- function(df) {
   # - Set NA values to 0
   a_df <- set_na_0(a_df)
   # - Update column names to more human-readable format
-  colnames(a_df) <- c("disease", get_yrs(df))
+  colnames(a_df) <- c("disease", get_yrs(data))
 
   a_df
 }
 
-#' Prepare data for report
+#' Standardize diseases for report
 #'
 #' 'standardize_report_diseases' removes rows from the data that
 #' shouldn't appear in the report and adds rows for diseases that
@@ -234,7 +225,7 @@ reshape_annual_wide <- function(df) {
 #' Added rows are filled with 0s.
 #'
 #' @param data Dataframe. Current report data.
-#' @param diseases String vector. Diseases to include in the report.
+#' @param diseases Character vector. Diseases to include in the report.
 #'
 #' @returns Report data with rows for all diseases to report.
 #' @export
@@ -271,18 +262,36 @@ standardize_report_diseases <- function(data, diseases) {
 }
 
 
+#' Get unique years from the data
+#'
+#' 'get_yrs' extracts and returns the sorted unique years from the 'year' column
+#' of a data frame.
+#'
+#' @param data Dataframe. Must contain the column:
+#' - `year` (integer)
+#'
+#' @returns Integer vector of sorted unique years present in the data.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(year = c(2020, 2021, 2020, 2022))
+#' get_yrs(df)
+get_yrs <- function(data) {
+  sort(unique(data$year))
+}
 
-#' Calculate monthly counts by disease
+
+#' Get monthly counts for each disease
 #'
 #' `get_month_counts` aggregates disease counts by month and year. This is a helper
 #' function used internally by report generation functions to summarize monthly
 #' disease counts.
 #'
 #' @param data Dataframe. Must contain columns:
-#'   - disease: The disease name
-#'   - year: The year of the counts
-#'   - month: The month of the counts (1-12)
-#'   - counts: The number of cases
+#'   - `disease` (character)
+#'   - `year` (integer)
+#'   - `month` (integer)
+#'   - `counts` (integer)
 #'
 #' @returns A dataframe with the aggregated monthly counts
 #' @export

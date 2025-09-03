@@ -1,160 +1,9 @@
-#' Create a monthly cross-section public report
-#'
-#' 'create_public_report_month' creates a public report for the given month.
-#'
-#' @param cases Dataframe. Disease case counts for each month and year. Must
-#' have columns: disease, year, month, counts.
-#' @param avgs Dataframe. Disease case count averages for each month. Must
-#' have columns: disease, Jan, Feb, ...
-#' @param d_list Dataframe. List of diseases to use for the report. Must have
-#' columns: EpiTrax_name, Public_name.
-#' @param m Integer. The report month (1-12).
-#' @param y Integer. The report year.
-#' @param config List. Settings to use for report.
-#'
-#' @returns List containing the report name and data.
-#' @export
-#'
-#' @importFrom stats aggregate
-#'
-#' @examples
-#' cases <- data.frame(
-#'   disease = c("A","B"),
-#'   year = 2024,
-#'   month = 1,
-#'   counts = c(10,20)
-#' )
-#' avgs <- data.frame(disease = c("A","B"), Jan = c(5,15))
-#' d_list <- data.frame(
-#'   EpiTrax_name = c("A","B"),
-#'   Public_name = c("Alpha","Beta")
-#' )
-#' config <- list(
-#'   current_population = 100000,
-#'   avg_5yr_population = 100000,
-#'   rounding_decimals = 1,
-#'   trend_threshold = 0.15
-#' )
-#'
-#' create_public_report_month(cases, avgs, d_list, 1, 2024, config)
-create_public_report_month <- function(cases, avgs, d_list, m, y, config) {
-
-  month_name <- month.abb[[m]]
-
-  m_counts <- with(cases, cases[year == y & month == m, c("disease", "counts")])
-
-  # - Only take the rows with data in the final report
-  m_counts <- m_counts[m_counts$disease %in% avgs$disease, ]
-
-  # - Convert monthly average counts to rate per 100k
-  m_rates <- convert_counts_to_rate(avgs[[month_name]],
-                                    pop = config$avg_5yr_population,
-                                    digits = config$rounding_decimals)
-
-  # - Create the report data frame initializing the Rate_per_100k column to 0
-  m_report <- data.frame(
-    Disease = avgs$disease,
-    Rate_per_100k = 0,
-    Avg_5yr_Rate = m_rates
-  )
-
-  # - Update the Rate_per_100k column with values from m_counts
-  for (i in 1:length(m_counts$disease)) {
-    d <- m_counts$disease[i]
-    rate <- convert_counts_to_rate(m_counts$counts[i],
-                                   pop = config$current_population,
-                                   digits = config$rounding_decimals)
-    m_report[m_report$Disease == d, ]$Rate_per_100k <- rate
-  }
-
-  # - Convert disease names to public-facing versions
-  m_report <- merge(m_report, d_list,
-                    by.x = "Disease", by.y = "EpiTrax_name",
-                    all.x = TRUE, all.y = FALSE)
-  m_report$Disease <- m_report$Public_name
-  m_report$Public_name <- NULL
-  m_report <- m_report[order(m_report$Disease),]
-
-  # - Combine diseases with same public name (if any)
-  m_report <- stats::aggregate(m_report[ , -1],
-                               by = list(Disease = m_report$Disease),
-                               "sum")
-
-  # - Add Trends column last
-  m_report$Trend <- get_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate,
-                              threshold = config$trend_threshold)
-
-  # - Name and return report
-  r_name <- paste0("public_report_", month_name, y)
-  list(name = r_name, report = m_report)
-}
-
-
-#' Create a YTD public report
-#'
-#' 'create_public_report_ytd' creates a public report for YTD rates.
-#'
-#' @param ytd_rates Dataframe. YTD case rates per 100k. Must have columns:
-#' disease, Current_YTD_Rate_per_100k, Avg_5yr_YTD_Rate_per_100k.
-#' @param d_list Dataframe. List of diseases to use for the report. Must have
-#' columns: EpiTrax_name, Public_name.
-#' @param config List. Settings to use for report.
-#'
-#' @returns List containing the report name and data.
-#' @export
-#'
-#' @importFrom stats aggregate
-#'
-#' @examples
-#' ytd_rates <- data.frame(
-#'   disease = c("A","B"),
-#'   Current_YTD_Rate_per_100k = c(12, 34),
-#'   Avg_5yr_YTD_Rate_per_100k = c(10, 30)
-#' )
-#' d_list <- data.frame(
-#'   EpiTrax_name = c("A","B"),
-#'   Public_name = c("Alpha","Beta")
-#' )
-#' config <- list(generate_csvs = TRUE, trend_threshold = 0.15)
-#' create_public_report_ytd(ytd_rates, d_list, config)
-create_public_report_ytd <- function(ytd_rates, d_list, config) {
-
-  # - Create the report data frame initializing the Rate_per_100k column to 0
-  m_report <- data.frame(
-    Disease = ytd_rates$disease,
-    YTD_Rate_per_100k = ytd_rates$Current_YTD_Rate_per_100k,
-    Avg_5yr_Rate = ytd_rates$Avg_5yr_YTD_Rate_per_100k
-  )
-
-  # - Convert disease names to public-facing versions
-  m_report <- merge(m_report, d_list, by.x = "Disease", by.y = "EpiTrax_name")
-  m_report$Disease <- m_report$Public_name
-  m_report$Public_name <- NULL
-  m_report <- m_report[order(m_report$Disease),]
-
-  # - Combine diseases with same public name (if any)
-  m_report <- stats::aggregate(m_report[ , -1],
-                               by = list(Disease = m_report$Disease),
-                               "sum")
-
-  # - Add Trends column last
-  m_report$Trend <- get_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate,
-                              threshold = config$trend_threshold)
-
-  # - Name and return report
-  r_name <- "public_report_YTD"
-  list(name = r_name, report = m_report)
-}
-
-
 #' Create annual counts report
 #'
 #' 'create_report_annual_counts' generates a data frame of annual case
 #' counts for each disease, with years as columns.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, counts.
-#' @param disease_names Character vector. List of diseases to include in the
-#' report.
+#' @inheritParams create_report_ytd_counts
 #'
 #' @returns Dataframe of annual counts with one row per disease and one column
 #' per year.
@@ -168,8 +17,8 @@ create_public_report_ytd <- function(ytd_rates, d_list, config) {
 #'   year = c(2020, 2021, 2020),
 #'   counts = c(5, 7, 8)
 #' )
-#' create_report_annual_counts(data, disease_names = c("A", "B", "C"))
-create_report_annual_counts <- function(data, disease_names) {
+#' create_report_annual_counts(data, diseases = c("A", "B", "C"))
+create_report_annual_counts <- function(data, diseases) {
   # - Aggregate annual counts by disease and year
   annual_counts <- stats::aggregate(counts ~ disease + year,
                             data = data,
@@ -179,7 +28,7 @@ create_report_annual_counts <- function(data, disease_names) {
   annual_counts <- reshape_annual_wide(annual_counts)
 
   # - Add missing diseases
-  annual_counts <- standardize_report_diseases(annual_counts, disease_names)
+  annual_counts <- standardize_report_diseases(annual_counts, diseases)
 
   # - Clear row names
   rownames(annual_counts) <- NULL
@@ -193,10 +42,7 @@ create_report_annual_counts <- function(data, disease_names) {
 #' 'create_report_monthly_counts' generates a data frame of monthly case
 #' counts for each disease for a specific year, with months as columns.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param y Integer. The year to generate the report for.
-#' @param disease_names Character vector. List of diseases to include in the
-#' report.
+#' @inheritParams create_report_ytd_counts
 #'
 #' @returns Dataframe of monthly counts with one row per disease and one column
 #' per month (Jan through Dec).
@@ -209,8 +55,8 @@ create_report_annual_counts <- function(data, disease_names) {
 #'   month = c(1, 2, 1, 4),
 #'   counts = c(5, 7, 8, 9)
 #' )
-#' create_report_monthly_counts(data, 2024, disease_names = c("A", "B", "C"))
-create_report_monthly_counts <- function(data, y, disease_names) {
+#' create_report_monthly_counts(data, diseases = c("A", "B", "C"), y = 2024)
+create_report_monthly_counts <- function(data, diseases, y) {
   # - Get monthly counts by disease, year, and month
   month_counts <- get_month_counts(data)
 
@@ -224,7 +70,7 @@ create_report_monthly_counts <- function(data, y, disease_names) {
   month_counts <- reshape_monthly_wide(month_counts)
 
   # - Add missing diseases
-  month_counts <- standardize_report_diseases(month_counts, disease_names)
+  month_counts <- standardize_report_diseases(month_counts, diseases)
 
   # - Clear row names
   rownames(month_counts) <- NULL
@@ -238,13 +84,14 @@ create_report_monthly_counts <- function(data, y, disease_names) {
 #' 'create_report_monthly_avgs' generates a data frame of average monthly case
 #' counts for each disease across all years in the input data.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param disease_names Character vector. List of diseases to include in the
-#' report.
-#' @param config List. Settings to use for report.
+#' Uses the following config options:
+#' - `rounding_decimals`
+#'
+#' @inheritParams create_report_ytd_counts
 #'
 #' @returns Dataframe of monthly averages with one row per disease and one column
 #' per month (Jan through Dec).
+#' @inherit create_report_ytd_counts seealso
 #' @export
 #'
 #' @importFrom stats aggregate
@@ -258,7 +105,7 @@ create_report_monthly_counts <- function(data, y, disease_names) {
 #' )
 #' config <- list(rounding_decimals = 1)
 #' create_report_monthly_avgs(data, c("A", "B", "C"), config)
-create_report_monthly_avgs <- function(data, disease_names, config) {
+create_report_monthly_avgs <- function(data, diseases, config) {
   # - Compute average counts for each month
   monthly_avgs <- stats::aggregate(counts ~ disease + month,
                                    data = data,
@@ -273,7 +120,7 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
   monthly_avgs <- reshape_monthly_wide(monthly_avgs)
 
   # - Add missing diseases
-  monthly_avgs <- standardize_report_diseases(monthly_avgs, disease_names)
+  monthly_avgs <- standardize_report_diseases(monthly_avgs, diseases)
 
   # - Clear row names
   rownames(monthly_avgs) <- NULL
@@ -288,9 +135,7 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 #' counts for each disease across all years in the input data. This provides a
 #' more robust central tendency measure compared to averages for skewed data.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param disease_names Character vector. List of diseases to include in the
-#' report.
+#' @inheritParams create_report_ytd_counts
 #'
 #' @returns Dataframe of monthly medians with one row per disease and one column
 #' per month (Jan through Dec).
@@ -306,7 +151,7 @@ create_report_monthly_avgs <- function(data, disease_names, config) {
 #'   counts = c(10, 20, 30, 5, 15, 25)
 #' )
 #' create_report_monthly_medians(data, c("A", "B", "C"))
-create_report_monthly_medians <- function(data, disease_names) {
+create_report_monthly_medians <- function(data, diseases) {
   # - Get the full range of years in the data
   all_years <- get_yrs(data)
   all_months <- 1:12
@@ -317,7 +162,7 @@ create_report_monthly_medians <- function(data, disease_names) {
   # - Create a complete grid of all disease/year/month combinations
   # This ensures missing combinations are filled with 0
   complete_grid <- expand.grid(
-    disease = disease_names,
+    disease = diseases,
     year = all_years,
     month = all_months,
     stringsAsFactors = FALSE
@@ -357,17 +202,25 @@ create_report_monthly_medians <- function(data, disease_names) {
 #' for each disease up to the given month, comparing the given year to the
 #' average of other years.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param disease_names Character vector. List of diseases to include in the
-#' report.
-#' @param y Integer. Current report year.
-#' @param m Integer. Current report month (1-12).
-#' @param config List. Configuration with current_population, avg_5yr_population,
-#' and rounding_decimals settings.
-#' @param as.rates Logical. If TRUE, returns rates per 100k instead of raw counts.
+#' Uses the following config options:
+#' - `current_population`
+#' - `avg_5yr_population`
+#' - `rounding_decimals`
+#'
+#' @param data Dataframe. Input data with columns:
+#' - `disease` (character)
+#' - `year` (integer)
+#' - `month` (integer)
+#' - `counts` (integer)
+#' @param diseases Character vector. Diseases to include in the report
+#' @param y Integer. Report year
+#' @param m Integer. Report month (1-12)
+#' @param config List. Report settings
+#' @param as.rates Logical. If TRUE, returns rates per 100k instead of raw counts
 #'
 #' @returns Dataframe with one row per disease and columns for current YTD and
-#' average YTD values (either counts or rates per 100k).
+#' average YTD values (either counts or rates per 100k)
+#' @seealso [epitraxr_config()] for config options
 #' @export
 #'
 #' @importFrom stats aggregate
@@ -385,7 +238,7 @@ create_report_monthly_medians <- function(data, disease_names) {
 #'   rounding_decimals = 1
 #' )
 #' create_report_ytd_counts(data, c("A", "B", "C"), 2024, 2, config)
-create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates = FALSE) {
+create_report_ytd_counts <- function(data, diseases, y, m, config, as.rates = FALSE) {
 
   # - Aggregate monthly counts by disease, year, and month
   month_counts <- get_month_counts(data)
@@ -395,14 +248,14 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
   # Compute current year-to-date (YTD) counts
   current_ytd <- month_counts[month_counts$year == y, ]
   current_ytd <- stats::aggregate(counts ~ disease, data = current_ytd, FUN = sum)
-  current_ytd <- standardize_report_diseases(current_ytd, disease_names)
+  current_ytd <- standardize_report_diseases(current_ytd, diseases)
 
   # Compute average YTD counts for the previous years
   avg_5yr_ytd <- with(month_counts, month_counts[year != y & month <= m, ])
   avg_5yr_ytd <- stats::aggregate(counts ~ disease, data = avg_5yr_ytd, FUN = sum)
   avg_5yr_ytd$counts <- round(avg_5yr_ytd$counts / num_prev_yrs,
                               config$rounding_decimals)
-  avg_5yr_ytd <- standardize_report_diseases(avg_5yr_ytd, disease_names)
+  avg_5yr_ytd <- standardize_report_diseases(avg_5yr_ytd, diseases)
 
   # Assemble YTD report
   ytd_report <- data.frame(disease = current_ytd$disease)
@@ -438,14 +291,10 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
 #' Create year-to-date (YTD) medians report
 #'
 #' 'create_report_ytd_medians' generates a data frame of median year-to-date
-#' counts for each disease up to the given month across all years in the data.
+#' counts for each disease up to the given month (months `1:m`) across all years in the data.
 #' This provides a robust central tendency measure for YTD values.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param disease_names Character vector. List of diseases to include in the
-#' report.
-#' @param m Integer. Current report month (1-12). YTD calculations will include
-#' months 1 through m.
+#' @inheritParams create_report_ytd_counts
 #'
 #' @returns Dataframe with one row per disease and columns for disease name and
 #' median YTD counts.
@@ -461,7 +310,7 @@ create_report_ytd_counts <- function(data, disease_names, y, m, config, as.rates
 #'   counts = c(10, 15, 20, 5, 8, 12)
 #' )
 #' create_report_ytd_medians(data, c("A", "B", "C"), 2)
-create_report_ytd_medians <- function(data, disease_names, m) {
+create_report_ytd_medians <- function(data, diseases, m) {
 
   # - Get the full range of years in the data
   all_years <- get_yrs(data)
@@ -474,7 +323,7 @@ create_report_ytd_medians <- function(data, disease_names, m) {
   # - Create a complete grid of all disease/year/month combinations
   # This ensures missing combinations are filled with 0
   complete_grid <- expand.grid(
-    disease = disease_names,
+    disease = diseases,
     year = all_years,
     month = all_months,
     stringsAsFactors = FALSE
@@ -509,13 +358,17 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #' and historical statistics for diseases organized by group. The report includes
 #' monthly counts/rates, year-to-date counts, and trend analysis.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param diseases Dataframe. Disease configuration with columns: EpiTrax_name,
-#' Group_name. Used to define disease names and their groupings. If Group_name
-#' is missing, diseases will be grouped under "Uncategorized".
-#' @param y Integer. Current report year.
-#' @param m Integer. Current report month (1-12).
-#' @param config List. Settings to use for report.
+#' Uses the following config options:
+#' - `current_population`
+#' - `avg_5yr_population`
+#' - `rounding_decimals`
+#' - `trend_threshold`
+#'
+#' @inheritParams create_report_ytd_counts
+#' @param diseases Dataframe. Diseases to include in the report. Must have column
+#' `EpiTrax_name` (character) with diseases to include. Optionally may have column
+#' `Group_name` (character) to define disease groupings. If `Group_name` is
+#' missing, all diseases will be grouped under "Uncategorized".
 #'
 #' @returns Dataframe with one row per disease containing:
 #'   - Group: Disease group name
@@ -524,6 +377,10 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #'   - Historical monthly averages and medians
 #'   - Year-to-date counts and historical averages and medians
 #'   - YTD trend indicators
+#' @seealso [create_report_monthly_counts()], [create_report_monthly_avgs()],
+#' [create_report_monthly_medians()], [create_report_ytd_counts()],
+#' [create_report_ytd_medians()] which this function uses and [epitraxr_config()]
+#' for config options
 #' @export
 #'
 #' @examples
@@ -546,7 +403,7 @@ create_report_ytd_medians <- function(data, disease_names, m) {
 #' create_report_grouped_stats(data, diseases, 2024, 2, config)
 create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
-  disease_names <- diseases$EpiTrax_name
+  epitrax_disease_names <- diseases$EpiTrax_name
 
   # Check that disease groups were included
   if (is.null(diseases$Group_name)) {
@@ -554,7 +411,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
       "The parameter 'diseases' should contain a 'Group_name' column. ",
       "Since, no groups were provided, all diseases will be 'Uncategorized'."
     )
-    diseases$Group_name <- rep("Uncategorized", length(disease_names))
+    diseases$Group_name <- rep("Uncategorized", length(epitrax_disease_names))
   }
 
   # Replace any NA values with "Uncategorized"
@@ -565,7 +422,11 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 
 
   # Get current monthy/year counts
-  grouped_r <- create_report_monthly_counts(data, y, disease_names)
+  grouped_r <- create_report_monthly_counts(
+    data = data,
+    diseases = epitrax_disease_names,
+    y = y
+  )
   grouped_r <- grouped_r[, c("disease", month_abb)]
   colnames(grouped_r) <- c("disease", "m_counts")
 
@@ -581,7 +442,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Get historical counts
   m_hist_avg_count <- create_report_monthly_avgs(
     data = data[data$year != y,],
-    disease_names = disease_names,
+    diseases = epitrax_disease_names,
     config = config
   )
   m_hist_avg_count <- m_hist_avg_count[, c("disease", month_abb)]
@@ -592,7 +453,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Get historical median
   m_hist_median_count <- create_report_monthly_medians(
     data = data[data$year != y,],
-    disease_names = disease_names
+    diseases = epitrax_disease_names
   )
   m_hist_median_count <- m_hist_median_count[, c("disease", month_abb)]
   colnames(m_hist_median_count) <- c("disease", "m_hist_median_count")
@@ -601,7 +462,7 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Get current and historical YTD counts
   y_ytd_stats <- create_report_ytd_counts(
     data = data,
-    disease_names = disease_names,
+    diseases = epitrax_disease_names,
     y = y,
     m = m,
     config = config,
@@ -613,16 +474,16 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Get historical YTD median
   y_ytd_medians <- create_report_ytd_medians(
     data = data[data$year != y,],
-    disease_names = disease_names,
+    diseases = epitrax_disease_names,
     m = m
   )
   colnames(y_ytd_medians) <- c("disease", "hist_y_ytd_median_count")
   grouped_r <- merge(grouped_r, y_ytd_medians, by = "disease", all.x = TRUE)
 
   # Get trend for YTD counts
-  grouped_r$y_ytd_trend <- get_trend(
-    col1 = grouped_r$y_YTD_count,
-    col2 = grouped_r$hist_y_ytd_avg_count,
+  grouped_r$y_ytd_trend <- compute_trend(
+    current = grouped_r$y_YTD_count,
+    historical = grouped_r$hist_y_ytd_avg_count,
     threshold = config$trend_threshold
   )
 
@@ -665,15 +526,22 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 #' that combines monthly case data with year-to-date statistics for the given month
 #' and year. This provides both current month context and cumulative year progress.
 #'
-#' @param data Dataframe. Input data with columns: disease, year, month, counts.
-#' @param diseases Dataframe. Disease configuration with columns: EpiTrax_name,
-#' Public_name. Used to define disease names and their public-facing versions.
-#' @param y Integer. Current report year.
-#' @param m Integer. Current report month (1-12).
-#' @param config List. Settings to use for report.
+#' Uses the following config options:
+#' - `current_population`
+#' - `avg_5yr_population`
+#' - `rounding_decimals`
+#' - `trend_threshold`
+#'
+#' @inheritParams create_report_ytd_counts
+#' @param diseases Dataframe. Diseases to include in the report. Maps EpiTrax disease
+#' names to public-facing versions. Must have columns:
+#' - `EpiTrax_name` (character)
+#' - `Public_name` (character)
 #'
 #' @returns List containing the report name and combined monthly/YTD report data
 #' with columns for monthly cases/averages/trends and YTD statistics.
+#' @seealso [create_public_report_month()], [create_report_ytd_counts()] which this
+#' function uses and [epitraxr_config()] for config options
 #' @export
 #'
 #' @examples
@@ -688,26 +556,22 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
 #' )
 #' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                           package = "epitraxr")
-#' config <- read_report_config(config_file)
-#' create_public_report_combined_month_ytd(data, diseases, 2024, 2, config)
+#' config <- get_report_config(config_file)
+#' create_public_report_combined_month_ytd(
+#'  data = data,
+#'  diseases = diseases,
+#'  y = 2024,
+#'  m = 2,
+#'  config = config
+#' )
 create_public_report_combined_month_ytd <- function(data, diseases, y, m, config) {
-
-  # Create monthly report component
-  month_counts <- get_month_counts(data)
-  prev_yrs_data <- data[data$year != y,]
-  monthly_avgs <- create_report_monthly_avgs(
-    data = prev_yrs_data,
-    disease_names = diseases$EpiTrax_name,
-    config = config
-  )
 
   # Modify the config for this function only because it returns rates, but we need counts
   m_report <- create_public_report_month(
-    cases = month_counts,
-    avgs = monthly_avgs,
-    d_list = diseases,
-    m = m,
+    data = data,
+    diseases = diseases,
     y = y,
+    m = m,
     config = list(
       current_population = 100000,
       avg_5yr_population = 100000,
@@ -721,7 +585,7 @@ create_public_report_combined_month_ytd <- function(data, diseases, y, m, config
   # Create YTD report component
   ytd_report_cases <- create_report_ytd_counts(
     data = data,
-    disease_names = diseases$EpiTrax_name,
+    diseases = diseases$EpiTrax_name,
     y = y,
     m = m,
     config = config,
@@ -729,7 +593,7 @@ create_public_report_combined_month_ytd <- function(data, diseases, y, m, config
   )
   ytd_report_rates <- create_report_ytd_counts(
     data = data,
-    disease_names = diseases$EpiTrax_name,
+    diseases = diseases$EpiTrax_name,
     y = y,
     m = m,
     config = config,
@@ -762,4 +626,189 @@ create_public_report_combined_month_ytd <- function(data, diseases, y, m, config
   # - Name and return report
   r_name <- paste0("public_report_combined_", month.abb[m], y)
   list(name = r_name, report = combined_r)
+}
+
+
+#' Create a monthly cross-section public report
+#'
+#' 'create_public_report_month' creates a public report for the given month.
+#'
+#' Uses the following config options:
+#' - `current_population`
+#' - `avg_5yr_population`
+#' - `rounding_decimals`
+#' - `trend_threshold`
+#'
+#' @inheritParams create_public_report_combined_month_ytd
+#'
+#' @returns List containing the report name and data.
+#' @seealso  [get_month_counts()], [create_report_monthly_avgs()] which
+#' this function uses and [epitraxr_config()] for config options
+#' @export
+#'
+#' @importFrom stats aggregate
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' # Read in EpiTrax data
+#' data <- read_epitrax_data(data_file)
+#'
+#' diseases <- data.frame(
+#'   EpiTrax_name = c("Influenza", "COVID-19", "Measles", "Syphilis"),
+#'   Public_name = c("Influenza", "COVID-19", "Measles", "Syphilis")
+#' )
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                           package = "epitraxr")
+#' config <- get_report_config(config_file)
+#'
+#' create_public_report_month(
+#'  data = data,
+#'  diseases = diseases,
+#'  y = 2024,
+#'  m = 1,
+#'  config = config
+#' )
+create_public_report_month <- function(data, diseases, y, m, config) {
+
+  # Get monthly counts by disease, year, and month
+  cases <- get_month_counts(data)
+
+  # Get monthly averages excluding the current year
+  prev_yrs_data <- data[data$year != y,]
+  avgs <- create_report_monthly_avgs(
+      data = prev_yrs_data,
+      diseases = diseases$EpiTrax_name,
+      config = config
+  )
+
+  # Extract month name
+  month_name <- month.abb[[m]]
+
+  # - Extract counts for the given year and month
+  m_counts <- with(cases, cases[year == y & month == m, c("disease", "counts")])
+
+  # - Only take the rows with data in the final report
+  m_counts <- m_counts[m_counts$disease %in% avgs$disease, ]
+
+  # - Convert monthly average counts to rate per 100k
+  m_rates <- convert_counts_to_rate(avgs[[month_name]],
+                                    pop = config$avg_5yr_population,
+                                    digits = config$rounding_decimals)
+
+  # - Create the report data frame initializing the Rate_per_100k column to 0
+  m_report <- data.frame(
+    Disease = avgs$disease,
+    Rate_per_100k = 0,
+    Avg_5yr_Rate = m_rates
+  )
+
+  # - Update the Rate_per_100k column with values from m_counts
+  for (i in 1:length(m_counts$disease)) {
+    d <- m_counts$disease[i]
+    rate <- convert_counts_to_rate(m_counts$counts[i],
+                                   pop = config$current_population,
+                                   digits = config$rounding_decimals)
+    m_report[m_report$Disease == d, ]$Rate_per_100k <- rate
+  }
+
+  # - Convert disease names to public-facing versions
+  m_report <- merge(m_report, diseases,
+                    by.x = "Disease", by.y = "EpiTrax_name",
+                    all.x = TRUE, all.y = FALSE)
+  m_report$Disease <- m_report$Public_name
+  m_report$Public_name <- NULL
+  m_report <- m_report[order(m_report$Disease),]
+
+  # - Combine diseases with same public name (if any)
+  m_report <- stats::aggregate(m_report[ , -1],
+                               by = list(Disease = m_report$Disease),
+                               "sum")
+
+  # - Add Trends column last
+  m_report$Trend <- compute_trend(m_report$Rate_per_100k, m_report$Avg_5yr_Rate,
+                              threshold = config$trend_threshold)
+
+  # - Name and return report
+  r_name <- paste0("public_report_", month_name, y)
+  list(name = r_name, report = m_report)
+}
+
+
+#' Create a YTD public report
+#'
+#' 'create_public_report_ytd' creates a public report for YTD rates.
+#'
+#' Uses the following config options:
+#' - `current_population`
+#' - `avg_5yr_population`
+#' - `rounding_decimals`
+#' - `trend_threshold`
+#'
+#' @inheritParams create_public_report_combined_month_ytd
+#'
+#' @returns List containing the report name and data.
+#' @seealso [create_report_ytd_counts()] which this function uses
+#' and [epitraxr_config()] for config options
+#' @export
+#'
+#' @importFrom stats aggregate
+#'
+#' @examples
+#' data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'                          package = "epitraxr")
+#' # Read in EpiTrax data
+#' data <- read_epitrax_data(data_file)
+#'
+#' diseases <- data.frame(
+#'   EpiTrax_name = c("Influenza", "COVID-19", "Measles", "Syphilis"),
+#'   Public_name = c("Influenza", "COVID-19", "Measles", "Syphilis")
+#' )
+#' config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'                           package = "epitraxr")
+#' config <- get_report_config(config_file)
+#' create_public_report_ytd(
+#'  data = data,
+#'  diseases = diseases,
+#'  y = 2024,
+#'  m = 1,
+#'  config = config
+#' )
+create_public_report_ytd <- function(data, diseases, y, m, config) {
+
+  # Compute YTD rates
+  ytd_rates <- create_report_ytd_counts(
+      data = data,
+      diseases = diseases$EpiTrax_name,
+      y = y,
+      m = m,
+      config = config,
+      as.rates = TRUE
+  )
+
+  # - Create the report data frame initializing the Rate_per_100k column to 0
+  m_report <- data.frame(
+    Disease = ytd_rates$disease,
+    YTD_Rate_per_100k = ytd_rates$Current_YTD_Rate_per_100k,
+    Avg_5yr_Rate = ytd_rates$Avg_5yr_YTD_Rate_per_100k
+  )
+
+  # - Convert disease names to public-facing versions
+  m_report <- merge(m_report, diseases, by.x = "Disease", by.y = "EpiTrax_name")
+  m_report$Disease <- m_report$Public_name
+  m_report$Public_name <- NULL
+  m_report <- m_report[order(m_report$Disease),]
+
+  # - Combine diseases with same public name (if any)
+  m_report <- stats::aggregate(m_report[ , -1],
+                               by = list(Disease = m_report$Disease),
+                               "sum")
+
+  # - Add Trends column last
+  m_report$Trend <- compute_trend(m_report$YTD_Rate_per_100k, m_report$Avg_5yr_Rate,
+                              threshold = config$trend_threshold)
+
+  # - Name and return report
+  r_name <- "public_report_YTD"
+  list(name = r_name, report = m_report)
 }

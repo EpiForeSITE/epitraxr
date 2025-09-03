@@ -36,7 +36,7 @@ expect_false(file.exists(i_file))
 expect_false(file.exists(p_file))
 
 
-# Test setup_filesystem() -----------------------------------------------------
+# Test setup_filesystem() ------------------------------------------------------
 
 # Test basic setup without clearing reports
 expect_silent(result <- setup_filesystem(test_folders))
@@ -62,7 +62,7 @@ expect_false(file.exists(test_file1))
 expect_false(file.exists(test_file2))
 
 
-# Test read_report_config() ----------------------------------------------------
+# Test get_report_config() -----------------------------------------------------
 # Test with valid config file
 good_config_file <- "test_files/configs/good_config.yaml"
 
@@ -82,60 +82,24 @@ default_config <- list(
   trend_threshold = 0.15
 )
 
-expect_silent(report_config <- read_report_config(good_config_file))
+expect_silent(report_config <- get_report_config(good_config_file))
 expect_equal(report_config, expected_config)
 
 # Test with no config file
-expect_error(report_config <- read_report_config(""),
+expect_error(report_config <- get_report_config(""),
                "No report configuration file provided.")
 
 # Test missing config fields
 empty_config_file <- "test_files/configs/empty_config.yaml"
-expect_warning(report_config <- read_report_config(empty_config_file),
+expect_warning(report_config <- get_report_config(empty_config_file),
                 "config fields are missing/invalid")
 expect_equal(report_config, default_config)
 
 # Test invalid config fields
 invalid_config_file <- "test_files/configs/invalid_config.yaml"
-expect_warning(report_config <- read_report_config(invalid_config_file),
+expect_warning(report_config <- get_report_config(invalid_config_file),
                "config fields are missing/invalid")
 expect_equal(report_config, default_config)
-
-
-# Test epitraxr_config() -------------------------------------------------------
-expected_config <- list(
-  current_population = 56000,
-  avg_5yr_population = 57000,
-  rounding_decimals = 3,
-  generate_csvs = FALSE,
-  trend_threshold = 0.2
-)
-
-default_config <- list(
-  current_population = 100000,
-  avg_5yr_population = 100000,
-  rounding_decimals = 2,
-  generate_csvs = TRUE,
-  trend_threshold = 0.15
-)
-
-expect_equal(epitraxr_config(
-  current_population = 56000,
-  avg_5yr_population = 57000,
-  rounding_decimals = 3,
-  generate_csvs = FALSE,
-  trend_threshold = 0.2
-), expected_config)
-expect_equal(epitraxr_config(), default_config)
-expect_equal(do.call(epitraxr_config, list()), default_config)
-expect_warning(result_config <- epitraxr_config(
-  current_population = "not numeric",
-  avg_5yr_population = "not numeric",
-  rounding_decimals = "not numeric",
-  generate_csvs = "not logical",
-  trend_threshold = "not numeric"
-), "config fields are missing/invalid")
-expect_equal(result_config, default_config)
 
 
 # Test writing to files --------------------------------------------------------
@@ -157,7 +121,7 @@ csv_data <- utils::read.csv(csv_fp)
 expect_equal(csv_data, r_data)
 
 
-# Test write_report_xlsx() --------------------------------------------------
+# Test write_report_xlsx() -----------------------------------------------------
 r_data <- data.frame(
   Disease = c("Measles", "Chickenpox"),
   Counts = c(20, 43)
@@ -176,7 +140,7 @@ xlsx_data <- readxl::read_excel(xlsx_fp)
 expect_equal(as.data.frame(xlsx_data), r_xl$report)
 
 
-# Test write_grouped_report_pdf() ----------------------------------------------
+# Test write_report_pdf_grouped() ----------------------------------------------
 # - Don't run PDF tests if not at home (might be missing LaTeX)
 if (at_home()) {
   # Create sample grouped report data
@@ -190,7 +154,7 @@ if (at_home()) {
     `2024 YTD` = c(0, 37, 9),
     `Historical 2024 YTD Avg` = c(20, 25, 14),
     `Historical 2024 YTD Median` = c(20, 25, 14),
-    `YTD Trend` = get_trend(c(0, 37, 9), c(20, 25, 14)),
+    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
     check.names = FALSE
   )
 
@@ -206,7 +170,7 @@ if (at_home()) {
   r_folder <- tempdir()
   r_name <- "grouped_disease_report.pdf"
 
-  expect_silent(write_grouped_report_pdf(
+  expect_silent(write_report_pdf_grouped(
     data = r_data,
     params = params,
     filename = r_name,
@@ -224,7 +188,7 @@ if (at_home()) {
     Disease = c("COVID", "Flu", "Measles"),
     `March 2024` = c(0, 25, 5),
     `Historical March Avg` = c(0, 15, 8),
-    `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+    `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
     check.names = FALSE
   )
 
@@ -250,58 +214,58 @@ if (at_home()) {
 }
 
 
-# Test get_internal_disease_list() ---------------------------------------------
+# Test get_report_diseases_internal() ------------------------------------------
 list_file <- "test_files/disease_lists/internal_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
 # Test with valid list file
-expect_silent(d_list <- get_internal_disease_list(list_file, default_list))
+expect_silent(diseases <- get_report_diseases_internal(list_file, default_list))
 file_data <- utils::read.csv(list_file)
-expect_equal(file_data, d_list)
+expect_equal(file_data, diseases)
 
 # Test with no list file
-expect_warning(d_list <- get_internal_disease_list("", default_list),
+expect_warning(diseases <- get_report_diseases_internal("", default_list),
                "You have not provided a disease list for internal reports.")
-expect_equal(sort(default_list), d_list$EpiTrax_name)
+expect_equal(sort(default_list), diseases$EpiTrax_name)
 # - Group_name is not provided by default
-expect_true(is.null(d_list$Group_name))
+expect_true(is.null(diseases$Group_name))
 
 # Test with invalid list file
 list_file <-"test_files/disease_lists/invalid_list.csv"
-expect_error(d_list <- get_internal_disease_list(list_file, default_list),
+expect_error(diseases <- get_report_diseases_internal(list_file, default_list),
              "missing required column")
 
 
-# Test get_public_disease_list() -----------------------------------------------
+# Test get_report_diseases_public() --------------------------------------------
 list_file <-"test_files/disease_lists/public_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
 # Test with valid list file
-expect_silent(d_list <- get_public_disease_list(list_file, default_list))
+expect_silent(diseases <- get_report_diseases_public(list_file, default_list))
 file_data <- utils::read.csv(list_file)
-expect_equal(file_data, d_list)
+expect_equal(file_data, diseases)
 
 # Test with no list file
-expect_warning(d_list <- get_public_disease_list("", default_list),
+expect_warning(diseases <- get_report_diseases_public("", default_list),
                "You have not provided a disease list for public reports.")
-expect_equal(sort(default_list), d_list$EpiTrax_name)
-expect_equal(sort(default_list), d_list$Public_name)
+expect_equal(sort(default_list), diseases$EpiTrax_name)
+expect_equal(sort(default_list), diseases$Public_name)
 # - Group_name is not provided by default
-expect_true(is.null(d_list$Group_name))
+expect_true(is.null(diseases$Group_name))
 
 # Test with invalid list file
 list_file <-"test_files/disease_lists/invalid_list.csv"
-expect_error(d_list <- get_public_disease_list(list_file, default_list),
+expect_error(diseases <- get_report_diseases_public(list_file, default_list),
              "is incorrectly formatted")
 
 
-# Test get_report_disease_lists() --------------------------------------------
+# Test get_report_diseases() ---------------------------------------------------
 
 internal_file <- "test_files/disease_lists/internal_list.csv"
 public_file <- "test_files/disease_lists/public_list.csv"
 default_list <- c("Measles", "Chickenpox")
 
-expect_silent(disease_lists <- get_report_disease_lists(
+expect_silent(disease_lists <- get_report_diseases(
   internal_file, public_file, default_list
 ))
 
@@ -312,11 +276,11 @@ expect_true(all(c("internal", "public") %in% names(disease_lists)))
 # Check contents
 expect_equal(
   disease_lists$internal,
-  get_internal_disease_list(internal_file, default_list)
+  get_report_diseases_internal(internal_file, default_list)
 )
 expect_equal(
   disease_lists$public,
-  get_public_disease_list(public_file, default_list)
+  get_report_diseases_public(public_file, default_list)
 )
 
 

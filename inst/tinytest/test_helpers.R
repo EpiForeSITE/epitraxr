@@ -1,3 +1,39 @@
+# Test epitraxr_config() -------------------------------------------------------
+expected_config <- list(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
+)
+
+default_config <- list(
+  current_population = 100000,
+  avg_5yr_population = 100000,
+  rounding_decimals = 2,
+  generate_csvs = TRUE,
+  trend_threshold = 0.15
+)
+
+expect_equal(epitraxr_config(
+  current_population = 56000,
+  avg_5yr_population = 57000,
+  rounding_decimals = 3,
+  generate_csvs = FALSE,
+  trend_threshold = 0.2
+), expected_config)
+expect_equal(epitraxr_config(), default_config)
+expect_equal(do.call(epitraxr_config, list()), default_config)
+expect_warning(result_config <- epitraxr_config(
+  current_population = "not numeric",
+  avg_5yr_population = "not numeric",
+  rounding_decimals = "not numeric",
+  generate_csvs = "not logical",
+  trend_threshold = "not numeric"
+), "config fields are missing/invalid")
+expect_equal(result_config, default_config)
+
+
 # Test convert_counts_to_rate() ------------------------------------------------
 
 # Basic conversion
@@ -10,30 +46,20 @@ expect_equal(convert_counts_to_rate(0, 100000, 2), 0)
 expect_equal(convert_counts_to_rate(7, 30000, 3), 23.333)
 
 
-# Test get_trend() ------------------------------------------------------------
+# Test compute_trend() ---------------------------------------------------------
 
 # Up, down, same
-expect_equal(get_trend(c(5, 10, 10), c(3, 10, 12)),
+expect_equal(compute_trend(c(5, 10, 10), c(3, 10, 12)),
              c("Elevated", "Expected", "Less Than Expected"))
 # Vector recycling
-expect_equal(get_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))
+expect_equal(compute_trend(1, c(0, 2)), c("Elevated", "Less Than Expected"))
 
 # Test threshold
-expect_equal(get_trend(c(5, 10, 11, 10), c(3, 10, 10, 12), threshold = 0.15),
+expect_equal(compute_trend(c(5, 10, 11, 10), c(3, 10, 10, 12), threshold = 0.15),
              c("Elevated", "Expected", "Expected", "Less Than Expected"))
 # Test threshold boundaries
-expect_equal(get_trend(11.5, 10, threshold = 0.15), "Expected") # Just within threshold
-expect_equal(get_trend(11.6, 10, threshold = 0.15), "Elevated") # Just over threshold
-
-
-# Test get_yrs() --------------------------------------------------------------
-
-df <- data.frame(year = c(2020, 2021, 2020, 2022, 2021))
-expect_equal(get_yrs(df), c(2020, 2021, 2022))
-
-# Works with only one year
-single <- data.frame(year = 2023)
-expect_equal(get_yrs(single), 2023)
+expect_equal(compute_trend(11.5, 10, threshold = 0.15), "Expected") # Just within threshold
+expect_equal(compute_trend(11.6, 10, threshold = 0.15), "Elevated") # Just over threshold
 
 
 # Test set_na_0() -------------------------------------------------------------

@@ -2,13 +2,17 @@
 % Please edit documentation in R/data.R
 \name{reshape_annual_wide}
 \alias{reshape_annual_wide}
-\title{Reshape data frame with each year as a separate column}
+\title{Reshape data with each year as a separate column}
 \usage{
-reshape_annual_wide(df)
+reshape_annual_wide(data)
 }
 \arguments{
-\item{df}{Dataframe. Data to reshape with years as columns. Must have
-columns: disease, year, and counts.}
+\item{data}{Dataframe. Must have columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{counts} (integer)
+}}
 }
 \value{
 The reshaped data frame.

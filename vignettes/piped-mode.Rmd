@@ -30,26 +30,26 @@ This vignette will walk you through each step of an epitraxr pipe then show the 
 
 ### Create an `epitrax` object
 
-The first step in piped mode is always to create an `epitrax` object with the `get_epitrax()` function. This object will contain the data, configuration options, and report settings needed for all reports in the pipe. The `epitrax` object is passed through each function in the pipe. When a report is generated, it is appended to the appropriate list (public or internal) in the `epitrax` object before the object is passed to the next function in the pipe.
+The first step in piped mode is always to create an `epitrax` object with the `create_epitrax_from_file()` function. This object will contain the data, configuration options, and report settings needed for all reports in the pipe. The `epitrax` object is passed through each function in the pipe. When a report is generated, it is appended to the appropriate list (public or internal) in the `epitrax` object before the object is passed to the next function in the pipe.
 
 ```{r get-epitrax}
 data_fp <- "vignette-data/epitrax_data.csv"
 
-epitrax <- get_epitrax(data_file = data_fp)
+epitrax <- create_epitrax_from_file(filepath = data_fp)
 
 names(epitrax)
 ```
 
-The `get_epitrax()` function reads the data in the provided data file, validates, and formats it. It then adds the data to the `epitrax` object as `epitrax$data`. The function also extracts key information and summary statistics from the data and adds those to the epitrax object as well:
+The `create_epitrax_from_file()` function reads the data in the provided data file, validates, and formats it. It then adds the data to the `epitrax` object as `epitrax$data`. The function also extracts key information and summary statistics from the data and adds those to the epitrax object as well:
 - `epitrax$diseases`: All diseases found in the data
 - `epitrax$yrs`: Years included in the data
 - `epitrax$report_year` and `epitrax$report_month`: The year and month treated as the "current" date for reports. Default to the latest year/month in the data.
 - `epitrax$internal_reports` and `epitrax$public_reports`: Lists to hold generated reports. Initially empty.
 
-**Note:** All further functions in the pipe will expect an object of class `epitrax` as their first argument. Thus, `get_epitrax()` is the start of the pipe.
+**Note:** All further functions in the pipe will expect an object of class `epitrax` as their first argument. Thus, `create_epitrax_from_file()` is the start of the pipe.
 
 ### Add Disease Lists
-The next step is adding two disease lists, one for internal reports and one for public reports. If a given disease is not in the EpiTrax data, that means there were no reported cases of that disease in those years. That is still useful data that you may want to include in your reports. The epitraxr package uses two lists because public reports typically include a subset of diseases, while internal reports typically include all tracked diseases. Add the disease lists to the `epitrax` object using the `epitrax_add_report_diseases()` function.
+The next step is adding two disease lists, one for internal reports and one for public reports. If a given disease is not in the EpiTrax data, that means there were no reported cases of that disease in those years. That is still useful data that you may want to include in your reports. The epitraxr package uses two lists because public reports typically include a subset of diseases, while internal reports typically include all tracked diseases. Add the disease lists to the `epitrax` object using the `epitrax_set_report_diseases()` function.
 
 ```{r add-diseases}
 disease_lists = list(
@@ -57,7 +57,7 @@ disease_lists = list(
   public = "vignette-data/preport_diseases.csv"
 )
 
-epitrax <- epitrax_add_report_diseases(epitrax, disease_list_files = disease_lists)
+epitrax <- epitrax_set_report_diseases(epitrax, disease_list_files = disease_lists)
 
 names(epitrax)
 ```
@@ -82,7 +82,7 @@ Since these three operations must always occur before the report generators can 
 
 ```{r conveniencefun}
 epitrax <- setup_epitrax(
-  epitrax_file = data_fp,
+  filepath = data_fp,
   config_file = config_file,
   disease_list_files = disease_lists
 )
@@ -182,7 +182,7 @@ fsys <- setup_filesystem(folders = fsys, clear.reports = TRUE)
 
 # Run report generation pipe
 epitrax <- setup_epitrax(
-    epitrax_file = data_fp,
+    filepath = data_fp,
     config_file = config_file,
     disease_list_files = disease_lists
   ) |>

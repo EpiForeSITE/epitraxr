@@ -2,15 +2,15 @@
 % Please edit documentation in R/validation.R
 \name{validate_filesystem}
 \alias{validate_filesystem}
-\title{Validate the filesystem structure}
+\title{Validate filesystem structure}
 \usage{
 validate_filesystem(fsys)
 }
 \arguments{
 \item{fsys}{List. Contains paths to report folders with elements:
 \itemize{
-\item internal: Folder for internal reports
-\item public: Folder for public reports
+\item \code{internal}: Folder for internal reports
+\item \code{public}: Folder for public reports
 }}
 }
 \value{

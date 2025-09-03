@@ -4,15 +4,20 @@
 \alias{create_report_monthly_avgs}
 \title{Create monthly averages report}
 \usage{
-create_report_monthly_avgs(data, disease_names, config)
+create_report_monthly_avgs(data, diseases, config)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{disease_names}{Character vector. List of diseases to include in the
-report.}
+\item{diseases}{Character vector. Diseases to include in the report}
 
-\item{config}{List. Settings to use for report.}
+\item{config}{List. Report settings}
 }
 \value{
 Dataframe of monthly averages with one row per disease and one column
@@ -21,6 +26,12 @@ per month (Jan through Dec).
 \description{
 'create_report_monthly_avgs' generates a data frame of average monthly case
 counts for each disease across all years in the input data.
+}
+\details{
+Uses the following config options:
+\itemize{
+\item \code{rounding_decimals}
+}
 }
 \examples{
 data <- data.frame(
@@ -31,4 +42,7 @@ data <- data.frame(
 )
 config <- list(rounding_decimals = 1)
 create_report_monthly_avgs(data, c("A", "B", "C"), config)
+}
+\seealso{
+\code{\link[=epitraxr_config]{epitraxr_config()}} for config options
 }

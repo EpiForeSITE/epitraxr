@@ -2,12 +2,12 @@
 % Please edit documentation in R/data.R
 \name{read_epitrax_data}
 \alias{read_epitrax_data}
-\title{Read in input EpiTrax data}
+\title{Read in EpiTrax data}
 \usage{
-read_epitrax_data(data_file = NULL, num_yrs = 5)
+read_epitrax_data(filepath = NULL, num_yrs = 5)
 }
 \arguments{
-\item{data_file}{Optional filepath. Data file should be a CSV. If this parameter
+\item{filepath}{Optional filepath. Data file should be a CSV. If this parameter
 is NULL, the user will be prompted to choose a file interactively.}
 
 \item{num_yrs}{Integer. Number of years of data to keep. Defaults to 5.}
@@ -20,12 +20,14 @@ The validated and formatted EpiTrax data from the input file.
 It also filters rows older than given number of years. The input file must
 contain the columns:
 \itemize{
-\item patient_mmwr_year: The year of the MMWR week
-\item patient_mmwr_week: The MMWR week number
-\item patient_disease: The disease name
+\item \code{patient_mmwr_year} (integer)
+\item \code{patient_mmwr_week} (integer)
+\item \code{patient_disease} (character)
+}
+}
+\details{
 See the example file here:
 \code{system.file("sample_data/sample_epitrax_data.csv", package = "epitraxr")}
-}
 }
 \examples{
 \dontrun{
@@ -34,9 +36,10 @@ read_epitrax_data()
 }
 
 # Using a file path:
-read_epitrax_data(
- data_file = system.file("sample_data/sample_epitrax_data.csv",
+data <- read_epitrax_data(
+ filepath = system.file("sample_data/sample_epitrax_data.csv",
                          package = "epitraxr"),
  num_yrs = 3
 )
+head(data)
 }

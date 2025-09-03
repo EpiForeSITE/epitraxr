@@ -217,7 +217,7 @@ server <- function(input, output, session) {
 
       # Setup epitrax object
       epitrax <- setup_epitrax(
-        epitrax_file = input$epitrax_file$datapath,
+        filepath = input$epitrax_file$datapath,
         config_list = config_list,
         disease_list_files = disease_list_files
       )

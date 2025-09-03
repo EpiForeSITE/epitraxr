@@ -9,7 +9,7 @@ epitrax_write_pdf_public_reports(epitrax, fsys, trend.only = FALSE)
 \arguments{
 \item{epitrax}{Object of class \code{epitrax}.}
 
-\item{fsys}{Filesystem list containing path for public reports.}
+\item{fsys}{Filesystem list containing paths for internal and public reports.}
 
 \item{trend.only}{Logical. Whether to show only trend in the PDF report.}
 }
@@ -41,11 +41,14 @@ a header and footer.
  )
 
  epitrax <- setup_epitrax(
-   epitrax_file = data_file,
+   filepath = data_file,
    config_file = config_file,
    disease_list_files = disease_lists
  ) |>
   epitrax_preport_month_crosssections(month_offsets = 0) |>
   epitrax_write_pdf_public_reports(fsys = fsys)
+
+ # Cleanup
+ unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 }
 }

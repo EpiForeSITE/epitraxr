@@ -4,16 +4,20 @@
 \alias{create_report_ytd_medians}
 \title{Create year-to-date (YTD) medians report}
 \usage{
-create_report_ytd_medians(data, disease_names, m)
+create_report_ytd_medians(data, diseases, m)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{disease_names}{Character vector. List of diseases to include in the
-report.}
+\item{diseases}{Character vector. Diseases to include in the report}
 
-\item{m}{Integer. Current report month (1-12). YTD calculations will include
-months 1 through m.}
+\item{m}{Integer. Report month (1-12)}
 }
 \value{
 Dataframe with one row per disease and columns for disease name and
@@ -21,7 +25,7 @@ median YTD counts.
 }
 \description{
 'create_report_ytd_medians' generates a data frame of median year-to-date
-counts for each disease up to the given month across all years in the data.
+counts for each disease up to the given month (months \code{1:m}) across all years in the data.
 This provides a robust central tendency measure for YTD values.
 }
 \examples{

@@ -1,3 +1,97 @@
 url: https://epiforesite.github.io/epitraxr/
 template:
   bootstrap: 5
+
+reference:
+- title: Piped mode functions
+
+- subtitle: Setup
+  desc: Functions to create the epitrax object and prepare it for report generation
+  contents:
+  - setup_epitrax
+  - create_epitrax_from_file
+  - starts_with("epitrax_set_")
+
+- subtitle: Internal reports
+  desc: Functions that generate exclusively internal reports
+  contents:
+  - starts_with("epitrax_ireport_")
+
+- subtitle: Public reports
+  desc: Functions that generate exclusively public reports
+  contents:
+  - starts_with("epitrax_preport_")
+
+- subtitle: Other reports
+  desc: Functions that generate both internal and public reports
+  contents:
+  - starts_with("epitrax_report_")
+
+- subtitle: Export
+  desc: Functions to export reports
+  contents:
+  - starts_with("epitrax_write_")
+
+- title: Standard mode functions
+
+- subtitle: Internal reports
+  desc: Functions that generate reports intended for internal use
+  contents:
+  - starts_with("create_report_")
+
+- subtitle: Public reports
+  desc: Functions that generate reports intended for public use
+  contents:
+  - starts_with("create_public_report_")
+
+- title: Data processing
+  desc: Functions for importing and processing data
+  contents:
+  - read_epitrax_data
+  - mmwr_week_to_month
+  - format_epitrax_data
+  - reshape_monthly_wide
+  - reshape_annual_wide
+  - standardize_report_diseases
+  - get_yrs
+  - get_month_counts
+
+- title: Filesystem
+
+- subtitle: Setup
+  desc: Functions for setting up the filesystem
+  contents:
+  - create_filesystem
+  - clear_old_reports
+  - setup_filesystem
+
+- subtitle: Reading files
+  desc: Functions for reading configuration and data files
+  contents:
+  - starts_with("get_report_")
+
+- subtitle: Export functions
+  desc: Functions to export reports
+  contents:
+  - starts_with("write_")
+
+- title: Validation
+  desc: Functions for validating input data and configurations
+  contents:
+  - validate_epitrax
+  - validate_filesystem
+  - validate_config
+  - validate_data
+
+- title: Utilities
+  desc: Miscellaneous utility functions
+  contents:
+  - epitraxr_config
+  - convert_counts_to_rate
+  - compute_trend
+  - set_na_0
+
+- title: Shiny app
+  desc: Functions related to the Shiny application
+  contents:
+  - run_app

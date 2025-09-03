@@ -4,15 +4,20 @@
 \alias{create_report_monthly_counts}
 \title{Create monthly counts report}
 \usage{
-create_report_monthly_counts(data, y, disease_names)
+create_report_monthly_counts(data, diseases, y)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{y}{Integer. The year to generate the report for.}
+\item{diseases}{Character vector. Diseases to include in the report}
 
-\item{disease_names}{Character vector. List of diseases to include in the
-report.}
+\item{y}{Integer. Report year}
 }
 \value{
 Dataframe of monthly counts with one row per disease and one column
@@ -29,5 +34,5 @@ data <- data.frame(
   month = c(1, 2, 1, 4),
   counts = c(5, 7, 8, 9)
 )
-create_report_monthly_counts(data, 2024, disease_names = c("A", "B", "C"))
+create_report_monthly_counts(data, diseases = c("A", "B", "C"), y = 2024)
 }

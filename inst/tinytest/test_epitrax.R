@@ -1,3 +1,38 @@
+# Test create_epitrax_from_file() ----------------------------------------------
+
+# Test with valid data file
+test_file <- "test_files/data/test_epitrax_data.csv"
+expect_silent(epitrax <- create_epitrax_from_file(test_file))
+
+# Check object class
+expect_true(inherits(epitrax, "epitrax"))
+
+# Check structure
+expected_names <- c("data", "diseases", "yrs", "report_year",
+                   "report_month", "internal_reports", "public_reports")
+expect_true(all(expected_names %in% names(epitrax)))
+
+# Check data component
+expect_true(is.data.frame(epitrax$data))
+expect_equal(colnames(epitrax$data),
+            c("disease", "month", "year", "counts"))
+
+# Check computed values
+expect_equal(epitrax$diseases, unique(epitrax$data$disease))
+expect_equal(epitrax$yrs, get_yrs(epitrax$data))
+expect_equal(epitrax$report_year, max(epitrax$data$year))
+expect_equal(epitrax$report_month,
+            max(epitrax$data[epitrax$data$year == epitrax$report_year,]$month))
+
+# Check report lists are empty
+expect_equal(length(epitrax$internal_reports), 0)
+expect_equal(length(epitrax$public_reports), 0)
+
+# Test with invalid file
+expect_error(create_epitrax_from_file("nonexistent.csv"),
+            "Please select an EpiTrax data file")
+
+
 # Test epitrax_set_config_from_file() ------------------------------------------
 config_file <- "test_files/configs/good_config.yaml"
 epitrax <- structure(
@@ -6,7 +41,7 @@ epitrax <- structure(
 )
 expect_silent(epitrax <- epitrax_set_config_from_file(epitrax, config_file))
 expect_true(inherits(epitrax, "epitrax"))
-expect_equal(epitrax$config, read_report_config(config_file))
+expect_equal(epitrax$config, get_report_config(config_file))
 
 
 # Test epitrax_set_config_from_list() ------------------------------------------
@@ -37,7 +72,7 @@ expect_equal(epitrax_set_config_from_list(epitrax)$config, default_config)
 expect_error(epitrax_set_config_from_list(epitrax, "no list"), "must be a list")
 
 
-# Test epitrax_add_report_diseases() -------------------------------------------
+# Test epitrax_set_report_diseases() -------------------------------------------
 i_file <- "test_files/disease_lists/internal_list.csv"
 p_file <- "test_files/disease_lists/public_list.csv"
 
@@ -46,7 +81,7 @@ epitrax <- structure(
   class = "epitrax"
 )
 
-expect_silent(epitrax <- epitrax_add_report_diseases(
+expect_silent(epitrax <- epitrax_set_report_diseases(
   epitrax,
   disease_list_files = list(internal = i_file, public = p_file)
 ))
@@ -55,7 +90,7 @@ expect_equal(epitrax$report_diseases$internal, utils::read.csv(i_file))
 expect_equal(epitrax$report_diseases$public, utils::read.csv(p_file))
 
 # Test with NULL disease lists
-expect_warning(epitrax <- epitrax_add_report_diseases(epitrax),
+expect_warning(epitrax <- epitrax_set_report_diseases(epitrax),
                "You have not provided a disease list")
 expect_equal(epitrax$report_diseases$internal$EpiTrax_name, sort(epitrax$diseases))
 expect_equal(epitrax$report_diseases$public$EpiTrax_name, sort(epitrax$diseases))
@@ -72,13 +107,13 @@ disease_lists <- list(
 
 # Test with config file
 expect_silent(epitrax_1 <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_file = config_file,
   disease_list_files = disease_lists
 ))
 expect_true(inherits(epitrax, "epitrax"))
-expect_equal(epitrax_1$data, get_epitrax(data_file)$data)
-expect_equal(epitrax_1$config, read_report_config(config_file))
+expect_equal(epitrax_1$data, create_epitrax_from_file(data_file)$data)
+expect_equal(epitrax_1$config, get_report_config(config_file))
 expect_equal(epitrax_1$report_diseases$internal, utils::read.csv(i_file))
 expect_equal(epitrax_1$report_diseases$public, utils::read.csv(p_file))
 
@@ -91,7 +126,7 @@ config_list <- list(
  trend_threshold = 0.0
 )
 expect_silent(epitrax_2 <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_list = config_list,
   disease_list_files = disease_lists
 ))
@@ -109,7 +144,7 @@ default_config <- list(
   trend_threshold = 0.15
 )
 expect_silent(epitrax_3 <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   disease_list_files = disease_lists
 ))
 expect_true(inherits(epitrax_3, "epitrax"))
@@ -119,7 +154,7 @@ expect_equal(epitrax_3$report_diseases, epitrax_1$report_diseases)
 
 # Test with both
 expect_error(epitrax_4 <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_list = config_list,
   config_file = config_file,
   disease_list_files = disease_lists
@@ -135,7 +170,7 @@ disease_lists <- list(
 )
 
 expect_warning(epitrax <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_file = config_file,
   disease_list_files = disease_lists
 ))

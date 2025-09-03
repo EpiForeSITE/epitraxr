@@ -2,7 +2,7 @@
 % Please edit documentation in R/validation.R
 \name{validate_epitrax}
 \alias{validate_epitrax}
-\title{Validate an EpiTrax object}
+\title{Validate EpiTrax object}
 \usage{
 validate_epitrax(epitrax, report.check = TRUE)
 }

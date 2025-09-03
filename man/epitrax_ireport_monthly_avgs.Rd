@@ -10,7 +10,7 @@ epitrax_ireport_monthly_avgs(epitrax, exclude.report.year = FALSE)
 \item{epitrax}{Object of class \code{epitrax}.}
 
 \item{exclude.report.year}{Logical indicating whether to exclude the current
-report year from the averages. Defaults to FALSE.}
+report year from the report. Defaults to FALSE.}
 }
 \value{
 Updated EpiTrax object with monthly averages report added to the
@@ -32,7 +32,7 @@ disease_lists <- list(
 )
 
 epitrax <- setup_epitrax(
-  epitrax_file = data_file,
+  filepath = data_file,
   config_file = config_file,
   disease_list_files = disease_lists
 ) |>

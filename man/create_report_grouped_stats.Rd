@@ -7,17 +7,24 @@
 create_report_grouped_stats(data, diseases, y, m, config)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{diseases}{Dataframe. Disease configuration with columns: EpiTrax_name,
-Group_name. Used to define disease names and their groupings. If Group_name
-is missing, diseases will be grouped under "Uncategorized".}
+\item{diseases}{Dataframe. Diseases to include in the report. Must have column
+\code{EpiTrax_name} (character) with diseases to include. Optionally may have column
+\code{Group_name} (character) to define disease groupings. If \code{Group_name} is
+missing, all diseases will be grouped under "Uncategorized".}
 
-\item{y}{Integer. Current report year.}
+\item{y}{Integer. Report year}
 
-\item{m}{Integer. Current report month (1-12).}
+\item{m}{Integer. Report month (1-12)}
 
-\item{config}{List. Settings to use for report.}
+\item{config}{List. Report settings}
 }
 \value{
 Dataframe with one row per disease containing:
@@ -34,6 +41,15 @@ Dataframe with one row per disease containing:
 'create_report_grouped_stats' generates a comprehensive report with current
 and historical statistics for diseases organized by group. The report includes
 monthly counts/rates, year-to-date counts, and trend analysis.
+}
+\details{
+Uses the following config options:
+\itemize{
+\item \code{current_population}
+\item \code{avg_5yr_population}
+\item \code{rounding_decimals}
+\item \code{trend_threshold}
+}
 }
 \examples{
 data <- data.frame(
@@ -53,4 +69,10 @@ config <- list(
   trend_threshold = 0.15
 )
 create_report_grouped_stats(data, diseases, 2024, 2, config)
+}
+\seealso{
+\code{\link[=create_report_monthly_counts]{create_report_monthly_counts()}}, \code{\link[=create_report_monthly_avgs]{create_report_monthly_avgs()}},
+\code{\link[=create_report_monthly_medians]{create_report_monthly_medians()}}, \code{\link[=create_report_ytd_counts]{create_report_ytd_counts()}},
+\code{\link[=create_report_ytd_medians]{create_report_ytd_medians()}} which this function uses and \code{\link[=epitraxr_config]{epitraxr_config()}}
+for config options
 }

@@ -29,4 +29,5 @@ r_data <- data.frame(
 
 # Write to temporary directory
 write_report_csv(r_data, "report.csv", tempdir())
+unlink(file.path(tempdir(), "report.csv"), recursive = TRUE)
 }

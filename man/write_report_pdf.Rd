@@ -7,19 +7,19 @@
 write_report_pdf(data, params, filename, folder, trend.only = FALSE)
 }
 \arguments{
-\item{data}{Dataframe. Report data containing disease statistics.}
+\item{data}{Dataframe. Report data.}
 
 \item{params}{List. Report parameters containing:
 \itemize{
-\item title: Report title (defaults to "Disease Report")
-\item report_year: Report year (defaults to 2025)
-\item report_month: Report month (defaults to 1)
-\item trend_threshold: Threshold for trend calculations (defaults to 0.15)
+\item \code{title}: Report title (defaults to "Disease Report")
+\item \code{report_year}: Report year (defaults to 2025)
+\item \code{report_month}: Report month (defaults to 1)
+\item \code{trend_threshold}: Threshold for trend calculations (defaults to 0.15)
 }}
 
-\item{filename}{String. Output filename for the rendered report.}
+\item{filename}{String. Report filename.}
 
-\item{folder}{Filepath. Output directory for the rendered report.}
+\item{folder}{Filepath. Report destination folder.}
 
 \item{trend.only}{Logical. Whether to show only trend in the PDF report.
 If TRUE, "trend_only_" will be prepended to the filename.}
@@ -40,7 +40,7 @@ types of report.
    Disease = c("COVID", "Flu", "Measles"),
    `March 2024` = c(0, 25, 5),
    `Historical March Avg` = c(0, 15, 8),
-   `Trend` = get_trend(c(0, 25, 5), c(0, 15, 8)),
+   `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
    check.names = FALSE
  )
 

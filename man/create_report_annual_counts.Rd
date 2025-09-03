@@ -4,13 +4,18 @@
 \alias{create_report_annual_counts}
 \title{Create annual counts report}
 \usage{
-create_report_annual_counts(data, disease_names)
+create_report_annual_counts(data, diseases)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{disease_names}{Character vector. List of diseases to include in the
-report.}
+\item{diseases}{Character vector. Diseases to include in the report}
 }
 \value{
 Dataframe of annual counts with one row per disease and one column
@@ -26,5 +31,5 @@ data <- data.frame(
   year = c(2020, 2021, 2020),
   counts = c(5, 7, 8)
 )
-create_report_annual_counts(data, disease_names = c("A", "B", "C"))
+create_report_annual_counts(data, diseases = c("A", "B", "C"))
 }

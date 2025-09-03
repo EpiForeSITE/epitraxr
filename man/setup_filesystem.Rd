@@ -9,9 +9,9 @@ setup_filesystem(folders, clear.reports = FALSE)
 \arguments{
 \item{folders}{List. Contains paths to report folders with elements:
 \itemize{
-\item internal: Folder for internal reports
-\item public: Folder for public reports
-\item settings: Folder for settings files
+\item \code{internal}: Folder for internal reports
+\item \code{public}: Folder for public reports
+\item \code{settings}: Folder for settings files
 }}
 
 \item{clear.reports}{Logical. Whether to clear old reports from the internal
@@ -33,4 +33,8 @@ folders <- list(
   settings = file.path(tempdir(), "settings")
 )
 setup_filesystem(folders)
+unlink(unlist(folders, use.names = FALSE), recursive = TRUE)
+}
+\seealso{
+\code{\link[=create_filesystem]{create_filesystem()}}, \code{\link[=clear_old_reports]{clear_old_reports()}} which this function wraps.
 }

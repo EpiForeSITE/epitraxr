@@ -4,13 +4,18 @@
 \alias{create_report_monthly_medians}
 \title{Create monthly medians report}
 \usage{
-create_report_monthly_medians(data, disease_names)
+create_report_monthly_medians(data, diseases)
 }
 \arguments{
-\item{data}{Dataframe. Input data with columns: disease, year, month, counts.}
+\item{data}{Dataframe. Input data with columns:
+\itemize{
+\item \code{disease} (character)
+\item \code{year} (integer)
+\item \code{month} (integer)
+\item \code{counts} (integer)
+}}
 
-\item{disease_names}{Character vector. List of diseases to include in the
-report.}
+\item{diseases}{Character vector. Diseases to include in the report}
 }
 \value{
 Dataframe of monthly medians with one row per disease and one column

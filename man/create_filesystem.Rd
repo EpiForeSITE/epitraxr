@@ -7,11 +7,11 @@
 create_filesystem(internal, public, settings)
 }
 \arguments{
-\item{internal}{Filepath. Folder to hold internal reports.}
+\item{internal}{Filepath. Folder for internal reports.}
 
-\item{public}{Filepath. Folder to hold public reports.}
+\item{public}{Filepath. Folder for public reports.}
 
-\item{settings}{Filepath. Folder to hold report settings.}
+\item{settings}{Filepath. Folder for report settings.}
 }
 \value{
 NULL.
@@ -29,4 +29,6 @@ NULL.
    public = public_folder,
    settings = settings_folder
  )
+
+unlink(c(internal_folder, public_folder, settings_folder), recursive = TRUE)
 }
