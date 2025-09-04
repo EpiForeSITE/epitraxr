@@ -33,7 +33,14 @@ export—`epitraxr` will do the rest!
 
 ## Installation
 
-You can install the development version of `epitraxr` from
+You can install the stable version of `epitraxr` from CRAN with:
+
+``` r
+install.packages("epitraxr")
+```
+
+To get a bug fix or to use a feature from the development version, you
+can install the development version of `epitraxr` from
 [GitHub](https://github.com/EpiForeSITE/epitraxr) with:
 
 ``` r
@@ -52,9 +59,16 @@ packages installed first. This list will walk you through those steps.
 Many features of `epitraxr` will work with the standard installation.
 However, there are several optional features, such as PDF report
 generation and the R Shiny app, that require you to install additional
-dependencies. You can do that with the command:
+dependencies. You can do that by adding the `dependencies = TRUE` flag
+when installing the package:
 
 ``` r
+# Stable version from CRAN
+install.packages("epitraxr", dependencies = TRUE)
+```
+
+``` r
+# Development version from GitHub
 # install.packages("devtools")
 devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
 ```
@@ -93,7 +107,7 @@ installing the package using the instructions above.
     [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
     corresponding to the version of R you installed. This is needed to
     build and install certain types of packages.
-4.  Install `devtools` (needed to install the package from GitHub)
+4.  Install `devtools`
 
 ``` r
 install.packages("devtools")
@@ -113,17 +127,26 @@ tinytex::install_tinytex()
 
 7.  Install `epitraxr`
 
-- **Note:** If you previously attempted to install `epitraxr` and ran
-  into an error (such as one solved by the above steps), you will need
-  to install the package again with the option `force = TRUE`. This
-  ensures the full package is downloaded and installed properly.
-
 ``` r
-devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE, force = TRUE)
+# Stable version from CRAN
+install.packages("epitraxr", dependencies = TRUE)
 ```
 
-- This command will also update the package (e.g., if you want to get
-  the latest version from GitHub.).
+``` r
+# Development version from GitHub
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
+```
+
+- **Note:** If you previously attempted to install `epitraxr` from
+  GitHub and ran into an error (such as one solved by the above steps),
+  you may need to install the package again with the option
+  `force = TRUE` to ensure the full package is downloaded and installed
+  properly:
+
+``` r
+# Development version from GitHub
+devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE, force = TRUE)
+```
 
 ## Usage
 
