@@ -20,7 +20,7 @@ interface for uploading data, configuring reports, and generating various
 types of disease surveillance reports.
 }
 \examples{
-if (interactive()) {
- run_app()
+if (interactive() & requireNamespace("shiny")) {
+  run_app()
 }
 }

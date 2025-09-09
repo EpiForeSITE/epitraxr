@@ -12,8 +12,8 @@
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#'  run_app()
+#' if (interactive() & requireNamespace("shiny")) {
+#'   run_app()
 #' }
 run_app <- function(...) {
   shiny::shinyAppDir(

@@ -10,15 +10,15 @@
 #' @export
 #'
 #' @examples
-#'  internal_folder = file.path(tempdir(), "internal")
-#'  public_folder = file.path(tempdir(), "public")
-#'  settings_folder = file.path(tempdir(), "settings")
+#' internal_folder = file.path(tempdir(), "internal")
+#' public_folder = file.path(tempdir(), "public")
+#' settings_folder = file.path(tempdir(), "settings")
 #'
-#'  create_filesystem(
-#'    internal = internal_folder,
-#'    public = public_folder,
-#'    settings = settings_folder
-#'  )
+#' create_filesystem(
+#'   internal = internal_folder,
+#'   public = public_folder,
+#'   settings = settings_folder
+#' )
 #'
 #' unlink(c(internal_folder, public_folder, settings_folder), recursive = TRUE)
 create_filesystem <- function(internal, public, settings) {
@@ -425,31 +425,31 @@ write_report_xlsx <- function(data, filename, folder) {
 #'
 #' @examples
 #' # Don't run PDF examples in case missing LaTeX
-#' \dontrun{
-#'  # Create sample report data
-#'  r_data <- data.frame(
-#'    Disease = c("COVID", "Flu", "Measles"),
-#'    `March 2024` = c(0, 25, 5),
-#'    `Historical March Avg` = c(0, 15, 8),
-#'    `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
-#'    check.names = FALSE
-#'  )
+#' if (requireNamespace("rmarkdown")) {
+#'   # Create sample report data
+#'   r_data <- data.frame(
+#'     Disease = c("COVID", "Flu", "Measles"),
+#'     `March 2024` = c(0, 25, 5),
+#'     `Historical March Avg` = c(0, 15, 8),
+#'     `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
+#'     check.names = FALSE
+#'   )
 #'
-#'  # Set report parameters
-#'  params <- list(
-#'    title = "Monthly Disease Surveillance Report",
-#'    report_year = 2024,
-#'    report_month = 3,
-#'    trend_threshold = 0.20
-#'  )
+#'   # Set report parameters
+#'   params <- list(
+#'     title = "Monthly Disease Surveillance Report",
+#'     report_year = 2024,
+#'     report_month = 3,
+#'     trend_threshold = 0.20
+#'   )
 #'
-#'  # Write to temporary directory
-#'  write_report_pdf(
-#'    data = r_data,
-#'    params = params,
-#'    filename = "monthly_disease_report.pdf",
-#'    folder = tempdir()
-#'  )
+#'   # Write to temporary directory
+#'   write_report_pdf(
+#'     data = r_data,
+#'     params = params,
+#'     filename = "monthly_disease_report.pdf",
+#'     folder = tempdir()
+#'   )
 #' }
 write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE) {
   # Check if rmarkdown is available
@@ -513,37 +513,37 @@ write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE)
 #'
 #' @examples
 #' # Don't run PDF examples in case missing LaTeX
-#' \dontrun{
-#'  # Create sample grouped report data
-#'  r_data <- data.frame(
-#'    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
-#'    Disease = c("COVID", "Flu", "Measles"),
-#'    `March 2024` = c(0, 25, 5),
-#'    `March 2024 Rate` = c(0, 25, 5),
-#'    `Historical March Avg` = c(0, 15, 8),
-#'    `Historical March Median` = c(0, 15, 8),
-#'    `2024 YTD` = c(0, 37, 9),
-#'    `Historical 2024 YTD Avg` = c(20, 25, 14),
-#'    `Historical 2024 YTD Median` = c(20, 25, 14),
-#'    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
-#'    check.names = FALSE
-#'  )
+#' if (requireNamespace("rmarkdown")) {
+#'   # Create sample grouped report data
+#'   r_data <- data.frame(
+#'     Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+#'     Disease = c("COVID", "Flu", "Measles"),
+#'     `March 2024` = c(0, 25, 5),
+#'     `March 2024 Rate` = c(0, 25, 5),
+#'     `Historical March Avg` = c(0, 15, 8),
+#'     `Historical March Median` = c(0, 15, 8),
+#'     `2024 YTD` = c(0, 37, 9),
+#'     `Historical 2024 YTD Avg` = c(20, 25, 14),
+#'     `Historical 2024 YTD Median` = c(20, 25, 14),
+#'     `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
+#'     check.names = FALSE
+#'   )
 #'
-#'  # Set report parameters
-#'  params <- list(
-#'    title = "Grouped Disease Surveillance Report",
-#'    report_year = 2024,
-#'    report_month = 3,
-#'    trend_threshold = 0.20
-#'  )
+#'   # Set report parameters
+#'   params <- list(
+#'     title = "Grouped Disease Surveillance Report",
+#'     report_year = 2024,
+#'     report_month = 3,
+#'     trend_threshold = 0.20
+#'   )
 #'
-#'  # Write to temporary directory
-#'  write_report_pdf_grouped(
-#'    data = r_data,
-#'    params = params,
-#'    filename = "grouped_disease_report.pdf",
-#'    folder = tempdir()
-#'  )
+#'   # Write to temporary directory
+#'   write_report_pdf_grouped(
+#'     data = r_data,
+#'     params = params,
+#'     filename = "grouped_disease_report.pdf",
+#'     folder = tempdir()
+#'   )
 #' }
 write_report_pdf_grouped <- function(data, params, filename, folder, trend.only = FALSE) {
   # Check if rmarkdown is available

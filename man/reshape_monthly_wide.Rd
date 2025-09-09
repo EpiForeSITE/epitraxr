@@ -23,9 +23,9 @@ months for columns.
 }
 \examples{
 df <- data.frame(
- disease = c("A", "B"),
- month = c(1, 2),
- counts = c(5, 6)
+  disease = c("A", "B"),
+  month = c(1, 2),
+  counts = c(5, 6)
 )
 reshape_monthly_wide(df)
 }

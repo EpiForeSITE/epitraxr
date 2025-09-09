@@ -30,16 +30,16 @@ See the example file here:
 \code{system.file("sample_data/sample_epitrax_data.csv", package = "epitraxr")}
 }
 \examples{
-\dontrun{
-# Interactive file chooser:
-read_epitrax_data()
+if(interactive()) {
+  # Interactive file chooser:
+  read_epitrax_data()
 }
 
 # Using a file path:
 data <- read_epitrax_data(
- filepath = system.file("sample_data/sample_epitrax_data.csv",
+  filepath = system.file("sample_data/sample_epitrax_data.csv",
                          package = "epitraxr"),
- num_yrs = 3
+  num_yrs = 3
 )
 head(data)
 }

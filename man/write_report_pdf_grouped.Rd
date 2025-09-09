@@ -34,36 +34,36 @@ disease statistics organized by groups with current and historical data.
 }
 \examples{
 # Don't run PDF examples in case missing LaTeX
-\dontrun{
- # Create sample grouped report data
- r_data <- data.frame(
-   Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
-   Disease = c("COVID", "Flu", "Measles"),
-   `March 2024` = c(0, 25, 5),
-   `March 2024 Rate` = c(0, 25, 5),
-   `Historical March Avg` = c(0, 15, 8),
-   `Historical March Median` = c(0, 15, 8),
-   `2024 YTD` = c(0, 37, 9),
-   `Historical 2024 YTD Avg` = c(20, 25, 14),
-   `Historical 2024 YTD Median` = c(20, 25, 14),
-   `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
-   check.names = FALSE
- )
+if (requireNamespace("rmarkdown")) {
+  # Create sample grouped report data
+  r_data <- data.frame(
+    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `March 2024 Rate` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Historical March Median` = c(0, 15, 8),
+    `2024 YTD` = c(0, 37, 9),
+    `Historical 2024 YTD Avg` = c(20, 25, 14),
+    `Historical 2024 YTD Median` = c(20, 25, 14),
+    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
+    check.names = FALSE
+  )
 
- # Set report parameters
- params <- list(
-   title = "Grouped Disease Surveillance Report",
-   report_year = 2024,
-   report_month = 3,
-   trend_threshold = 0.20
- )
+  # Set report parameters
+  params <- list(
+    title = "Grouped Disease Surveillance Report",
+    report_year = 2024,
+    report_month = 3,
+    trend_threshold = 0.20
+  )
 
- # Write to temporary directory
- write_report_pdf_grouped(
-   data = r_data,
-   params = params,
-   filename = "grouped_disease_report.pdf",
-   folder = tempdir()
- )
+  # Write to temporary directory
+  write_report_pdf_grouped(
+    data = r_data,
+    params = params,
+    filename = "grouped_disease_report.pdf",
+    folder = tempdir()
+  )
 }
 }
