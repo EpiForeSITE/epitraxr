@@ -33,8 +33,9 @@ template. It is relatively flexible and can be used for various
 types of report.
 }
 \examples{
-# Requires LaTeX is installed
-\donttest{
+\dontrun{
+  # Example not run because it requires LaTeX installation
+
   # Create sample report data
   r_data <- data.frame(
     Disease = c("COVID", "Flu", "Measles"),

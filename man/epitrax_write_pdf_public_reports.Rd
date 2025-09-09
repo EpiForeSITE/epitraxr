@@ -23,8 +23,9 @@ report, excluding grouped stats reports (which are handled by
 a header and footer.
 }
 \examples{
-# Requires LaTeX is installed
-\donttest{
+\dontrun{
+  # Example not run because it requires LaTeX installation
+
   fsys <- list(
     internal = file.path(tempdir(), "internal_reports"),
     public = file.path(tempdir(), "public_reports"),

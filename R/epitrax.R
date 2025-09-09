@@ -950,8 +950,9 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #' @export
 #'
 #' @examples
-#' # Requires LaTeX is installed
-#' \donttest{
+#' \dontrun{
+#'   # Example not run because it requires LaTeX installation
+#'
 #'   fsys <- list(
 #'     internal = file.path(tempdir(), "internal_reports"),
 #'     public = file.path(tempdir(), "public_reports"),
@@ -1028,8 +1029,9 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) 
 #' @export
 #'
 #' @examples
-#' # Requires LaTeX is installed
-#' \donttest{
+#' \dontrun{
+#'   # Example not run because it requires LaTeX installation
+#'
 #'   fsys <- list(
 #'     internal = file.path(tempdir(), "internal_reports"),
 #'     public = file.path(tempdir(), "public_reports"),

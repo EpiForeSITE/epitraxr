@@ -424,8 +424,9 @@ write_report_xlsx <- function(data, filename, folder) {
 #' @export
 #'
 #' @examples
-#' # Requires LaTeX is installed
-#' \donttest{
+#' \dontrun{
+#'   # Example not run because it requires LaTeX installation
+#'
 #'   # Create sample report data
 #'   r_data <- data.frame(
 #'     Disease = c("COVID", "Flu", "Measles"),
@@ -512,8 +513,9 @@ write_report_pdf <- function(data, params, filename, folder, trend.only = FALSE)
 #' @export
 #'
 #' @examples
-#' # Requires LaTeX is installed
-#' \donttest{
+#' \dontrun{
+#'   # Example not run because it requires LaTeX installation
+#'
 #'   # Create sample grouped report data
 #'   r_data <- data.frame(
 #'     Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
