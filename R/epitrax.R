@@ -950,7 +950,8 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #' @export
 #'
 #' @examples
-#' if (requireNamespace("rmarkdown")) {
+#' # Requires LaTeX is installed
+#' \donttest{
 #'   fsys <- list(
 #'     internal = file.path(tempdir(), "internal_reports"),
 #'     public = file.path(tempdir(), "public_reports"),
@@ -1027,8 +1028,8 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) 
 #' @export
 #'
 #' @examples
-#' # Don't run PDF examples in case missing LaTeX
-#' if (requireNamespace("rmarkdown")) {
+#' # Requires LaTeX is installed
+#' \donttest{
 #'   fsys <- list(
 #'     internal = file.path(tempdir(), "internal_reports"),
 #'     public = file.path(tempdir(), "public_reports"),

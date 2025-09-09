@@ -27,8 +27,8 @@ an EpiTrax object to PDF files using a formatted template. It processes both
 internal and public grouped statistics reports.
 }
 \examples{
-# Don't run PDF examples in case missing LaTeX
-if (requireNamespace("rmarkdown")) {
+# Requires LaTeX is installed
+\donttest{
   fsys <- list(
     internal = file.path(tempdir(), "internal_reports"),
     public = file.path(tempdir(), "public_reports"),

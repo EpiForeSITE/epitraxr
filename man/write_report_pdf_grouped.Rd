@@ -33,8 +33,8 @@ as a PDF using a R Markdown template. The report includes comprehensive
 disease statistics organized by groups with current and historical data.
 }
 \examples{
-# Don't run PDF examples in case missing LaTeX
-if (requireNamespace("rmarkdown")) {
+# Requires LaTeX is installed
+\donttest{
   # Create sample grouped report data
   r_data <- data.frame(
     Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),

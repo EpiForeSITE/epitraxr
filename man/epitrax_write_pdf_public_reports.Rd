@@ -23,7 +23,8 @@ report, excluding grouped stats reports (which are handled by
 a header and footer.
 }
 \examples{
-if (requireNamespace("rmarkdown")) {
+# Requires LaTeX is installed
+\donttest{
   fsys <- list(
     internal = file.path(tempdir(), "internal_reports"),
     public = file.path(tempdir(), "public_reports"),

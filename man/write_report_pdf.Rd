@@ -33,8 +33,8 @@ template. It is relatively flexible and can be used for various
 types of report.
 }
 \examples{
-# Don't run PDF examples in case missing LaTeX
-if (requireNamespace("rmarkdown")) {
+# Requires LaTeX is installed
+\donttest{
   # Create sample report data
   r_data <- data.frame(
     Disease = c("COVID", "Flu", "Measles"),
