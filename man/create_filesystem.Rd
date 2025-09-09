@@ -20,15 +20,15 @@ NULL.
 \code{create_filesystem} creates the given folders if they don't already exist.
 }
 \examples{
- internal_folder = file.path(tempdir(), "internal")
- public_folder = file.path(tempdir(), "public")
- settings_folder = file.path(tempdir(), "settings")
+internal_folder = file.path(tempdir(), "internal")
+public_folder = file.path(tempdir(), "public")
+settings_folder = file.path(tempdir(), "settings")
 
- create_filesystem(
-   internal = internal_folder,
-   public = public_folder,
-   settings = settings_folder
- )
+create_filesystem(
+  internal = internal_folder,
+  public = public_folder,
+  settings = settings_folder
+)
 
 unlink(c(internal_folder, public_folder, settings_folder), recursive = TRUE)
 }

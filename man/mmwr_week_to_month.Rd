@@ -25,9 +25,9 @@ column is removed.
 }
 \examples{
 df <- data.frame(
- patient_mmwr_year = 2020L,
- patient_mmwr_week = 1L,
- patient_disease = "A"
+  patient_mmwr_year = 2020L,
+  patient_mmwr_week = 1L,
+  patient_disease = "A"
 )
 mmwr_week_to_month(df)
 }

@@ -18,9 +18,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Interactive file chooser:
-#' create_epitrax_from_file()
+#' if (interactive()) {
+#'   # Interactive file chooser:
+#'   create_epitrax_from_file()
 #' }
 #'
 #' # Using sample data included with package
@@ -951,32 +951,34 @@ epitrax_write_xlsxs <- function(epitrax, fsys) {
 #'
 #' @examples
 #' \dontrun{
-#'  fsys <- list(
-#'    internal = file.path(tempdir(), "internal_reports"),
-#'    public = file.path(tempdir(), "public_reports"),
-#'    settings = file.path(tempdir(), "report_settings")
-#'  )
-#'  fsys <- setup_filesystem(fsys)
+#'   # Example not run because it requires LaTeX installation
 #'
-#'  data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'   fsys <- list(
+#'     internal = file.path(tempdir(), "internal_reports"),
+#'     public = file.path(tempdir(), "public_reports"),
+#'     settings = file.path(tempdir(), "report_settings")
+#'   )
+#'   fsys <- setup_filesystem(fsys)
+#'
+#'   data_file <- system.file("sample_data/sample_epitrax_data.csv",
 #'                           package = "epitraxr")
-#'  config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'   config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                             package = "epitraxr")
-#'  disease_lists <- list(
-#'    internal = "use_defaults",
-#'    public = "use_defaults"
-#'  )
+#'   disease_lists <- list(
+#'     internal = "use_defaults",
+#'     public = "use_defaults"
+#'   )
 #'
-#'  epitrax <- setup_epitrax(
-#'    filepath = data_file,
-#'    config_file = config_file,
-#'    disease_list_files = disease_lists
-#'  ) |>
-#'   epitrax_preport_month_crosssections(month_offsets = 0) |>
-#'   epitrax_write_pdf_public_reports(fsys = fsys)
+#'   epitrax <- setup_epitrax(
+#'     filepath = data_file,
+#'     config_file = config_file,
+#'     disease_list_files = disease_lists
+#'   ) |>
+#'     epitrax_preport_month_crosssections(month_offsets = 0) |>
+#'     epitrax_write_pdf_public_reports(fsys = fsys)
 #'
-#'  # Cleanup
-#'  unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
+#'   # Cleanup
+#'   unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 #' }
 epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) {
 
@@ -1027,38 +1029,39 @@ epitrax_write_pdf_public_reports <- function(epitrax, fsys, trend.only = FALSE) 
 #' @export
 #'
 #' @examples
-#' # Don't run PDF examples in case missing LaTeX
 #' \dontrun{
-#'  fsys <- list(
-#'    internal = file.path(tempdir(), "internal_reports"),
-#'    public = file.path(tempdir(), "public_reports"),
-#'    settings = file.path(tempdir(), "report_settings")
-#'  )
-#'  fsys <- setup_filesystem(fsys)
+#'   # Example not run because it requires LaTeX installation
 #'
-#'  data_file <- system.file("sample_data/sample_epitrax_data.csv",
+#'   fsys <- list(
+#'     internal = file.path(tempdir(), "internal_reports"),
+#'     public = file.path(tempdir(), "public_reports"),
+#'     settings = file.path(tempdir(), "report_settings")
+#'   )
+#'   fsys <- setup_filesystem(fsys)
+#'
+#'   data_file <- system.file("sample_data/sample_epitrax_data.csv",
 #'                           package = "epitraxr")
-#'  config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+#'   config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
 #'                             package = "epitraxr")
-#'  disease_lists <- list(
-#'    internal = "use_defaults",
-#'    public = "use_defaults"
-#'  )
+#'   disease_lists <- list(
+#'     internal = "use_defaults",
+#'     public = "use_defaults"
+#'   )
 #'
-#'  params <- list(
-#'    title = "Monthly Grouped Disease Statistics"
-#'  )
+#'   params <- list(
+#'     title = "Monthly Grouped Disease Statistics"
+#'   )
 #'
-#'  epitrax <- setup_epitrax(
-#'    filepath = data_file,
-#'    config_file = config_file,
-#'    disease_list_files = disease_lists
-#'  ) |>
-#'   epitrax_report_grouped_stats() |>
-#'   epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
+#'   epitrax <- setup_epitrax(
+#'     filepath = data_file,
+#'     config_file = config_file,
+#'     disease_list_files = disease_lists
+#'   ) |>
+#'     epitrax_report_grouped_stats() |>
+#'     epitrax_write_pdf_grouped_stats(params = params, fsys = fsys)
 #'
-#'  # Cleanup
-#'  unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
+#'   # Cleanup
+#'   unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
 #' }
 epitrax_write_pdf_grouped_stats <- function(epitrax, params, fsys, trend.only = FALSE) {
 

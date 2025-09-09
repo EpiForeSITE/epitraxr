@@ -20,16 +20,16 @@
 #' @importFrom utils read.csv
 #'
 #' @examples
-#' \dontrun{
-#' # Interactive file chooser:
-#' read_epitrax_data()
+#' if(interactive()) {
+#'   # Interactive file chooser:
+#'   read_epitrax_data()
 #' }
 #'
 #' # Using a file path:
 #' data <- read_epitrax_data(
-#'  filepath = system.file("sample_data/sample_epitrax_data.csv",
+#'   filepath = system.file("sample_data/sample_epitrax_data.csv",
 #'                          package = "epitraxr"),
-#'  num_yrs = 3
+#'   num_yrs = 3
 #' )
 #' head(data)
 read_epitrax_data <- function(filepath = NULL, num_yrs = 5) {
@@ -80,9 +80,9 @@ read_epitrax_data <- function(filepath = NULL, num_yrs = 5) {
 #'
 #' @examples
 #' df <- data.frame(
-#'  patient_mmwr_year = 2020L,
-#'  patient_mmwr_week = 1L,
-#'  patient_disease = "A"
+#'   patient_mmwr_year = 2020L,
+#'   patient_mmwr_week = 1L,
+#'   patient_disease = "A"
 #' )
 #' mmwr_week_to_month(df)
 mmwr_week_to_month <- function(data) {
@@ -147,9 +147,9 @@ format_epitrax_data <- function(data) {
 #'
 #' @examples
 #' df <- data.frame(
-#'  disease = c("A", "B"),
-#'  month = c(1, 2),
-#'  counts = c(5, 6)
+#'   disease = c("A", "B"),
+#'   month = c(1, 2),
+#'   counts = c(5, 6)
 #' )
 #' reshape_monthly_wide(df)
 reshape_monthly_wide <- function(data) {

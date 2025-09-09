@@ -33,31 +33,32 @@ template. It is relatively flexible and can be used for various
 types of report.
 }
 \examples{
-# Don't run PDF examples in case missing LaTeX
 \dontrun{
- # Create sample report data
- r_data <- data.frame(
-   Disease = c("COVID", "Flu", "Measles"),
-   `March 2024` = c(0, 25, 5),
-   `Historical March Avg` = c(0, 15, 8),
-   `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
-   check.names = FALSE
- )
+  # Example not run because it requires LaTeX installation
 
- # Set report parameters
- params <- list(
-   title = "Monthly Disease Surveillance Report",
-   report_year = 2024,
-   report_month = 3,
-   trend_threshold = 0.20
- )
+  # Create sample report data
+  r_data <- data.frame(
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Trend` = compute_trend(c(0, 25, 5), c(0, 15, 8)),
+    check.names = FALSE
+  )
 
- # Write to temporary directory
- write_report_pdf(
-   data = r_data,
-   params = params,
-   filename = "monthly_disease_report.pdf",
-   folder = tempdir()
- )
+  # Set report parameters
+  params <- list(
+    title = "Monthly Disease Surveillance Report",
+    report_year = 2024,
+    report_month = 3,
+    trend_threshold = 0.20
+  )
+
+  # Write to temporary directory
+  write_report_pdf(
+    data = r_data,
+    params = params,
+    filename = "monthly_disease_report.pdf",
+    folder = tempdir()
+  )
 }
 }

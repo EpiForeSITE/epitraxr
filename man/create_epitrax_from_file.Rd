@@ -29,9 +29,9 @@ An object of class \code{epitrax} containing:
 containing the data along with commonly used metadata and empty report lists.
 }
 \examples{
-\dontrun{
-# Interactive file chooser:
-create_epitrax_from_file()
+if (interactive()) {
+  # Interactive file chooser:
+  create_epitrax_from_file()
 }
 
 # Using sample data included with package
