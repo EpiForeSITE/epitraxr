@@ -13,7 +13,9 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/EpiForeSITE/epitraxr/blob/master/LICENSE.md)
 [![R-CMD-check](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml)
 [![pkgdown](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml)
-[![codecov](https://app.codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://app.codecov.io/gh/EpiForeSITE/epitraxr)
+[![codecov](https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://app.codecov.io/gh/EpiForeSITE/epitraxr)
+[![CRANlogs
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/epitraxr)](https://cran.r-project.org/package=epitraxr)
 <!-- badges: end -->
 
 ## Overview
