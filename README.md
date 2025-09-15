@@ -7,8 +7,6 @@
 
 [![ForeSITE
 Group](https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
-[![CRANlogs
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/epitraxr)](https://cran.r-project.org/package=epitraxr)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
@@ -16,6 +14,8 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Ep
 [![R-CMD-check](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/r-check.yaml)
 [![pkgdown](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/EpiForeSITE/epitraxr/actions/workflows/pkgdown.yaml)
 [![codecov](https://codecov.io/gh/EpiForeSITE/epitraxr/graph/badge.svg?token=KC48SFPX39)](https://app.codecov.io/gh/EpiForeSITE/epitraxr)
+[![CRANlogs
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/epitraxr)](https://cran.r-project.org/package=epitraxr)
 <!-- badges: end -->
 
 ## Overview
