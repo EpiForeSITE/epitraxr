@@ -100,39 +100,44 @@ After that, you can use `epitraxr` to generate PDF reports.
 
 In our experience, machines managed by local health departments (LHDs)
 are less likely to have installed all necessary packages and tools. For
-these users, we recommend completing the following steps before
-installing the package using the instructions above.
+these users, we recommend installing using the following steps.
 
 1.  Install the latest version of R: <https://cran.rstudio.com>
 2.  Install RStudio: <https://posit.co/download/rstudio-desktop/>
-3.  If on Windows, install the version of
-    [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
-    corresponding to the version of R you installed. This is needed to
-    build and install certain types of packages.
-4.  Install `devtools`
+3.  Install `devtools`
 
 ``` r
 install.packages("devtools")
 ```
 
-5.  Install the `tinytex` package
+4.  Install the `tinytex` package
 
 ``` r
 install.packages("tinytex")
 ```
 
-6.  Install TinyTeX (the LaTeX distribution) using the `tinytex` package
+5.  Install TinyTeX (the LaTeX distribution) using the `tinytex` package
 
 ``` r
 tinytex::install_tinytex()
 ```
 
-7.  Install `epitraxr`
+6.  Install `epitraxr`
 
 ``` r
 # Stable version from CRAN
 install.packages("epitraxr", dependencies = TRUE)
 ```
+
+#### Installing the Development Version of epitraxr
+
+We recommend installing the stable CRAN version, but you can install the
+development version from GitHub instead. If you’re on Windows, you’ll
+need to first install the version of
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/) corresponding
+to the version of R you installed. This is needed to build and install
+certain types of packages. Then you install the development version
+using:
 
 ``` r
 # Development version from GitHub
@@ -141,7 +146,7 @@ devtools::install_github("EpiForeSITE/epitraxr", dependencies = TRUE)
 
 - **Note:** If you previously attempted to install `epitraxr` from
   GitHub and ran into an error (such as one solved by the above steps),
-  you may need to install the package again with the option
+  you will likely need to install the package again with the option
   `force = TRUE` to ensure the full package is downloaded and installed
   properly:
 
