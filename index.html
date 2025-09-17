@@ -99,45 +99,49 @@
 <div class="section level3">
 <h3 id="installation-for-local-health-departments">Installation For Local Health Departments<a class="anchor" aria-label="anchor" href="#installation-for-local-health-departments"></a>
 </h3>
-<p>In our experience, machines managed by local health departments (LHDs) are less likely to have installed all necessary packages and tools. For these users, we recommend completing the following steps before installing the package using the instructions above.</p>
+<p>In our experience, machines managed by local health departments (LHDs) are less likely to have installed all necessary packages and tools. For these users, we recommend installing using the following steps.</p>
 <ol style="list-style-type: decimal">
 <li>Install the latest version of R: <a href="https://cran.rstudio.com" class="external-link uri">https://cran.rstudio.com</a>
 </li>
 <li>Install RStudio: <a href="https://posit.co/download/rstudio-desktop/" class="external-link uri">https://posit.co/download/rstudio-desktop/</a>
 </li>
-<li>If on Windows, install the version of <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a> corresponding to the version of R you installed. This is needed to build and install certain types of packages.</li>
 <li>Install <code>devtools</code>
 </li>
 </ol>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span></code></pre></div>
-<ol start="5" style="list-style-type: decimal">
+<ol start="4" style="list-style-type: decimal">
 <li>Install the <code>tinytex</code> package</li>
 </ol>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tinytex"</span><span class="op">)</span></span></code></pre></div>
-<ol start="6" style="list-style-type: decimal">
+<ol start="5" style="list-style-type: decimal">
 <li>Install TinyTeX (the LaTeX distribution) using the <code>tinytex</code> package</li>
 </ol>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html" class="external-link">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<ol start="7" style="list-style-type: decimal">
+<ol start="6" style="list-style-type: decimal">
 <li>Install <code>epitraxr</code>
 </li>
 </ol>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Stable version from CRAN</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="section level4">
+<h4 id="installing-the-development-version-of-epitraxr">Installing the Development Version of epitraxr<a class="anchor" aria-label="anchor" href="#installing-the-development-version-of-epitraxr"></a>
+</h4>
+<p>We recommend installing the stable CRAN version, but you can install the development version from GitHub instead. If you’re on Windows, you’ll need to first install the version of <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a> corresponding to the version of R you installed. This is needed to build and install certain types of packages. Then you install the development version using:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Development version from GitHub</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>
-<strong>Note:</strong> If you previously attempted to install <code>epitraxr</code> from GitHub and ran into an error (such as one solved by the above steps), you may need to install the package again with the option <code>force = TRUE</code> to ensure the full package is downloaded and installed properly:</li>
+<strong>Note:</strong> If you previously attempted to install <code>epitraxr</code> from GitHub and ran into an error (such as one solved by the above steps), you will likely need to install the package again with the option <code>force = TRUE</code> to ensure the full package is downloaded and installed properly:</li>
 </ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Development version from GitHub</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"EpiForeSITE/epitraxr"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 </div>
 <div class="section level2">
