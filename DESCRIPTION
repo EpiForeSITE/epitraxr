@@ -6,6 +6,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-0773-3210")),
     person("Nate", "Lanza", , "natelanzadevelopment@gmail.com", role = c("aut", "ctb")),
     person("Madeline", "George", role = "ctb"),
+    person("Zachary", "Heuscher", role = "ctb"),
     person("Centers for Disease Control and Prevention's Center for Forecasting and Outbreak Analytics", role = "fnd",
            comment = "Cooperative agreement CDC-RFA-FT-23-0069")
   )
