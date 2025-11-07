@@ -4,7 +4,7 @@
 \alias{create_report_grouped_stats}
 \title{Create grouped disease statistics report}
 \usage{
-create_report_grouped_stats(data, diseases, y, m, config)
+create_report_grouped_stats(data, diseases, y, m, config, is.public = FALSE)
 }
 \arguments{
 \item{data}{Dataframe. Input data with columns:
@@ -25,6 +25,8 @@ missing, all diseases will be grouped under "Uncategorized".}
 \item{m}{Integer. Report month (1-12)}
 
 \item{config}{List. Report settings}
+
+\item{is.public}{Logical. If TRUE, uses public-facing disease names.}
 }
 \value{
 Dataframe with one row per disease containing:

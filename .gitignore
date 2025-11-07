@@ -6,3 +6,5 @@
 docs
 *.Rcheck
 inst/doc
+scripts/test_format_files/
+scripts/test_scripts/

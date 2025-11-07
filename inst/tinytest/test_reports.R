@@ -352,6 +352,29 @@ expected_result$Group <- c("Respiratory", "Respiratory", "Uncategorized")
 expect_true(is.data.frame(result_with_na))
 expect_equal(result_with_na, expected_result)
 
+# Test with is.public = TRUE and missing Public_name column
+expect_warning(
+  result_no_public <- create_report_grouped_stats(data, diseases_no_group, 2024, 3, config, is.public = TRUE),
+  "no public names were provided"
+)
+
+# Test with is.public = TRUE and valid Public_name column
+diseases_public <- data.frame(
+  EpiTrax_name = c("Flu", "Measles", "COVID"),
+  Public_name = c("Alpha", "Bravo", "Charlie"),
+  Group_name = c("Respiratory", "Vaccine-Preventable", "Respiratory")
+)
+
+result_public <- create_report_grouped_stats(data, diseases_public, 2024, 3, config, is.public = TRUE)
+
+# Update expected result with public names
+expected_result$Disease <- c("Charlie", "Alpha", "Bravo")
+expected_result$Group <- c("Respiratory", "Respiratory", "Vaccine-Preventable")
+# - Sort expected result to match result_public order
+expected_result <- expected_result[order(expected_result$Group, expected_result$Disease), ]
+
+expect_equal(result_public, expected_result)
+
 
 # Test create_public_report_combined_month_ytd() -------------------------------
 
