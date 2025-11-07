@@ -369,6 +369,7 @@ create_report_ytd_medians <- function(data, diseases, m) {
 #' `EpiTrax_name` (character) with diseases to include. Optionally may have column
 #' `Group_name` (character) to define disease groupings. If `Group_name` is
 #' missing, all diseases will be grouped under "Uncategorized".
+#' @param is.public Logical. If TRUE, uses public-facing disease names.
 #'
 #' @returns Dataframe with one row per disease containing:
 #'   - Group: Disease group name
@@ -401,7 +402,7 @@ create_report_ytd_medians <- function(data, diseases, m) {
 #'   trend_threshold = 0.15
 #' )
 #' create_report_grouped_stats(data, diseases, 2024, 2, config)
-create_report_grouped_stats <- function(data, diseases, y, m, config) {
+create_report_grouped_stats <- function(data, diseases, y, m, config, is.public = FALSE) {
 
   epitrax_disease_names <- diseases$EpiTrax_name
 
@@ -490,11 +491,29 @@ create_report_grouped_stats <- function(data, diseases, y, m, config) {
   # Add disease groups to the report
   grouped_r <- merge(
     grouped_r,
-    diseases[, c("EpiTrax_name", "Group_name")],
+    diseases,
     by.x = "disease",
     by.y = "EpiTrax_name",
     all.x = TRUE
   )
+
+  # If needed, convert disease names to public-facing versions
+  if (is.public) {
+    # Check that public disease names were included
+    if (is.null(diseases$Public_name)) {
+      warning(
+        "In order to convert disease names to public-facing versions, ",
+        "the parameter 'diseases' should contain a 'Public_name' column. ",
+        "Since, no public names were provided, disease names won't be changed."
+      )
+    } else {
+      grouped_r$disease <- grouped_r$Public_name
+    }
+  }
+
+  # Delete the Public_name column (regardless of whether report is public)
+  grouped_r$Public_name <- NULL
+
   # - Rearrange columns to have Group_name first
   grouped_r <- grouped_r[,c(ncol(grouped_r),1:(ncol(grouped_r)-1))]
 

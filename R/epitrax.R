@@ -790,7 +790,8 @@ epitrax_report_grouped_stats <- function(epitrax, is.public = FALSE) {
         diseases = report_diseases,
         y = epitrax$report_year,
         m = epitrax$report_month,
-        config = epitrax$config
+        config = epitrax$config,
+        is.public = is.public
     )
 
     # Add report to EpiTrax object
