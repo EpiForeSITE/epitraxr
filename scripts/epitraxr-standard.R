@@ -138,7 +138,7 @@ xl_files <- list()
 for (offset in 0:3) {
   r <- create_public_report_month(
     data = epitrax$data,
-    diseases = report_diseases$public,
+    diseases = report_diseases$public[, c("EpiTrax_name", "Public_name")],
     y = epitrax$report_year,
     m = epitrax$report_month - offset,
     config = report_config
@@ -152,7 +152,7 @@ for (offset in 0:3) {
 # - Create current YTD report
 r <- create_public_report_ytd(
   data = epitrax$data,
-  diseases = report_diseases$public,
+  diseases = report_diseases$public[, c("EpiTrax_name", "Public_name")],
   y = epitrax$report_year,
   m = epitrax$report_month,
   config = report_config

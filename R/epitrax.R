@@ -488,7 +488,7 @@ epitrax_preport_month_crosssections <- function(epitrax, month_offsets = 0:3) {
     for (offset in month_offsets) {
         r <- create_public_report_month(
             data = epitrax$data,
-            diseases = epitrax$report_diseases$public,
+            diseases = epitrax$report_diseases$public[, c("EpiTrax_name", "Public_name")],
             y = epitrax$report_year,
             m = epitrax$report_month - offset,
             config = epitrax$config
@@ -538,7 +538,7 @@ epitrax_preport_ytd_rates <- function(epitrax) {
     # Create public report
     r <- create_public_report_ytd(
         data = epitrax$data,
-        diseases = epitrax$report_diseases$public,
+        diseases = epitrax$report_diseases$public[, c("EpiTrax_name", "Public_name")],
         y = epitrax$report_year,
         m = epitrax$report_month,
         config = epitrax$config
@@ -588,7 +588,7 @@ epitrax_preport_combined_month_ytd <- function(epitrax) {
     # Create combined month and YTD report
     r <- create_public_report_combined_month_ytd(
         data = epitrax$data,
-        diseases = epitrax$report_diseases$public,
+        diseases = epitrax$report_diseases$public[, c("EpiTrax_name", "Public_name")],
         y = epitrax$report_year,
         m = epitrax$report_month,
         config = epitrax$config
