@@ -113,3 +113,46 @@ na_data <- data.frame(
 expect_warning(validated <- validate_data(na_data),
                "dataset contains missing or NA values")
 expect_equal(nrow(validated), 1)
+
+
+# Test validate_diseases() ------------------------------------------------------
+valid_diseases <- data.frame(
+  EpiTrax_name = c("Disease A", "Disease B"),
+  Public_name = c("Public Disease A", "Public Disease B"),
+  Group_name = c("Group 1", "Group 2")
+)
+
+# Test all valid
+result <- validate_diseases(valid_diseases, is.public = TRUE, is.grouped = TRUE)
+expect_equal(result, valid_diseases)
+
+# Test only EpiTrax_name required
+result <- validate_diseases(valid_diseases, is.public = FALSE, is.grouped = FALSE)
+expect_equal(names(result), c("EpiTrax_name"))
+expect_equal(result, valid_diseases[c("EpiTrax_name")])
+
+# Test non-grouped public report
+result <- validate_diseases(valid_diseases, is.public = TRUE, is.grouped = FALSE)
+expect_equal(names(result), c("EpiTrax_name", "Public_name"))
+expect_equal(result, valid_diseases[c("EpiTrax_name", "Public_name")])
+
+# Test missing EpiTrax_name
+missing_epitrax_diseases <- valid_diseases[c("Public_name", "Group_name")]
+expect_error(
+  validate_diseases(missing_epitrax_diseases, is.public = TRUE, is.grouped = TRUE),
+  "'diseases' is missing the column 'EpiTrax_name'."
+)
+
+# Test missing Public_name
+missing_epitrax_diseases <- valid_diseases[c("EpiTrax_name", "Group_name")]
+expect_error(
+  validate_diseases(missing_epitrax_diseases, is.public = TRUE, is.grouped = TRUE),
+  "'diseases' is missing the column 'Public_name'."
+)
+
+# Test missing Group_name
+missing_epitrax_diseases <- valid_diseases[c("EpiTrax_name", "Public_name")]
+expect_error(
+  validate_diseases(missing_epitrax_diseases, is.public = TRUE, is.grouped = TRUE),
+  "'diseases' is missing the column 'Group_name'."
+)

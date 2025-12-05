@@ -192,3 +192,56 @@ validate_data <- function(data) {
 
   data
 }
+
+
+#' Validate diseases list
+#'
+#' `validate_diseases` checks that the diseases list contains the required columns
+#' for the type of report being generated.
+#'
+#' @param diseases Data frame. Diseases to validate.
+#' @param is.public Logical. If TRUE, checks for public report requirements.
+#' @param is.grouped Logical. If TRUE, checks for grouped report requirements.
+#'
+#' @returns A data frame with validated disease columns.
+#' @export
+#'
+#' @examples
+#' diseases <- data.frame(
+#'   EpiTrax_name = c("Disease A", "Disease B"),
+#'   Public_name = c("Public Disease A", "Public Disease B"),
+#'   Group_name = c("Group 1", "Group 2")
+#' )
+#' validate_diseases(diseases, is.public = TRUE, is.grouped = TRUE)
+validate_diseases <- function(diseases, is.public = FALSE, is.grouped = FALSE) {
+
+  # Check for EpiTrax_name column (required for all reports)
+  if (is.null(diseases$EpiTrax_name) ||
+      !inherits(diseases$EpiTrax_name, "character")) {
+    stop("'diseases' is missing the column 'EpiTrax_name'.")
+  }
+
+  validated_diseases <- diseases["EpiTrax_name"]
+
+  if (is.public) {
+    # Check for Public_name column (required for public reports)
+    if (is.null(diseases$Public_name) ||
+        !inherits(diseases$Public_name, "character")) {
+      stop("'diseases' is missing the column 'Public_name'.")
+    }
+
+    validated_diseases$Public_name <- diseases$Public_name
+  }
+
+  if (is.grouped) {
+    # Check for Group_name column (required for grouped reports)
+    if (is.null(diseases$Group_name) ||
+        !inherits(diseases$Group_name, "character")) {
+      stop("'diseases' is missing the column 'Group_name'.")
+    }
+
+    validated_diseases$Group_name <- diseases$Group_name
+  }
+
+  validated_diseases
+}

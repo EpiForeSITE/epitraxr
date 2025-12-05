@@ -140,7 +140,7 @@ get_report_config <- function(filepath) {
     config
   } else {
     stop(
-      "No report configuration file provided. Please provide a valid file or",
+      "No report configuration file provided. Please provide a valid file or ",
       "use `epitraxr_config()` to create a config programmatically."
     )
   }
