@@ -585,6 +585,9 @@ create_report_grouped_stats <- function(data, diseases, y, m, config, is.public 
 #' )
 create_public_report_combined_month_ytd <- function(data, diseases, y, m, config) {
 
+  # Validate diseases list
+  diseases <- validate_diseases(diseases, is.public = TRUE, is.grouped = FALSE)
+
   # Modify the config for this function only because it returns rates, but we need counts
   m_report <- create_public_report_month(
     data = data,
@@ -690,6 +693,9 @@ create_public_report_combined_month_ytd <- function(data, diseases, y, m, config
 #' )
 create_public_report_month <- function(data, diseases, y, m, config) {
 
+  # Validate diseases list
+  diseases <- validate_diseases(diseases, is.public = TRUE, is.grouped = FALSE)
+
   # Get monthly counts by disease, year, and month
   cases <- get_month_counts(data)
 
@@ -794,6 +800,9 @@ create_public_report_month <- function(data, diseases, y, m, config) {
 #'  config = config
 #' )
 create_public_report_ytd <- function(data, diseases, y, m, config) {
+
+  # Validate diseases list
+  diseases <- validate_diseases(diseases, is.public = TRUE, is.grouped = FALSE)
 
   # Compute YTD rates
   ytd_rates <- create_report_ytd_counts(

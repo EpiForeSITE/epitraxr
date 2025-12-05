@@ -215,15 +215,13 @@ validate_data <- function(data) {
 #' validate_diseases(diseases, is.public = TRUE, is.grouped = TRUE)
 validate_diseases <- function(diseases, is.public = FALSE, is.grouped = FALSE) {
 
-  validated_diseases <- list()
-
   # Check for EpiTrax_name column (required for all reports)
   if (is.null(diseases$EpiTrax_name) ||
       !inherits(diseases$EpiTrax_name, "character")) {
     stop("'diseases' is missing the column 'EpiTrax_name'.")
   }
 
-  validated_diseases$EpiTrax_name = diseases$EpiTrax_name
+  validated_diseases <- diseases["EpiTrax_name"]
 
   if (is.public) {
     # Check for Public_name column (required for public reports)
@@ -244,8 +242,6 @@ validate_diseases <- function(diseases, is.public = FALSE, is.grouped = FALSE) {
 
     validated_diseases$Group_name <- diseases$Group_name
   }
-
-  validated_diseases <- as.data.frame(validated_diseases)
 
   validated_diseases
 }
