@@ -1,0 +1,65 @@
+# Create formatted PDF report of monthly cross-section reports
+
+`epitrax_write_pdf_public_reports` writes a PDF report for each public
+report, excluding grouped stats reports (which are handled by
+`epitrax_write_pdf_grouped_stats`). The PDF uses pretty formatting and
+adds a header and footer.
+
+## Usage
+
+``` r
+epitrax_write_pdf_public_reports(epitrax, fsys, trend.only = FALSE)
+```
+
+## Arguments
+
+- epitrax:
+
+  Object of class `epitrax`.
+
+- fsys:
+
+  Filesystem list containing paths for internal and public reports.
+
+- trend.only:
+
+  Logical. Whether to show only trend in the PDF report.
+
+## Value
+
+The original EpiTrax object, unchanged.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+  # Example not run because it requires LaTeX installation
+
+  fsys <- list(
+    internal = file.path(tempdir(), "internal_reports"),
+    public = file.path(tempdir(), "public_reports"),
+    settings = file.path(tempdir(), "report_settings")
+  )
+  fsys <- setup_filesystem(fsys)
+
+  data_file <- system.file("sample_data/sample_epitrax_data.csv",
+                          package = "epitraxr")
+  config_file <- system.file("tinytest/test_files/configs/good_config.yaml",
+                            package = "epitraxr")
+  disease_lists <- list(
+    internal = "use_defaults",
+    public = "use_defaults"
+  )
+
+  epitrax <- setup_epitrax(
+    filepath = data_file,
+    config_file = config_file,
+    disease_list_files = disease_lists
+  ) |>
+    epitrax_preport_month_crosssections(month_offsets = 0) |>
+    epitrax_write_pdf_public_reports(fsys = fsys)
+
+  # Cleanup
+  unlink(unlist(fsys, use.names = FALSE), recursive = TRUE)
+} # }
+```

@@ -1,0 +1,86 @@
+# Write PDF grouped report from R Markdown template
+
+`write_report_pdf_grouped` renders a grouped disease statistics report
+as a PDF using a R Markdown template. The report includes comprehensive
+disease statistics organized by groups with current and historical data.
+
+## Usage
+
+``` r
+write_report_pdf_grouped(data, params, filename, folder, trend.only = FALSE)
+```
+
+## Arguments
+
+- data:
+
+  Dataframe. Report data.
+
+- params:
+
+  List. Report parameters containing:
+
+  - `title`: Report title (defaults to "Grouped Report")
+
+  - `report_year`: Report year (defaults to 2025)
+
+  - `report_month`: Report month (defaults to 1)
+
+  - `trend_threshold`: Threshold for trend calculations (defaults to
+    0.15)
+
+- filename:
+
+  String. Report filename.
+
+- folder:
+
+  Filepath. Report destination folder.
+
+- trend.only:
+
+  Logical. Whether to show only trend in the PDF report. If TRUE,
+  "trend_only\_" will be prepended to the filename.
+
+## Value
+
+NULL (called for side effects - creates the report file).
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+  # Example not run because it requires LaTeX installation
+
+  # Create sample grouped report data
+  r_data <- data.frame(
+    Group = c("Respiratory", "Respiratory", "Vaccine-Preventable"),
+    Disease = c("COVID", "Flu", "Measles"),
+    `March 2024` = c(0, 25, 5),
+    `March 2024 Rate` = c(0, 25, 5),
+    `Historical March Avg` = c(0, 15, 8),
+    `Historical March Median` = c(0, 15, 8),
+    `2024 YTD` = c(0, 37, 9),
+    `Historical 2024 YTD Avg` = c(20, 25, 14),
+    `Historical 2024 YTD Median` = c(20, 25, 14),
+    `YTD Trend` = compute_trend(c(0, 37, 9), c(20, 25, 14)),
+    check.names = FALSE
+  )
+
+  # Set report parameters
+  params <- list(
+    title = "Grouped Disease Surveillance Report",
+    report_year = 2024,
+    report_month = 3,
+    trend_threshold = 0.20
+  )
+
+  # Write to temporary directory
+  write_report_pdf_grouped(
+    data = r_data,
+    params = params,
+    filename = "grouped_disease_report.pdf",
+    folder = tempdir()
+  )
+} # }
+```
