@@ -1,6 +1,25 @@
 url: https://epiforesite.github.io/epitraxr/
 template:
   bootstrap: 5
+  light-switch: false
+  bslib:
+    brand: pkgdown/brand/_brand.yml
+
+navbar:
+  bg: light
+
+footer:
+  structure:
+    left: [developed_by, foresite]
+    right: built_with
+  components:
+    foresite: >-
+      Part of the [ForeSITE](https://github.com/EpiForeSITE) software
+      ecosystem. This project was made possible by cooperative agreement
+      CDC-RFA-FT-23-0069 from the CDC's Center for Forecasting and Outbreak
+      Analytics. Its contents are solely the responsibility of the authors and do
+      not necessarily represent the official views of the Centers for Disease
+      Control and Prevention.
 
 reference:
 - title: Piped mode functions

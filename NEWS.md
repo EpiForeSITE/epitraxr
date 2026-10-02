@@ -1,3 +1,7 @@
+# epitraxr (development version)
+
+* Added the ForeSITE pkgdown brand and weekly brand-sync workflow.
+
 # epitraxr 0.5.0
 
 * Add formatted PDF reports
