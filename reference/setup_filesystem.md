@@ -48,13 +48,13 @@ folders <- list(
 )
 setup_filesystem(folders)
 #> $internal
-#> [1] "/tmp/Rtmp79aE2S/internal"
+#> [1] "/tmp/RtmpzpkD4L/internal"
 #> 
 #> $public
-#> [1] "/tmp/Rtmp79aE2S/public"
+#> [1] "/tmp/RtmpzpkD4L/public"
 #> 
 #> $settings
-#> [1] "/tmp/Rtmp79aE2S/settings"
+#> [1] "/tmp/RtmpzpkD4L/settings"
 #> 
 unlink(unlist(folders, use.names = FALSE), recursive = TRUE)
 ```
